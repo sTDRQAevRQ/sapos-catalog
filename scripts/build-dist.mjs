@@ -29,13 +29,9 @@ writeFileSync(
   `import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || "0.0.0.0";
-const publicDir = path.join(__dirname, "..", "public");
+const publicDir = path.join(process.cwd(), "dist", "public");
 
 const contentTypes = {
   ".html": "text/html; charset=utf-8",
