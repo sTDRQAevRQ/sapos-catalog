@@ -45,10 +45,25 @@ init().catch((error) => {
 
 async function init() {
   bindUi();
-  const response = await fetch(DATA_URL);
-  state.items = await response.json();
+  state.items = await loadCatalogItems();
   renderFilterOptions();
   render();
+}
+
+async function loadCatalogItems() {
+  const inlineData = document.querySelector("#catalog-data");
+  if (inlineData?.textContent) {
+    const raw = inlineData.textContent.trim();
+    if (raw && raw !== "__CATALOG_DATA__") {
+      return JSON.parse(raw);
+    }
+  }
+
+  const response = await fetch(DATA_URL, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Catalogue HTTP ${response.status}`);
+  }
+  return response.json();
 }
 
 function bindUi() {

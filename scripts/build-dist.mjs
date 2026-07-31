@@ -8,6 +8,9 @@ const root = path.resolve(__dirname, "..");
 const dist = path.join(root, "dist");
 const publicDir = path.join(dist, "public");
 const serverDir = path.join(dist, "server");
+const sourceDataDir = existsSync(path.join(root, "public", "data"))
+  ? path.join(root, "public", "data")
+  : path.join(root, "data");
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(publicDir, { recursive: true });
@@ -17,10 +20,6 @@ mkdirSync(path.join(dist, ".openai"), { recursive: true });
 copyFile("index.html", "index.html");
 copyFile("styles.css", "styles.css");
 copyFile("app.js", "app.js");
-
-const sourceDataDir = existsSync(path.join(root, "public", "data"))
-  ? path.join(root, "public", "data")
-  : path.join(root, "data");
 cpSync(sourceDataDir, path.join(publicDir, "data"), { recursive: true });
 cpSync(path.join(root, ".openai", "hosting.json"), path.join(dist, ".openai", "hosting.json"));
 
@@ -75,9 +74,8 @@ function copyFile(from, to) {
   const source = path.join(root, from);
   let content = readFileSync(source, "utf8");
   if (from === "index.html") {
-    content = content
-      .replace('src="./app.js" type="module"', 'src="./app.js" type="module"')
-      .replace('<script src="./app.js" type="module"></script>', '<script src="./app.js" type="module"></script>');
+    const embeddedCatalog = readFileSync(path.join(sourceDataDir, "catalog.json"), "utf8").trim();
+    content = content.replace("__CATALOG_DATA__", embeddedCatalog);
   }
   writeFileSync(path.join(publicDir, to), content);
 }
