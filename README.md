@@ -5,6 +5,7 @@ V1 autonome d'un catalogue client mobile-first pour `saposparfums.fr`.
 ## Ce que fait cette V1
 
 - affiche une liste dynamique fluide et partageable
+- menu burger lateral (marques, best-sellers, homme/femme/unisexe, contact)
 - filtre par marque, famille, genre et statut
 - recherche par nom, marque, famille ou note
 - trie par ordre catalogue, marque, nom ou prix
@@ -66,6 +67,7 @@ python3 scripts/build_catalog_from_csv.py
 - `image` : image facultative
 - `collections` : valeurs separees par `|`
 - `published_at` : date facultative
+- `best_seller` : `oui` / `non` (ou `1`/`0`, `x`) — pilote l'entree "Best sellers" du menu burger
 
 ## Suite logique
 

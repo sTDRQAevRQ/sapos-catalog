@@ -28,6 +28,8 @@ STATUS_MAP = {
     "masqué": ("out", "Masque"),
 }
 
+TRUE_VALUES = {"1", "oui", "yes", "true", "x", "vrai"}
+
 
 def detect_delimiter(sample: str) -> str:
     try:
@@ -63,6 +65,10 @@ def normalize_status(raw: str):
     return STATUS_MAP.get(key, ("available", raw.strip() if raw else "Disponible"))
 
 
+def parse_bool(raw: str) -> bool:
+    return (raw or "").strip().lower() in TRUE_VALUES
+
+
 def read_csv_items():
     if not SOURCE_PATH.exists():
         raise SystemExit(f"Source CSV introuvable: {SOURCE_PATH}")
@@ -88,6 +94,7 @@ def read_csv_items():
             note = (row.get("note") or "").strip()
             volume = (row.get("volume") or "").strip()
             gender = (row.get("gender") or "").strip() or "Mixte"
+            best_seller = parse_bool(row.get("best_seller") or "")
 
             items.append(
                 {
@@ -108,6 +115,7 @@ def read_csv_items():
                     "priceValue": price_value,
                     "priceLabel": format_price(price_value),
                     "tags": tags,
+                    "bestSeller": best_seller,
                     "rank": int((row.get("rank") or index)),
                     "publishedAt": (row.get("published_at") or "").strip() or None,
                 }

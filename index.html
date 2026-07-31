@@ -8,31 +8,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=15">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="./styles.css?v=17">
 </head>
 <body>
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <button type="button" class="burger-toggle" id="nav-toggle" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <button type="button" class="top-bar-brand" id="brand-home">
+        Sapos Parfums <span>Catalogue</span>
+      </button>
+    </div>
+  </div>
+
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
         <h1>Le catalogue Sapos Parfums</h1>
         <h2 class="hero-text">Une selection elegante a parcourir selon vos envies.</h2>
-        <div class="hero-stats" id="hero-stats">
-          <span class="stat-pill">Chargement du catalogue…</span>
-        </div>
-      </div>
-      <div class="hero-rail">
-        <div class="hero-card">
-          <p class="hero-card-label">En un coup d'oeil</p>
-          <ul class="hero-points">
-            <li>Recherche rapide</li>
-            <li>Tri par marque et disponibilite</li>
-            <li>Nouveautes visibles en un instant</li>
-          </ul>
-        </div>
-        <div class="hero-mini-card">
-          <p class="hero-mini-label">Conseil</p>
-          <p class="hero-mini-text">Utilisez les filtres pour affiner la selection selon vos envies.</p>
-        </div>
+        <p class="hero-summary" id="hero-summary"></p>
       </div>
     </header>
 
@@ -141,7 +137,96 @@
     </main>
   </div>
 
-  <div class="filters-backdrop" id="filters-backdrop"></div>
+  <footer class="site-footer" id="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col" id="footer-contact">
+        <h3>Contact</h3>
+        <p>Une question, une demande particulière ?</p>
+        <a class="footer-link" href="https://saposparfums.fr/pages/contact" target="_blank" rel="noreferrer">Nous contacter</a>
+      </div>
+      <div class="footer-col">
+        <h3>Informations</h3>
+        <ul>
+          <li><a href="https://saposparfums.fr/policies/legal-notice" target="_blank" rel="noreferrer">Mentions légales</a></li>
+          <li><a href="https://saposparfums.fr/policies/terms-of-sale" target="_blank" rel="noreferrer">Conditions d'utilisation</a></li>
+          <li><a href="https://saposparfums.fr/pages/politique-de-confidentialite" target="_blank" rel="noreferrer">Politique de confidentialité</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Nos garanties</h3>
+        <ul class="footer-badges">
+          <li>100% Made in France</li>
+          <li>Livraison gratuite</li>
+          <li>Satisfait ou remboursé</li>
+          <li>Paiement sécurisé</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Avis clients</h3>
+        <p>Nos clients nous notent 5/5.</p>
+        <a class="footer-link" href="https://saposparfums.fr/pages/avis-clients" target="_blank" rel="noreferrer">Voir les avis clients</a>
+      </div>
+    </div>
+    <div class="footer-social">
+      <ul class="social-list">
+        <li>
+          <a href="https://wa.me/33633642129" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+            <span>WhatsApp</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/saposparfums/" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            <span>Saposparfums</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/@SaposParfums/?hr=1" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-facebook" aria-hidden="true"></i>
+            <span>Saposparfums</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.snapchat.com/add/saposz" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-snapchat" aria-hidden="true"></i>
+            <span>Saposparfums</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.tiktok.com/@saposparfum" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+            <span>Saposparfums</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Sapos Parfums — <a href="https://saposparfums.fr/" target="_blank" rel="noreferrer">saposparfums.fr</a></p>
+    </div>
+  </footer>
+
+  <div class="filters-backdrop" id="drawer-backdrop"></div>
+
+  <nav class="nav-drawer" id="nav-panel" aria-label="Menu">
+    <div class="nav-drawer-head">
+      <p class="nav-drawer-title">Menu</p>
+      <button type="button" class="filters-close" id="nav-close" aria-label="Fermer le menu">×</button>
+    </div>
+    <ul class="nav-list">
+      <li><button type="button" class="nav-link" data-nav="all">Tous les parfums</button></li>
+      <li><button type="button" class="nav-link" data-nav="best-sellers">Best sellers</button></li>
+      <li><button type="button" class="nav-link" data-nav="brands">Toutes les marques</button></li>
+      <li><button type="button" class="nav-link" data-nav="men">Parfum pour homme</button></li>
+      <li><button type="button" class="nav-link" data-nav="women">Parfum pour femme</button></li>
+      <li><button type="button" class="nav-link" data-nav="unisex">Unisexe</button></li>
+      <li><button type="button" class="nav-link" data-nav="contact">Contact</button></li>
+    </ul>
+    <div class="nav-drawer-foot">
+      <a class="nav-external" href="https://saposparfums.fr/" target="_blank" rel="noreferrer">Voir le site saposparfums.fr ↗</a>
+    </div>
+  </nav>
+
   <button type="button" class="filters-fab" id="filters-toggle">
     <span>Filtrer</span>
     <span class="filters-fab-count hidden" id="filters-fab-count">0</span>
@@ -189,6 +274,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=15" type="module"></script>
+  <script src="./app.js?v=17" type="module"></script>
 </body>
 </html>

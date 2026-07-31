@@ -9,6 +9,7 @@ const state = {
     family: new Set(),
     gender: new Set(),
     status: new Set(),
+    bestSeller: false,
     sort: "featured",
   },
 };
@@ -16,7 +17,7 @@ const state = {
 let availableStatusLabels = new Set();
 
 const els = {
-  heroStats: document.querySelector("#hero-stats"),
+  heroSummary: document.querySelector("#hero-summary"),
   overviewPanel: document.querySelector("#overview-panel"),
   overviewList: document.querySelector("#overview-list"),
   overviewLabel: document.querySelector("#overview-label"),
@@ -50,14 +51,18 @@ const els = {
   filtersPanel: document.querySelector("#filters-panel"),
   filtersToggle: document.querySelector("#filters-toggle"),
   filtersClose: document.querySelector("#filters-close"),
-  filtersBackdrop: document.querySelector("#filters-backdrop"),
   filtersFabCount: document.querySelector("#filters-fab-count"),
   brandSearch: document.querySelector("#brand-search"),
+  drawerBackdrop: document.querySelector("#drawer-backdrop"),
+  navPanel: document.querySelector("#nav-panel"),
+  navToggle: document.querySelector("#nav-toggle"),
+  navClose: document.querySelector("#nav-close"),
+  brandHome: document.querySelector("#brand-home"),
 };
 
 init().catch((error) => {
   console.error(error);
-  els.heroStats.innerHTML = '<span class="stat-pill">Erreur de chargement du catalogue.</span>';
+  els.heroSummary.textContent = "Erreur de chargement du catalogue.";
   els.skeletonList?.classList.add("hidden");
 });
 
@@ -68,11 +73,20 @@ async function init() {
 
   availableStatusLabels = getAvailableStatusLabels();
   availableStatusLabels.forEach((label) => state.filters.status.add(label));
+  updateHeroSummary();
 
   syncViewFromHash();
   renderFilterOptions();
   ["brand", "family", "gender", "status"].forEach(syncFilterInputs);
   render();
+}
+
+function updateHeroSummary() {
+  if (!els.heroSummary) return;
+  const totalBrands = new Set(state.items.map((item) => item.brand).filter(Boolean)).size;
+  els.heroSummary.textContent = `${state.items.length} references${
+    totalBrands ? ` · ${totalBrands} marques` : ""
+  }`;
 }
 
 function getAvailableStatusLabels() {
@@ -125,7 +139,10 @@ function bindUi() {
     });
   });
 
-  els.reset.addEventListener("click", resetAllFilters);
+  els.reset.addEventListener("click", () => {
+    resetAllFilters();
+    navigateToView("catalog");
+  });
   els.overviewBack.addEventListener("click", () => navigateToView("catalog"));
   els.dialogClose.addEventListener("click", () => els.dialog.close());
   els.dialog.addEventListener("click", (event) => {
@@ -138,13 +155,22 @@ function bindUi() {
     render();
   });
 
-  els.filtersToggle?.addEventListener("click", openFiltersDrawer);
-  els.filtersClose?.addEventListener("click", closeFiltersDrawer);
-  els.filtersBackdrop?.addEventListener("click", closeFiltersDrawer);
+  els.filtersToggle?.addEventListener("click", () => openDrawer(els.filtersPanel));
+  els.filtersClose?.addEventListener("click", closeAllDrawers);
+  els.navToggle?.addEventListener("click", () => openDrawer(els.navPanel));
+  els.navClose?.addEventListener("click", closeAllDrawers);
+  els.drawerBackdrop?.addEventListener("click", closeAllDrawers);
+  els.brandHome?.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      closeFiltersDrawer();
+      closeAllDrawers();
     }
+  });
+
+  document.querySelectorAll(".nav-link").forEach((button) => {
+    button.addEventListener("click", () => handleNavAction(button.dataset.nav));
   });
 
   els.brandSearch?.addEventListener("input", (event) => {
@@ -161,16 +187,71 @@ function bindUi() {
   });
 }
 
-function openFiltersDrawer() {
-  els.filtersPanel?.classList.add("is-open");
-  els.filtersBackdrop?.classList.add("is-visible");
+function openDrawer(panel) {
+  closeAllDrawers();
+  panel?.classList.add("is-open");
+  els.drawerBackdrop?.classList.add("is-visible");
   document.body.classList.add("filters-open");
 }
 
-function closeFiltersDrawer() {
+function closeAllDrawers() {
   els.filtersPanel?.classList.remove("is-open");
-  els.filtersBackdrop?.classList.remove("is-visible");
+  els.navPanel?.classList.remove("is-open");
+  els.drawerBackdrop?.classList.remove("is-visible");
   document.body.classList.remove("filters-open");
+}
+
+function handleNavAction(action) {
+  switch (action) {
+    case "all":
+      resetAllFilters();
+      navigateToView("catalog");
+      closeAllDrawers();
+      break;
+    case "best-sellers":
+      applyCategoryFilter({ bestSeller: true });
+      break;
+    case "brands":
+      closeAllDrawers();
+      navigateToView("brands");
+      break;
+    case "men":
+      applyCategoryFilter({ gender: "Homme" });
+      break;
+    case "women":
+      applyCategoryFilter({ gender: "Femme" });
+      break;
+    case "unisex":
+      applyCategoryFilter({ gender: "Mixte" });
+      break;
+    case "contact":
+      closeAllDrawers();
+      window.open("https://saposparfums.fr/pages/contact", "_blank", "noopener");
+      break;
+    default:
+      break;
+  }
+}
+
+function applyCategoryFilter({ gender, bestSeller } = {}) {
+  state.filters.brand.clear();
+  state.filters.family.clear();
+  state.filters.query = "";
+  els.search.value = "";
+  state.filters.gender.clear();
+  if (gender) {
+    state.filters.gender.add(gender);
+  }
+  state.filters.bestSeller = Boolean(bestSeller);
+  syncFilterInputs("brand");
+  syncFilterInputs("family");
+  syncFilterInputs("gender");
+  if (els.brandSearch) {
+    els.brandSearch.value = "";
+    filterBrandChips("");
+  }
+  closeAllDrawers();
+  navigateToView("catalog");
 }
 
 function filterBrandChips(query) {
@@ -200,7 +281,6 @@ function renderFilterOptions() {
 
 function render() {
   const results = sortItems(filterItems());
-  renderStats(results);
   renderOverview(results);
   renderRows(results);
   renderActiveFilters();
@@ -227,47 +307,10 @@ function updateFiltersFabCount() {
     state.filters.family.size +
     state.filters.gender.size +
     state.filters.status.size +
+    (state.filters.bestSeller ? 1 : 0) +
     (state.filters.query ? 1 : 0);
   els.filtersFabCount.textContent = String(count);
   els.filtersFabCount.classList.toggle("hidden", count === 0);
-}
-
-function renderStats(results) {
-  const brands = new Set(results.map((item) => item.brand).filter(Boolean)).size;
-  const families = new Set(results.flatMap((item) => item.families || [])).size;
-  const available = results.filter((item) => item.statusKey === "available").length;
-
-  els.heroStats.innerHTML = "";
-  [
-    {
-      view: "catalog",
-      label: `${state.items.length} refs`,
-      detail: "Voir toutes les references",
-    },
-    {
-      view: "brands",
-      label: `${brands} marque${brands > 1 ? "s" : ""}`,
-      detail: "Voir toutes les marques",
-    },
-    {
-      view: "families",
-      label: `${families} familles`,
-      detail: "Voir toutes les familles",
-    },
-    {
-      view: "available",
-      label: `${available} disponibles`,
-      detail: "Voir les references disponibles",
-    },
-  ].forEach(({ view, label, detail }) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "stat-pill stat-pill-button";
-    button.dataset.view = view;
-    button.innerHTML = `<span>${escapeHtml(label)}</span><span class="stat-pill-hint">${escapeHtml(detail)}</span>`;
-    button.addEventListener("click", () => navigateToView(view));
-    els.heroStats.appendChild(button);
-  });
 }
 
 function renderOverview(results) {
@@ -359,6 +402,10 @@ function renderActiveFilters() {
     ...[...state.filters.status].map((value) => ["status", value]),
   ];
 
+  if (state.filters.bestSeller) {
+    filterEntries.unshift(["bestSeller", "Best sellers"]);
+  }
+
   if (state.filters.query) {
     filterEntries.unshift(["query", state.filters.query]);
   }
@@ -376,6 +423,8 @@ function renderActiveFilters() {
       if (key === "query") {
         state.filters.query = "";
         els.search.value = "";
+      } else if (key === "bestSeller") {
+        state.filters.bestSeller = false;
       } else {
         state.filters[key].delete(value);
         syncFilterInputs(key);
@@ -426,6 +475,10 @@ function openDialog(item) {
 
 function filterItems() {
   return state.items.filter((item) => {
+    if (state.filters.bestSeller && !item.bestSeller) {
+      return false;
+    }
+
     if (state.filters.query) {
       const haystack = [
         item.title,
@@ -551,6 +604,7 @@ function resetAllFilters() {
     state.filters[key].clear();
     syncFilterInputs(key);
   });
+  state.filters.bestSeller = false;
   availableStatusLabels.forEach((label) => state.filters.status.add(label));
   syncFilterInputs("status");
   if (els.brandSearch) {
