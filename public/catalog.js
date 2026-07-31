@@ -1,6 +1,4 @@
 const DATA_URL = "/data/catalog.json";
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=80";
 
 const state = {
   items: [],
@@ -16,7 +14,7 @@ const state = {
 
 const els = {
   heroStats: document.querySelector("#hero-stats"),
-  grid: document.querySelector("#catalog-grid"),
+  list: document.querySelector("#catalog-list"),
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
   activeFilters: document.querySelector("#active-filters"),
@@ -31,14 +29,13 @@ const els = {
   },
   dialog: document.querySelector("#product-dialog"),
   dialogClose: document.querySelector("#dialog-close"),
-  dialogImage: document.querySelector("#dialog-image"),
   dialogBrand: document.querySelector("#dialog-brand"),
   dialogTitle: document.querySelector("#dialog-title"),
-  dialogSubtitle: document.querySelector("#dialog-subtitle"),
   dialogMeta: document.querySelector("#dialog-meta"),
+  dialogNote: document.querySelector("#dialog-note"),
   dialogTags: document.querySelector("#dialog-tags"),
   dialogLink: document.querySelector("#dialog-link"),
-  template: document.querySelector("#product-card-template"),
+  template: document.querySelector("#product-row-template"),
 };
 
 init().catch((error) => {
@@ -96,8 +93,7 @@ function renderFilterOptions() {
   for (const [key, values] of Object.entries(options)) {
     els.filters[key].innerHTML = "";
     values.forEach((value) => {
-      const node = createFilterChip(key, value);
-      els.filters[key].appendChild(node);
+      els.filters[key].appendChild(createFilterChip(key, value));
     });
   }
 }
@@ -105,10 +101,10 @@ function renderFilterOptions() {
 function render() {
   const results = sortItems(filterItems());
   renderStats(results);
-  renderCards(results);
+  renderRows(results);
   renderActiveFilters();
 
-  els.title.textContent = `${results.length} parfum${results.length > 1 ? "s" : ""}`;
+  els.title.textContent = `${results.length} reference${results.length > 1 ? "s" : ""}`;
   els.empty.classList.toggle("hidden", results.length !== 0);
 }
 
@@ -119,9 +115,9 @@ function renderStats(results) {
 
   els.heroStats.innerHTML = "";
   [
-    `${state.items.length} refs prêtes à afficher`,
-    `${brands} marque${brands > 1 ? "s" : ""} visibles`,
-    `${families} familles repérées`,
+    `${state.items.length} refs`,
+    `${brands} marque${brands > 1 ? "s" : ""}`,
+    `${families} familles`,
     `${available} disponibles`,
   ].forEach((label) => {
     const span = document.createElement("span");
@@ -131,42 +127,46 @@ function renderStats(results) {
   });
 }
 
-function renderCards(results) {
-  els.grid.innerHTML = "";
+function renderRows(results) {
+  els.list.innerHTML = "";
 
-  results.forEach((item) => {
+  results.forEach((item, itemIndex) => {
     const fragment = els.template.content.cloneNode(true);
-    const button = fragment.querySelector(".product-card-button");
-    const image = fragment.querySelector(".product-image");
+    const button = fragment.querySelector(".product-row-button");
+    const index = fragment.querySelector(".product-index");
+    const monogram = fragment.querySelector(".product-monogram");
     const status = fragment.querySelector(".product-status");
     const brand = fragment.querySelector(".product-brand");
-    const price = fragment.querySelector(".product-price");
     const title = fragment.querySelector(".product-title");
-    const subtitle = fragment.querySelector(".product-subtitle");
-    const badges = fragment.querySelector(".product-badges");
+    const volume = fragment.querySelector(".product-volume");
+    const price = fragment.querySelector(".product-price");
+    const note = fragment.querySelector(".product-note");
+    const meta = fragment.querySelector(".product-meta");
 
-    image.src = item.image || PLACEHOLDER_IMAGE;
-    image.alt = item.imageAlt || item.title;
+    index.textContent = formatRowIndex(item.rank, itemIndex + 1);
+    monogram.textContent = buildMonogram(item.brand || item.title);
     status.textContent = item.statusLabel || "Disponible";
+    status.dataset.status = item.statusKey || "available";
     brand.textContent = item.brand || "Marque";
-    price.textContent = item.priceLabel || "";
     title.textContent = item.title;
-    subtitle.textContent = item.subtitle || "Fiche prête pour enrichissement inventaire.";
+    volume.textContent = item.volume || "Contenance a preciser";
+    price.textContent = item.priceLabel || "Prix sur demande";
+    note.textContent = item.note || item.subtitle || "Reference prete a recommander.";
 
-    const badgeValues = [...(item.families || []).slice(0, 2)];
-    if (item.gender) {
-      badgeValues.push(item.gender);
-    }
-
-    badgeValues.slice(0, 3).forEach((value) => {
-      const badge = document.createElement("span");
-      badge.className = "badge";
-      badge.textContent = value;
-      badges.appendChild(badge);
-    });
+    [
+      ...(item.families || []).slice(0, 2),
+      item.gender,
+    ]
+      .filter(Boolean)
+      .forEach((value) => {
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = value;
+        meta.appendChild(badge);
+      });
 
     button.addEventListener("click", () => openDialog(item));
-    els.grid.appendChild(fragment);
+    els.list.appendChild(fragment);
   });
 }
 
@@ -186,7 +186,7 @@ function renderActiveFilters() {
   filterEntries.forEach(([key, value]) => {
     const chip = document.createElement("span");
     chip.className = "chip";
-    chip.innerHTML = `<span>${value}</span>`;
+    chip.innerHTML = `<span>${escapeHtml(value)}</span>`;
     const close = document.createElement("button");
     close.type = "button";
     close.textContent = "×";
@@ -206,18 +206,19 @@ function renderActiveFilters() {
 }
 
 function openDialog(item) {
-  els.dialogImage.src = item.image || PLACEHOLDER_IMAGE;
-  els.dialogImage.alt = item.imageAlt || item.title;
   els.dialogBrand.textContent = item.brand || "Marque";
   els.dialogTitle.textContent = item.title;
-  els.dialogSubtitle.textContent = item.subtitle || "Fiche prête à être enrichie.";
+  els.dialogNote.textContent = item.note || item.subtitle || "Reference prete a etre conseillee.";
   els.dialogLink.href = item.url || "#";
+  els.dialogLink.classList.toggle("hidden", !item.url);
 
   els.dialogMeta.innerHTML = "";
   [
+    item.volume,
     item.priceLabel,
     item.statusLabel,
-    ...(item.collections || []).slice(0, 3),
+    ...(item.families || []).slice(0, 3),
+    item.gender,
   ]
     .filter(Boolean)
     .forEach((value) => {
@@ -228,7 +229,7 @@ function openDialog(item) {
     });
 
   els.dialogTags.innerHTML = "";
-  [...(item.families || []), ...(item.tags || []).slice(0, 5)]
+  [...(item.tags || []), ...(item.collections || [])]
     .filter(Boolean)
     .slice(0, 8)
     .forEach((value) => {
@@ -247,7 +248,8 @@ function filterItems() {
       const haystack = [
         item.title,
         item.brand,
-        item.subtitle,
+        item.volume,
+        item.note,
         item.gender,
         ...(item.families || []),
         ...(item.tags || []),
@@ -295,14 +297,22 @@ function sortItems(items) {
     case "title-desc":
       sorted.sort((a, b) => b.title.localeCompare(a.title, "fr"));
       break;
+    case "brand-asc":
+      sorted.sort((a, b) => {
+        const brandOrder = (a.brand || "").localeCompare(b.brand || "", "fr");
+        if (brandOrder !== 0) {
+          return brandOrder;
+        }
+        return a.title.localeCompare(b.title, "fr");
+      });
+      break;
     case "price-asc":
-      sorted.sort((a, b) => (a.priceValue ?? Number.MAX_SAFE_INTEGER) - (b.priceValue ?? Number.MAX_SAFE_INTEGER));
+      sorted.sort(
+        (a, b) => (a.priceValue ?? Number.MAX_SAFE_INTEGER) - (b.priceValue ?? Number.MAX_SAFE_INTEGER)
+      );
       break;
     case "price-desc":
       sorted.sort((a, b) => (b.priceValue ?? -1) - (a.priceValue ?? -1));
-      break;
-    case "newest":
-      sorted.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
       break;
     default:
       sorted.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999) || a.title.localeCompare(b.title, "fr"));
@@ -347,11 +357,9 @@ function uniqueValues(key) {
 }
 
 function syncFilterInputs(key) {
-  document
-    .querySelectorAll(`input[data-filter-key="${key}"]`)
-    .forEach((input) => {
-      input.checked = state.filters[key].has(input.value);
-    });
+  document.querySelectorAll(`input[data-filter-key="${key}"]`).forEach((input) => {
+    input.checked = state.filters[key].has(input.value);
+  });
 }
 
 function resetAllFilters() {
@@ -373,4 +381,18 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function buildMonogram(value) {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
+
+function formatRowIndex(rank, fallbackIndex) {
+  const numeric = Number(rank);
+  return String(Number.isFinite(numeric) && numeric > 0 ? numeric : fallbackIndex).padStart(2, "0");
 }

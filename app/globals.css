@@ -1,16 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg: #f4efe7;
-  --bg-soft: rgba(255, 250, 242, 0.76);
-  --ink: #1f1712;
-  --muted: #68584c;
-  --line: rgba(58, 43, 30, 0.12);
-  --line-strong: rgba(58, 43, 30, 0.2);
-  --card: rgba(255, 251, 246, 0.88);
-  --accent: #9e6a33;
-  --accent-soft: rgba(158, 106, 51, 0.12);
-  --shadow: 0 22px 60px rgba(55, 33, 18, 0.12);
+  --bg: #f6f0e7;
+  --bg-soft: rgba(255, 249, 240, 0.72);
+  --ink: #221611;
+  --muted: #6f5a4f;
+  --line: rgba(68, 47, 31, 0.12);
+  --line-strong: rgba(68, 47, 31, 0.24);
+  --card: rgba(255, 250, 244, 0.84);
+  --accent: #9b6031;
+  --accent-soft: rgba(155, 96, 49, 0.12);
+  --accent-deep: #2d1b12;
+  --shadow: 0 24px 80px rgba(58, 34, 18, 0.12);
   --radius-xl: 28px;
   --radius-lg: 20px;
   --radius-md: 16px;
@@ -31,9 +32,10 @@ body {
   font-family: var(--font-body);
   color: var(--ink);
   background:
-    radial-gradient(circle at top left, rgba(187, 149, 100, 0.18), transparent 34%),
-    radial-gradient(circle at top right, rgba(114, 83, 53, 0.12), transparent 26%),
-    linear-gradient(180deg, #f8f4ee 0%, #efe7db 100%);
+    radial-gradient(circle at top left, rgba(201, 151, 94, 0.2), transparent 26%),
+    radial-gradient(circle at 85% 15%, rgba(118, 77, 43, 0.14), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(167, 122, 74, 0.12), transparent 24%),
+    linear-gradient(180deg, #fbf7f1 0%, #efe3d3 100%);
 }
 
 button,
