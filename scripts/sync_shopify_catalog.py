@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENV_PATH = ROOT.parent / "shopify.env"
 OUT_PATH = ROOT / "public" / "data" / "catalog.json"
+LEGACY_OUT_PATH = ROOT / "data" / "catalog.json"
 API_VER = "2025-04"
 
 TAG_FAMILY_MAP = {
@@ -265,6 +266,8 @@ def main():
     normalized = normalize_products(products)
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(normalized, ensure_ascii=False, indent=2) + "\n")
+    LEGACY_OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LEGACY_OUT_PATH.write_text(json.dumps(normalized, ensure_ascii=False, indent=2) + "\n")
     print(f"{len(normalized)} produits synchronisés vers {OUT_PATH}")
 
 

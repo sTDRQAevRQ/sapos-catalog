@@ -3,13 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && rm -rf dist && cp -R out dist",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "16.2.12",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "dev": "python3 -m http.server 4173",
+    "build": "node scripts/build-dist.mjs"
   }
 }
