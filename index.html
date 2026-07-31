@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sapos Parfums Catalogue</title>
+  <meta name="description" content="Catalogue dynamique Sapos Parfums, filtrable et mobile-first.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Catalogue client</p>
+        <h1>Une liste de parfums agréable, rapide et vivante.</h1>
+        <p class="hero-text">
+          Pensé pour être envoyé tel quel au client, puis mis à jour sans refaire un document entier.
+        </p>
+        <div class="hero-stats" id="hero-stats">
+          <span class="stat-pill">Chargement du catalogue…</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <p class="hero-card-label">Usage visé</p>
+        <ul class="hero-points">
+          <li>Recherche instantanée</li>
+          <li>Filtres par marque, style, genre, statut</li>
+          <li>Consultation fluide sur mobile</li>
+          <li>Base prête pour sync Shopify</li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="catalog-layout">
+      <aside class="filters-panel">
+        <div class="filters-sticky">
+          <label class="search-box" for="search">
+            <span>Recherche</span>
+            <input id="search" type="search" placeholder="Nom, marque, note, style…">
+          </label>
+
+          <div class="filter-block">
+            <div class="filter-head">
+              <h2>Marques</h2>
+              <button type="button" class="filter-clear" data-clear="brand">Effacer</button>
+            </div>
+            <div class="filter-list" id="brand-filters"></div>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-head">
+              <h2>Familles</h2>
+              <button type="button" class="filter-clear" data-clear="family">Effacer</button>
+            </div>
+            <div class="filter-list" id="family-filters"></div>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-head">
+              <h2>Genre</h2>
+              <button type="button" class="filter-clear" data-clear="gender">Effacer</button>
+            </div>
+            <div class="filter-list" id="gender-filters"></div>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-head">
+              <h2>Statut</h2>
+              <button type="button" class="filter-clear" data-clear="status">Effacer</button>
+            </div>
+            <div class="filter-list" id="status-filters"></div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="catalog-panel">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <p class="toolbar-label">Catalogue</p>
+            <h2 id="results-title">Parfums</h2>
+          </div>
+          <div class="toolbar-right">
+            <label class="sort-box" for="sort">
+              <span>Trier</span>
+              <select id="sort">
+                <option value="featured">Recommandés</option>
+                <option value="title-asc">Nom A → Z</option>
+                <option value="title-desc">Nom Z → A</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="newest">Plus récents</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="active-filters" id="active-filters"></div>
+        <div class="catalog-grid" id="catalog-grid"></div>
+        <div class="empty-state hidden" id="empty-state">
+          <p>Aucun parfum ne correspond aux filtres actuels.</p>
+          <button type="button" id="reset-filters">Réinitialiser les filtres</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="product-dialog" id="product-dialog">
+    <article class="dialog-card">
+      <button type="button" class="dialog-close" id="dialog-close" aria-label="Fermer">×</button>
+      <div class="dialog-media-wrap">
+        <img id="dialog-image" class="dialog-image" alt="">
+      </div>
+      <div class="dialog-body">
+        <p class="dialog-brand" id="dialog-brand"></p>
+        <h3 id="dialog-title"></h3>
+        <p class="dialog-subtitle" id="dialog-subtitle"></p>
+        <div class="dialog-meta" id="dialog-meta"></div>
+        <div class="dialog-tags" id="dialog-tags"></div>
+        <div class="dialog-actions">
+          <a id="dialog-link" class="primary-link" href="#" target="_blank" rel="noreferrer">Voir le parfum</a>
+        </div>
+      </div>
+    </article>
+  </dialog>
+
+  <template id="product-card-template">
+    <article class="product-card">
+      <button type="button" class="product-card-button">
+        <div class="product-image-wrap">
+          <img class="product-image" alt="">
+          <span class="product-status"></span>
+        </div>
+        <div class="product-content">
+          <div class="product-topline">
+            <p class="product-brand"></p>
+            <p class="product-price"></p>
+          </div>
+          <h3 class="product-title"></h3>
+          <p class="product-subtitle"></p>
+          <div class="product-badges"></div>
+        </div>
+      </button>
+    </article>
+  </template>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
