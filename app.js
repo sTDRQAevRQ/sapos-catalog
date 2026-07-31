@@ -146,6 +146,7 @@ function renderRows(results) {
   results.forEach((item, itemIndex) => {
     const fragment = els.template.content.cloneNode(true);
     const button = fragment.querySelector(".product-row-button");
+    const image = fragment.querySelector(".product-image");
     const index = fragment.querySelector(".product-index");
     const monogram = fragment.querySelector(".product-monogram");
     const status = fragment.querySelector(".product-status");
@@ -158,6 +159,17 @@ function renderRows(results) {
 
     index.textContent = formatRowIndex(item.rank, itemIndex + 1);
     monogram.textContent = buildMonogram(item.brand || item.title);
+    if (item.image) {
+      image.src = item.image;
+      image.alt = item.imageAlt || item.title;
+      image.classList.remove("hidden");
+      monogram.classList.add("hidden");
+    } else {
+      image.removeAttribute("src");
+      image.alt = "";
+      image.classList.add("hidden");
+      monogram.classList.remove("hidden");
+    }
     status.textContent = item.statusLabel || "Disponible";
     status.dataset.status = item.statusKey || "available";
     brand.textContent = item.brand || "Marque";

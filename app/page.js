@@ -121,9 +121,10 @@ export default function HomePage() {
       <template id="product-row-template">
         <article className="product-row">
           <button type="button" className="product-row-button">
-            <div className="product-mark">
-              <span className="product-index"></span>
+            <div className="product-visual">
+              <img className="product-image hidden" alt="" loading="lazy" />
               <span className="product-monogram"></span>
+              <span className="product-index"></span>
             </div>
             <div className="product-main">
               <div className="product-brandline">
