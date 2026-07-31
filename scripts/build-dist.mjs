@@ -24,62 +24,48 @@ const sourceDataDir = existsSync(path.join(root, "public", "data"))
 cpSync(sourceDataDir, path.join(publicDir, "data"), { recursive: true });
 cpSync(path.join(root, ".openai", "hosting.json"), path.join(dist, ".openai", "hosting.json"));
 
+const indexHtml = readFileSync(path.join(publicDir, "index.html"), "utf8");
+const stylesCss = readFileSync(path.join(publicDir, "styles.css"), "utf8");
+const appJs = readFileSync(path.join(publicDir, "app.js"), "utf8");
+const catalogJson = readFileSync(path.join(publicDir, "data", "catalog.json"), "utf8");
+
 writeFileSync(
   path.join(serverDir, "index.js"),
-  `import http from "node:http";
-import fs from "node:fs";
-import path from "node:path";
-const port = Number(process.env.PORT || 3000);
-const host = process.env.HOST || "0.0.0.0";
-const publicDir = path.join(process.cwd(), "dist", "public");
-
-const contentTypes = {
-  ".html": "text/html; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".webp": "image/webp",
-  ".svg": "image/svg+xml",
-  ".ico": "image/x-icon",
-  ".txt": "text/plain; charset=utf-8"
+  `const assets = {
+  "/": { type: "text/html; charset=utf-8", body: ${JSON.stringify(indexHtml)} },
+  "/index.html": { type: "text/html; charset=utf-8", body: ${JSON.stringify(indexHtml)} },
+  "/styles.css": { type: "text/css; charset=utf-8", body: ${JSON.stringify(stylesCss)} },
+  "/app.js": { type: "application/javascript; charset=utf-8", body: ${JSON.stringify(appJs)} },
+  "/data/catalog.json": { type: "application/json; charset=utf-8", body: ${JSON.stringify(catalogJson)} }
 };
 
-function safePath(urlPath) {
-  const normalized = path.normalize(decodeURIComponent(urlPath.split("?")[0])).replace(/^([.][.][\\/\\\\])+/, "");
-  return normalized === "/" ? "/index.html" : normalized;
+function matchAsset(pathname) {
+  if (assets[pathname]) {
+    return assets[pathname];
+  }
+  if (pathname.startsWith("/data/")) {
+    return null;
+  }
+  return assets["/index.html"];
 }
 
-function sendFile(filePath, res) {
-  const ext = path.extname(filePath).toLowerCase();
-  const type = contentTypes[ext] || "application/octet-stream";
-  const stream = fs.createReadStream(filePath);
-  res.writeHead(200, { "Content-Type": type, "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=3600" });
-  stream.pipe(res);
-  stream.on("error", () => {
-    res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Server error");
-  });
-}
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    const asset = matchAsset(url.pathname);
+    if (!asset) {
+      return new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    }
 
-http.createServer((req, res) => {
-  const resolved = safePath(req.url || "/");
-  let filePath = path.join(publicDir, resolved);
-
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, "index.html");
+    return new Response(asset.body, {
+      status: 200,
+      headers: {
+        "Content-Type": asset.type,
+        "Cache-Control": asset.type.startsWith("text/html") ? "no-cache" : "public, max-age=3600"
+      }
+    });
   }
-
-  if (!fs.existsSync(filePath)) {
-    filePath = path.join(publicDir, "index.html");
-  }
-
-  sendFile(filePath, res);
-}).listen(port, host, () => {
-  console.log("Sapos catalog server listening on", host + ":" + port);
-});
+};
 `
 );
 
