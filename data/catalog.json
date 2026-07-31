@@ -276,6 +276,32 @@
     "publishedAt": null
   },
   {
+    "id": "csv-6",
+    "title": "XS Vintage",
+    "subtitle": "",
+    "note": "",
+    "brand": "Paco Rabanne",
+    "volume": "100 ml",
+    "url": "",
+    "image": "",
+    "imageAlt": "XS Vintage",
+    "families": [],
+    "collections": [],
+    "gender": "Homme",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": null,
+    "priceLabel": "",
+    "tags": [
+      "paco rabanne",
+      "xs",
+      "vintage",
+      "homme"
+    ],
+    "rank": 6,
+    "publishedAt": null
+  },
+  {
     "id": "gid://shopify/Product/10053789942106",
     "title": "Caraïba – Parfum fruité tropical solaire",
     "subtitle": "Fruité — Tous nos parfums — Parfums de niche longue tenue",
