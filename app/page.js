@@ -6,28 +6,24 @@ export default function HomePage() {
       <div className="page-shell">
         <header className="hero">
           <div className="hero-copy">
-            <p className="eyebrow">Catalogue client</p>
-            <h1>Un catalogue parfum plus editorial, plus clair, plus premium.</h1>
-            <p className="hero-text">
-              Une experience mobile premium pour vendre vite: liste dynamique, rendu propre, navigation fluide et mise a jour simple depuis le tableur.
-            </p>
+            <h1>Le catalogue Sapos Parfums</h1>
+            <h2 className="hero-text">Une selection elegante a parcourir selon vos envies.</h2>
             <div className="hero-stats" id="hero-stats">
               <span className="stat-pill">Chargement du catalogue…</span>
             </div>
           </div>
           <div className="hero-rail">
             <div className="hero-card">
-              <p className="hero-card-label">Direction V1</p>
+              <p className="hero-card-label">En un coup d'oeil</p>
               <ul className="hero-points">
-                <li>Liste dynamique par reference</li>
-                <li>Recherche instantanee</li>
-                <li>Tri par marque, prix, disponibilite</li>
-                <li>Photos facultatives en V1</li>
+                <li>Recherche rapide</li>
+                <li>Tri par marque et disponibilite</li>
+                <li>Nouveautes visibles en un instant</li>
               </ul>
             </div>
             <div className="hero-mini-card">
-              <p className="hero-mini-label">Vision</p>
-              <p className="hero-mini-text">Le client parcourt une selection nette et inspiree, pas un tableur brut.</p>
+              <p className="hero-mini-label">Conseil</p>
+              <p className="hero-mini-text">Utilisez les filtres pour affiner la selection selon vos envies.</p>
             </div>
           </div>
         </header>
