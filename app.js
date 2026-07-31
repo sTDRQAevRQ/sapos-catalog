@@ -147,7 +147,6 @@ function renderRows(results) {
     const fragment = els.template.content.cloneNode(true);
     const button = fragment.querySelector(".product-row-button");
     const image = fragment.querySelector(".product-image");
-    const index = fragment.querySelector(".product-index");
     const monogram = fragment.querySelector(".product-monogram");
     const status = fragment.querySelector(".product-status");
     const brand = fragment.querySelector(".product-brand");
@@ -157,7 +156,6 @@ function renderRows(results) {
     const note = fragment.querySelector(".product-note");
     const meta = fragment.querySelector(".product-meta");
 
-    index.textContent = formatRowIndex(item.rank, itemIndex + 1);
     monogram.textContent = buildMonogram(item.brand || item.title);
     if (item.image) {
       image.src = item.image;

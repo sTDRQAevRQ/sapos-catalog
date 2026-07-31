@@ -124,7 +124,6 @@ export default function HomePage() {
             <div className="product-visual">
               <img className="product-image hidden" alt="" loading="lazy" />
               <span className="product-monogram"></span>
-              <span className="product-index"></span>
             </div>
             <div className="product-main">
               <div className="product-brandline">
