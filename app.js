@@ -2,6 +2,7 @@ const DATA_URL = "./data/catalog.json";
 
 const state = {
   items: [],
+  view: "catalog",
   filters: {
     query: "",
     brand: new Set(),
@@ -14,6 +15,12 @@ const state = {
 
 const els = {
   heroStats: document.querySelector("#hero-stats"),
+  overviewPanel: document.querySelector("#overview-panel"),
+  overviewList: document.querySelector("#overview-list"),
+  overviewLabel: document.querySelector("#overview-label"),
+  overviewTitle: document.querySelector("#overview-title"),
+  overviewText: document.querySelector("#overview-text"),
+  overviewBack: document.querySelector("#overview-back"),
   list: document.querySelector("#catalog-list"),
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
@@ -46,6 +53,7 @@ init().catch((error) => {
 async function init() {
   bindUi();
   state.items = await loadCatalogItems();
+  syncViewFromHash();
   renderFilterOptions();
   render();
 }
@@ -87,11 +95,16 @@ function bindUi() {
   });
 
   els.reset.addEventListener("click", resetAllFilters);
+  els.overviewBack.addEventListener("click", () => navigateToView("catalog"));
   els.dialogClose.addEventListener("click", () => els.dialog.close());
   els.dialog.addEventListener("click", (event) => {
     if (event.target === els.dialog) {
       els.dialog.close();
     }
+  });
+  window.addEventListener("hashchange", () => {
+    syncViewFromHash();
+    render();
   });
 }
 
@@ -114,6 +127,7 @@ function renderFilterOptions() {
 function render() {
   const results = sortItems(filterItems());
   renderStats(results);
+  renderOverview(results);
   renderRows(results);
   renderActiveFilters();
 
@@ -128,15 +142,61 @@ function renderStats(results) {
 
   els.heroStats.innerHTML = "";
   [
-    `${state.items.length} refs`,
-    `${brands} marque${brands > 1 ? "s" : ""}`,
-    `${families} familles`,
-    `${available} disponibles`,
-  ].forEach((label) => {
-    const span = document.createElement("span");
-    span.className = "stat-pill";
-    span.textContent = label;
-    els.heroStats.appendChild(span);
+    {
+      view: "catalog",
+      label: `${state.items.length} refs`,
+      detail: "Voir toutes les references",
+    },
+    {
+      view: "brands",
+      label: `${brands} marque${brands > 1 ? "s" : ""}`,
+      detail: "Voir toutes les marques",
+    },
+    {
+      view: "families",
+      label: `${families} familles`,
+      detail: "Voir toutes les familles",
+    },
+    {
+      view: "available",
+      label: `${available} disponibles`,
+      detail: "Voir les references disponibles",
+    },
+  ].forEach(({ view, label, detail }) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "stat-pill stat-pill-button";
+    button.dataset.view = view;
+    button.innerHTML = `<span>${escapeHtml(label)}</span><span class="stat-pill-hint">${escapeHtml(detail)}</span>`;
+    button.addEventListener("click", () => navigateToView(view));
+    els.heroStats.appendChild(button);
+  });
+}
+
+function renderOverview(results) {
+  const config = getOverviewConfig(results);
+  const isCatalog = state.view === "catalog";
+
+  els.overviewPanel.classList.toggle("hidden", isCatalog);
+  els.overviewLabel.textContent = config.label;
+  els.overviewTitle.textContent = config.title;
+  els.overviewText.textContent = config.text;
+  els.overviewList.innerHTML = "";
+
+  if (isCatalog) {
+    return;
+  }
+
+  config.items.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "overview-item";
+    button.innerHTML = `
+      <span class="overview-item-title">${escapeHtml(item.title)}</span>
+      <span class="overview-item-meta">${escapeHtml(item.meta)}</span>
+    `;
+    button.addEventListener("click", item.action);
+    els.overviewList.appendChild(button);
   });
 }
 
@@ -395,6 +455,98 @@ function resetAllFilters() {
   state.filters.sort = "featured";
   els.sort.value = "featured";
   render();
+}
+
+function syncViewFromHash() {
+  const hash = window.location.hash.replace(/^#/, "");
+  state.view = ["brands", "families", "available"].includes(hash) ? hash : "catalog";
+}
+
+function navigateToView(view) {
+  const nextHash = view === "catalog" ? "" : `#${view}`;
+  const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+  window.history.replaceState(null, "", nextUrl);
+  state.view = view;
+  render();
+
+  if (view === "catalog") {
+    document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  els.overviewPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function getOverviewConfig(results) {
+  if (state.view === "brands") {
+    return {
+      label: "Marques",
+      title: "Toutes les marques disponibles",
+      text: "Choisissez une marque pour afficher directement ses references dans le catalogue.",
+      items: summarizeCounts(results, (item) => item.brand).map(({ value, count }) => ({
+        title: value,
+        meta: `${count} reference${count > 1 ? "s" : ""}`,
+        action: () => applySingleFilter("brand", value),
+      })),
+    };
+  }
+
+  if (state.view === "families") {
+    return {
+      label: "Familles",
+      title: "Toutes les familles olfactives",
+      text: "Choisissez une famille pour revenir sur une selection deja filtree.",
+      items: summarizeCounts(results, (item) => item.families || []).map(({ value, count }) => ({
+        title: value,
+        meta: `${count} reference${count > 1 ? "s" : ""}`,
+        action: () => applySingleFilter("family", value),
+      })),
+    };
+  }
+
+  if (state.view === "available") {
+    return {
+      label: "Disponibilite",
+      title: "Disponibilite des references",
+      text: "Choisissez un statut pour afficher uniquement les references correspondantes.",
+      items: summarizeCounts(results, (item) => item.statusLabel).map(({ value, count }) => ({
+        title: value,
+        meta: `${count} reference${count > 1 ? "s" : ""}`,
+        action: () => applySingleFilter("status", value),
+      })),
+    };
+  }
+
+  return {
+    label: "Catalogue",
+    title: "Toutes les references",
+    text: "",
+    items: [],
+  };
+}
+
+function summarizeCounts(items, picker) {
+  const counts = new Map();
+
+  items.forEach((item) => {
+    const raw = picker(item);
+    const values = Array.isArray(raw) ? raw : [raw];
+
+    values
+      .filter(Boolean)
+      .forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+  });
+
+  return [...counts.entries()]
+    .map(([value, count]) => ({ value, count }))
+    .sort((a, b) => a.value.localeCompare(b.value, "fr"));
+}
+
+function applySingleFilter(key, value) {
+  state.filters[key].clear();
+  state.filters[key].add(value);
+  syncFilterInputs(key);
+  navigateToView("catalog");
 }
 
 function escapeHtml(value) {

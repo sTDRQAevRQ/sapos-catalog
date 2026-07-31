@@ -28,6 +28,18 @@ export default function HomePage() {
           </div>
         </header>
 
+        <section className="overview-panel hidden" id="overview-panel">
+          <div className="overview-head">
+            <div>
+              <p className="overview-label" id="overview-label">Navigation</p>
+              <h2 id="overview-title">Explorer le catalogue</h2>
+              <p className="overview-text" id="overview-text"></p>
+            </div>
+            <button type="button" className="overview-back" id="overview-back">Retour au catalogue</button>
+          </div>
+          <div className="overview-list" id="overview-list"></div>
+        </section>
+
         <main className="catalog-layout">
           <aside className="filters-panel">
             <div className="filters-sticky">
