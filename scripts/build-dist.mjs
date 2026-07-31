@@ -60,7 +60,7 @@ export default {
       status: 200,
       headers: {
         "Content-Type": asset.type,
-        "Cache-Control": asset.type.startsWith("text/html") ? "no-cache" : "public, max-age=3600"
+        "Cache-Control": "no-cache, no-store, must-revalidate"
       }
     });
   }

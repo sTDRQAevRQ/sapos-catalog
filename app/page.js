@@ -154,7 +154,7 @@ export default function HomePage() {
         </article>
       </template>
 
-      <Script src="/catalog.js" strategy="afterInteractive" />
+      <Script src="/catalog.js?v=14" strategy="afterInteractive" />
     </>
   );
 }
