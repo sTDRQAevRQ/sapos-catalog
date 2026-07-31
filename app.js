@@ -13,6 +13,8 @@ const state = {
   },
 };
 
+let availableStatusLabels = new Set();
+
 const els = {
   heroStats: document.querySelector("#hero-stats"),
   overviewPanel: document.querySelector("#overview-panel"),
@@ -22,12 +24,14 @@ const els = {
   overviewText: document.querySelector("#overview-text"),
   overviewBack: document.querySelector("#overview-back"),
   list: document.querySelector("#catalog-list"),
+  skeletonList: document.querySelector("#skeleton-list"),
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
   activeFilters: document.querySelector("#active-filters"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
   reset: document.querySelector("#reset-filters"),
+  quickAvailable: document.querySelector("#quick-available"),
   filters: {
     brand: document.querySelector("#brand-filters"),
     family: document.querySelector("#family-filters"),
@@ -54,14 +58,31 @@ const els = {
 init().catch((error) => {
   console.error(error);
   els.heroStats.innerHTML = '<span class="stat-pill">Erreur de chargement du catalogue.</span>';
+  els.skeletonList?.classList.add("hidden");
 });
 
 async function init() {
   bindUi();
   state.items = await loadCatalogItems();
+  els.skeletonList?.classList.add("hidden");
+
+  availableStatusLabels = getAvailableStatusLabels();
+  availableStatusLabels.forEach((label) => state.filters.status.add(label));
+
   syncViewFromHash();
   renderFilterOptions();
+  ["brand", "family", "gender", "status"].forEach(syncFilterInputs);
   render();
+}
+
+function getAvailableStatusLabels() {
+  const labels = new Set();
+  state.items.forEach((item) => {
+    if (item.statusKey === "available" && item.statusLabel) {
+      labels.add(item.statusLabel);
+    }
+  });
+  return labels;
 }
 
 async function loadCatalogItems() {
@@ -129,6 +150,15 @@ function bindUi() {
   els.brandSearch?.addEventListener("input", (event) => {
     filterBrandChips(event.target.value.trim().toLowerCase());
   });
+
+  els.quickAvailable?.addEventListener("change", (event) => {
+    state.filters.status.clear();
+    if (event.target.checked) {
+      availableStatusLabels.forEach((label) => state.filters.status.add(label));
+    }
+    syncFilterInputs("status");
+    render();
+  });
 }
 
 function openFiltersDrawer() {
@@ -175,9 +205,19 @@ function render() {
   renderRows(results);
   renderActiveFilters();
   updateFiltersFabCount();
+  syncQuickAvailableToggle();
 
   els.title.textContent = `${results.length} reference${results.length > 1 ? "s" : ""}`;
   els.empty.classList.toggle("hidden", results.length !== 0);
+}
+
+function syncQuickAvailableToggle() {
+  if (!els.quickAvailable) return;
+  const isAvailableOnly =
+    availableStatusLabels.size > 0 &&
+    state.filters.status.size === availableStatusLabels.size &&
+    [...state.filters.status].every((label) => availableStatusLabels.has(label));
+  els.quickAvailable.checked = isAvailableOnly;
 }
 
 function updateFiltersFabCount() {
@@ -322,6 +362,8 @@ function renderActiveFilters() {
   if (state.filters.query) {
     filterEntries.unshift(["query", state.filters.query]);
   }
+
+  els.activeFilters.classList.toggle("has-filters", filterEntries.length > 0);
 
   filterEntries.forEach(([key, value]) => {
     const chip = document.createElement("span");
@@ -509,6 +551,8 @@ function resetAllFilters() {
     state.filters[key].clear();
     syncFilterInputs(key);
   });
+  availableStatusLabels.forEach((label) => state.filters.status.add(label));
+  syncFilterInputs("status");
   if (els.brandSearch) {
     els.brandSearch.value = "";
     filterBrandChips("");
