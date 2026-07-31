@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=17">
+  <link rel="stylesheet" href="./styles.css?v=20">
 </head>
 <body>
   <div class="top-bar">
@@ -50,6 +50,24 @@
           <div class="filters-mobile-head">
             <p class="filters-mobile-title">Filtres</p>
             <button type="button" class="filters-close" id="filters-close" aria-label="Fermer les filtres">×</button>
+          </div>
+
+          <div class="filters-mobile-extra">
+            <label class="sort-box" for="sort-mobile">
+              <span>Trier</span>
+              <select id="sort-mobile">
+                <option value="featured">Ordre catalogue</option>
+                <option value="brand-asc">Marque A → Z</option>
+                <option value="title-asc" selected>Nom A → Z</option>
+                <option value="title-desc">Nom Z → A</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix decroissant</option>
+              </select>
+            </label>
+            <label class="quick-toggle" for="quick-available-mobile">
+              <input type="checkbox" id="quick-available-mobile" checked>
+              <span>Disponible uniquement</span>
+            </label>
           </div>
 
           <div class="filter-block">
@@ -100,7 +118,7 @@
               <select id="sort">
                 <option value="featured">Ordre catalogue</option>
                 <option value="brand-asc">Marque A → Z</option>
-                <option value="title-asc">Nom A → Z</option>
+                <option value="title-asc" selected>Nom A → Z</option>
                 <option value="title-desc">Nom Z → A</option>
                 <option value="price-asc">Prix croissant</option>
                 <option value="price-desc">Prix decroissant</option>
@@ -118,6 +136,14 @@
             <input type="checkbox" id="quick-available" checked>
             <span>Disponible uniquement</span>
           </label>
+          <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+            <button type="button" class="view-toggle-btn is-active" id="view-list-btn" aria-label="Vue liste">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+            </button>
+            <button type="button" class="view-toggle-btn" id="view-grid-btn" aria-label="Vue grille">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>
+            </button>
+          </div>
         </div>
 
         <div class="active-filters" id="active-filters"></div>
@@ -235,6 +261,12 @@
   <dialog class="product-dialog" id="product-dialog">
     <article class="dialog-card">
       <button type="button" class="dialog-close" id="dialog-close" aria-label="Fermer">×</button>
+      <div class="dialog-visual">
+        <div class="dialog-badges" id="dialog-badges"></div>
+        <img class="dialog-image hidden" id="dialog-image" alt="">
+        <img class="dialog-logo hidden" id="dialog-logo" alt="">
+        <span class="dialog-monogram" id="dialog-monogram"></span>
+      </div>
       <div class="dialog-body">
         <p class="dialog-brand" id="dialog-brand"></p>
         <h3 id="dialog-title"></h3>
@@ -254,7 +286,9 @@
         <article class="product-row">
           <button type="button" class="product-row-button">
             <div class="product-visual">
+              <div class="product-badges"></div>
               <img class="product-image hidden" alt="" loading="lazy">
+              <img class="product-logo hidden" alt="" loading="lazy">
               <span class="product-monogram"></span>
             </div>
             <div class="product-main">
@@ -274,6 +308,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=17" type="module"></script>
+  <script src="./app.js?v=20" type="module"></script>
 </body>
 </html>

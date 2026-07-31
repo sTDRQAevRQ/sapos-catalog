@@ -1,4 +1,7 @@
 const DATA_URL = "./data/catalog.json";
+const BRAND_LOGOS_URL = "./data/brand-logos.json";
+
+let brandLogoMap = new Map();
 
 const state = {
   items: [],
@@ -10,11 +13,30 @@ const state = {
     gender: new Set(),
     status: new Set(),
     bestSeller: false,
-    sort: "featured",
+    sort: "title-asc",
   },
 };
 
+let currentView = "list";
+
 let availableStatusLabels = new Set();
+const NEW_WINDOW_DAYS = 30;
+
+function isNewItem(item) {
+  if (!item.publishedAt) return false;
+  const published = new Date(item.publishedAt);
+  if (Number.isNaN(published.getTime())) return false;
+  const diffDays = (Date.now() - published.getTime()) / (1000 * 60 * 60 * 24);
+  return diffDays >= 0 && diffDays <= NEW_WINDOW_DAYS;
+}
+
+function buildBadgeList(item) {
+  const badges = [];
+  if (isNewItem(item)) badges.push({ text: "Nouveau", cls: "badge-new" });
+  if (item.bestSeller) badges.push({ text: "Best-seller", cls: "badge-best" });
+  if (item.discontinued) badges.push({ text: "Discontinué", cls: "badge-discontinued" });
+  return badges;
+}
 
 const els = {
   heroSummary: document.querySelector("#hero-summary"),
@@ -31,8 +53,12 @@ const els = {
   activeFilters: document.querySelector("#active-filters"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
+  sortMobile: document.querySelector("#sort-mobile"),
   reset: document.querySelector("#reset-filters"),
   quickAvailable: document.querySelector("#quick-available"),
+  quickAvailableMobile: document.querySelector("#quick-available-mobile"),
+  viewListBtn: document.querySelector("#view-list-btn"),
+  viewGridBtn: document.querySelector("#view-grid-btn"),
   filters: {
     brand: document.querySelector("#brand-filters"),
     family: document.querySelector("#family-filters"),
@@ -41,6 +67,10 @@ const els = {
   },
   dialog: document.querySelector("#product-dialog"),
   dialogClose: document.querySelector("#dialog-close"),
+  dialogImage: document.querySelector("#dialog-image"),
+  dialogLogo: document.querySelector("#dialog-logo"),
+  dialogMonogram: document.querySelector("#dialog-monogram"),
+  dialogBadges: document.querySelector("#dialog-badges"),
   dialogBrand: document.querySelector("#dialog-brand"),
   dialogTitle: document.querySelector("#dialog-title"),
   dialogMeta: document.querySelector("#dialog-meta"),
@@ -68,7 +98,11 @@ init().catch((error) => {
 
 async function init() {
   bindUi();
-  state.items = await loadCatalogItems();
+  const [items, brandLogos] = await Promise.all([loadCatalogItems(), loadBrandLogos()]);
+  state.items = items;
+  brandLogoMap = new Map(
+    Object.entries(brandLogos || {}).map(([brand, url]) => [brand.trim().toLowerCase(), url])
+  );
   els.skeletonList?.classList.add("hidden");
 
   availableStatusLabels = getAvailableStatusLabels();
@@ -78,6 +112,15 @@ async function init() {
   syncViewFromHash();
   renderFilterOptions();
   ["brand", "family", "gender", "status"].forEach(syncFilterInputs);
+
+  let savedView = "list";
+  try {
+    savedView = localStorage.getItem("sapos-catalog-view") || "list";
+  } catch (error) {
+    savedView = "list";
+  }
+  setView(savedView);
+
   render();
 }
 
@@ -97,6 +140,21 @@ function getAvailableStatusLabels() {
     }
   });
   return labels;
+}
+
+async function loadBrandLogos() {
+  try {
+    const response = await fetch(BRAND_LOGOS_URL, { cache: "no-store" });
+    if (!response.ok) return {};
+    return await response.json();
+  } catch (error) {
+    return {};
+  }
+}
+
+function getBrandLogo(brand) {
+  if (!brand) return null;
+  return brandLogoMap.get(String(brand).trim().toLowerCase()) || null;
 }
 
 async function loadCatalogItems() {
@@ -123,6 +181,13 @@ function bindUi() {
 
   els.sort.addEventListener("change", (event) => {
     state.filters.sort = event.target.value;
+    if (els.sortMobile) els.sortMobile.value = event.target.value;
+    render();
+  });
+
+  els.sortMobile?.addEventListener("change", (event) => {
+    state.filters.sort = event.target.value;
+    els.sort.value = event.target.value;
     render();
   });
 
@@ -178,13 +243,63 @@ function bindUi() {
   });
 
   els.quickAvailable?.addEventListener("change", (event) => {
-    state.filters.status.clear();
-    if (event.target.checked) {
-      availableStatusLabels.forEach((label) => state.filters.status.add(label));
-    }
-    syncFilterInputs("status");
-    render();
+    applyQuickAvailable(event.target.checked);
   });
+
+  els.quickAvailableMobile?.addEventListener("change", (event) => {
+    applyQuickAvailable(event.target.checked);
+  });
+
+  els.viewListBtn?.addEventListener("click", () => setView("list"));
+  els.viewGridBtn?.addEventListener("click", () => setView("grid"));
+
+  bindFabScrollBehavior();
+}
+
+function applyQuickAvailable(checked) {
+  state.filters.status.clear();
+  if (checked) {
+    availableStatusLabels.forEach((label) => state.filters.status.add(label));
+  }
+  syncFilterInputs("status");
+  render();
+}
+
+function setView(mode) {
+  currentView = mode === "grid" ? "grid" : "list";
+  els.list.classList.toggle("is-grid", currentView === "grid");
+  els.viewListBtn?.classList.toggle("is-active", currentView === "list");
+  els.viewGridBtn?.classList.toggle("is-active", currentView === "grid");
+  try {
+    localStorage.setItem("sapos-catalog-view", currentView);
+  } catch (error) {
+    // stockage indisponible, on ignore
+  }
+}
+
+function bindFabScrollBehavior() {
+  if (!els.filtersToggle) return;
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        if (currentY > lastY && currentY > 140) {
+          els.filtersToggle.classList.add("is-hidden");
+        } else {
+          els.filtersToggle.classList.remove("is-hidden");
+        }
+        lastY = currentY;
+        ticking = false;
+      });
+    },
+    { passive: true }
+  );
 }
 
 function openDrawer(panel) {
@@ -292,12 +407,12 @@ function render() {
 }
 
 function syncQuickAvailableToggle() {
-  if (!els.quickAvailable) return;
   const isAvailableOnly =
     availableStatusLabels.size > 0 &&
     state.filters.status.size === availableStatusLabels.size &&
     [...state.filters.status].every((label) => availableStatusLabels.has(label));
-  els.quickAvailable.checked = isAvailableOnly;
+  if (els.quickAvailable) els.quickAvailable.checked = isAvailableOnly;
+  if (els.quickAvailableMobile) els.quickAvailableMobile.checked = isAvailableOnly;
 }
 
 function updateFiltersFabCount() {
@@ -346,7 +461,9 @@ function renderRows(results) {
   results.forEach((item, itemIndex) => {
     const fragment = els.template.content.cloneNode(true);
     const button = fragment.querySelector(".product-row-button");
+    const badgesEl = fragment.querySelector(".product-badges");
     const image = fragment.querySelector(".product-image");
+    const logo = fragment.querySelector(".product-logo");
     const monogram = fragment.querySelector(".product-monogram");
     const status = fragment.querySelector(".product-status");
     const brand = fragment.querySelector(".product-brand");
@@ -357,16 +474,32 @@ function renderRows(results) {
     const meta = fragment.querySelector(".product-meta");
 
     monogram.textContent = buildMonogram(item.brand || item.title);
+    buildBadgeList(item).forEach(({ text, cls }) => {
+      const badge = document.createElement("span");
+      badge.className = `product-badge ${cls}`;
+      badge.textContent = text;
+      badgesEl.appendChild(badge);
+    });
     if (item.image) {
       image.src = item.image;
       image.alt = item.imageAlt || item.title;
       image.classList.remove("hidden");
+      logo.classList.add("hidden");
       monogram.classList.add("hidden");
     } else {
+      const brandLogo = getBrandLogo(item.brand);
       image.removeAttribute("src");
       image.alt = "";
       image.classList.add("hidden");
-      monogram.classList.remove("hidden");
+      if (brandLogo) {
+        logo.src = brandLogo;
+        logo.alt = item.brand || item.title;
+        logo.classList.remove("hidden");
+        monogram.classList.add("hidden");
+      } else {
+        logo.classList.add("hidden");
+        monogram.classList.remove("hidden");
+      }
     }
     status.textContent = item.statusLabel || "Disponible";
     status.dataset.status = item.statusKey || "available";
@@ -437,6 +570,37 @@ function renderActiveFilters() {
 }
 
 function openDialog(item) {
+  els.dialogBadges.innerHTML = "";
+  buildBadgeList(item).forEach(({ text, cls }) => {
+    const badge = document.createElement("span");
+    badge.className = `product-badge ${cls}`;
+    badge.textContent = text;
+    els.dialogBadges.appendChild(badge);
+  });
+
+  if (item.image) {
+    els.dialogImage.src = item.image;
+    els.dialogImage.alt = item.imageAlt || item.title;
+    els.dialogImage.classList.remove("hidden");
+    els.dialogLogo.classList.add("hidden");
+    els.dialogMonogram.classList.add("hidden");
+  } else {
+    const brandLogo = getBrandLogo(item.brand);
+    els.dialogImage.removeAttribute("src");
+    els.dialogImage.alt = "";
+    els.dialogImage.classList.add("hidden");
+    if (brandLogo) {
+      els.dialogLogo.src = brandLogo;
+      els.dialogLogo.alt = item.brand || item.title;
+      els.dialogLogo.classList.remove("hidden");
+      els.dialogMonogram.classList.add("hidden");
+    } else {
+      els.dialogLogo.classList.add("hidden");
+      els.dialogMonogram.classList.remove("hidden");
+      els.dialogMonogram.textContent = buildMonogram(item.brand || item.title);
+    }
+  }
+
   els.dialogBrand.textContent = item.brand || "Marque";
   els.dialogTitle.textContent = item.title;
   els.dialogNote.textContent = item.note || item.subtitle || "Reference prete a etre conseillee.";
@@ -611,8 +775,9 @@ function resetAllFilters() {
     els.brandSearch.value = "";
     filterBrandChips("");
   }
-  state.filters.sort = "featured";
-  els.sort.value = "featured";
+  state.filters.sort = "title-asc";
+  els.sort.value = "title-asc";
+  if (els.sortMobile) els.sortMobile.value = "title-asc";
   render();
 }
 

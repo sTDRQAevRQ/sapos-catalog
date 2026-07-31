@@ -66,8 +66,17 @@ python3 scripts/build_catalog_from_csv.py
 - `url` : lien facultatif
 - `image` : image facultative
 - `collections` : valeurs separees par `|`
-- `published_at` : date facultative
-- `best_seller` : `oui` / `non` (ou `1`/`0`, `x`) — pilote l'entree "Best sellers" du menu burger
+- `published_at` : date facultative (format `AAAA-MM-JJ`) — une ref est marquée "Nouveau" sur le catalogue pendant 30 jours après cette date
+- `best_seller` : `oui` / `non` (ou `1`/`0`, `x`) — pilote l'entree "Best sellers" du menu burger et le badge "Best-seller" sur la fiche
+- `discontinued` : `oui` / `non` — le parfum n'est plus produit par la marque mais reste vendable (independant du `status`, qui gere la disponibilite en stock). Affiche le badge "Discontinué".
+
+## Logos de marque (fallback quand une ref n'a pas de photo)
+
+- fichier : `data/brand-logos.json`
+- format : `{ "Nom de la marque exact": "https://url-du-logo.png" }`
+- la marque est comparee sans tenir compte de la casse/espaces, mais doit correspondre au champ `brand` du CSV
+- ordre d'affichage sur une ref : photo produit (`image`) > logo de la marque (`brand-logos.json`) > monogramme
+- pas besoin de relancer le script Python : ce fichier est charge directement par le catalogue au chargement de la page
 
 ## Suite logique
 

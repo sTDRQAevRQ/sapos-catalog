@@ -28,7 +28,9 @@
     "rank": 1,
     "publishedAt": "2023-03-07T11:52:49Z",
     "note": "Puissant, chaud, boisé épicé. Idéal pour client qui cherche une signature affirmée.",
-    "volume": "50 ml"
+    "volume": "50 ml",
+    "bestSeller": false,
+    "discontinued": false
   },
   {
     "id": "gid://shopify/Product/8449836679514",
@@ -59,7 +61,9 @@
     "rank": 2,
     "publishedAt": "2023-06-20T12:23:23Z",
     "note": "Profil soirée, boisé épicé, facile à recommander.",
-    "volume": "50 ml"
+    "volume": "50 ml",
+    "bestSeller": false,
+    "discontinued": false
   },
   {
     "id": "gid://shopify/Product/7784325906685",
@@ -90,7 +94,9 @@
     "rank": 3,
     "publishedAt": "2022-07-12T10:52:40Z",
     "note": "Fraîcheur fruitée, très utile pour les demandes été ou quotidien.",
-    "volume": "50 ml"
+    "volume": "50 ml",
+    "bestSeller": false,
+    "discontinued": false
   },
   {
     "id": "gid://shopify/Product/8449832190298",
@@ -162,6 +168,8 @@
       "soirée",
       "signature"
     ],
+    "bestSeller": false,
+    "discontinued": false,
     "rank": 4,
     "publishedAt": null
   },
@@ -233,6 +241,8 @@
       "boisé",
       "ambré"
     ],
+    "bestSeller": false,
+    "discontinued": false,
     "rank": 5,
     "publishedAt": null
   },
@@ -298,6 +308,8 @@
       "vintage",
       "homme"
     ],
+    "bestSeller": false,
+    "discontinued": false,
     "rank": 6,
     "publishedAt": null
   },

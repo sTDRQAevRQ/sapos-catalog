@@ -95,6 +95,7 @@ def read_csv_items():
             volume = (row.get("volume") or "").strip()
             gender = (row.get("gender") or "").strip() or "Mixte"
             best_seller = parse_bool(row.get("best_seller") or "")
+            discontinued = parse_bool(row.get("discontinued") or "")
 
             items.append(
                 {
@@ -116,6 +117,7 @@ def read_csv_items():
                     "priceLabel": format_price(price_value),
                     "tags": tags,
                     "bestSeller": best_seller,
+                    "discontinued": discontinued,
                     "rank": int((row.get("rank") or index)),
                     "publishedAt": (row.get("published_at") or "").strip() or None,
                 }
