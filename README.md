@@ -9,15 +9,16 @@ V1 autonome d'un catalogue client mobile-first pour `saposparfums.fr`.
 - recherche par nom, marque, famille ou note
 - trie par ordre catalogue, marque, nom ou prix
 - ouvre un mini detail leger au clic
-- se pilote depuis un simple fichier `CSV`
+- fusionne les refs Shopify existantes avec une couche de pilotage `CSV`
 
 ## Structure
 
 - `index.html` : page catalogue
 - `styles.css` : direction visuelle
 - `app.js` : logique de filtres et rendu
-- `data/catalog-source.csv` : source a remplir
-- `scripts/build_catalog_from_csv.py` : conversion CSV vers `catalog.json`
+- `data/catalog-source.csv` : couche de pilotage et refs hors Shopify
+- `scripts/build_catalog_from_csv.py` : fusion Shopify + CSV vers `catalog.json`
+- `scripts/sync_shopify_catalog.py` : sync Shopify seule si besoin de debug
 - `data/catalog.json` : donnee affichee
 
 ## Lancer localement
@@ -36,12 +37,18 @@ Puis ouvrir :
 ## Mettre a jour le catalogue
 
 1. modifier `data/catalog-source.csv`
-2. regenerer le JSON :
+2. regenerer le JSON hybride :
 
 ```bash
 cd /home/openclaw/.openclaw/workspace/sapos-catalog-v1
 python3 scripts/build_catalog_from_csv.py
 ```
+
+## Role du CSV
+
+- ajouter une ref qui n'existe pas dans Shopify
+- surcharger une ref Shopify existante via son `url`
+- ajuster `status`, `price`, `note`, `tags`, `rank`, etc.
 
 ## Colonnes du CSV
 

@@ -3,6 +3,14 @@ import csv
 import json
 from pathlib import Path
 
+from sync_shopify_catalog import (
+    fetch_all_products,
+    load_env,
+    normalize_products,
+    refresh_access_token,
+    ENV_PATH,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATH = ROOT / "data" / "catalog-source.csv"
 OUT_PATH = ROOT / "data" / "catalog.json"
@@ -55,16 +63,16 @@ def normalize_status(raw: str):
     return STATUS_MAP.get(key, ("available", raw.strip() if raw else "Disponible"))
 
 
-def main():
+def read_csv_items():
     if not SOURCE_PATH.exists():
         raise SystemExit(f"Source CSV introuvable: {SOURCE_PATH}")
 
     sample = SOURCE_PATH.read_text(encoding="utf-8")[:2048]
     delimiter = detect_delimiter(sample)
+    items = []
 
     with SOURCE_PATH.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle, delimiter=delimiter)
-        items = []
 
         for index, row in enumerate(reader, start=1):
             title = (row.get("title") or "").strip()
@@ -105,12 +113,103 @@ def main():
                 }
             )
 
-    items.sort(key=lambda item: (item.get("rank") or 9999, item["title"].lower()))
+    return items
+
+
+def load_shopify_items():
+    if not ENV_PATH.exists():
+        return []
+
+    env = load_env(ENV_PATH)
+    store = env.get("SHOPIFY_STORE")
+    token = env.get("SHOPIFY_ACCESS_TOKEN")
+    client_id = env.get("SHOPIFY_CLIENT_ID")
+    client_secret = env.get("SHOPIFY_CLIENT_SECRET")
+    if not store or not token:
+        return []
+
+    try:
+        products = fetch_all_products(store, token)
+    except Exception as exc:
+        if "401" not in str(exc) or not client_id or not client_secret:
+            raise
+        token = refresh_access_token(store, client_id, client_secret)
+        products = fetch_all_products(store, token)
+
+    return normalize_products(products)
+
+
+def slugify(value: str):
+    return " ".join((value or "").strip().lower().split())
+
+
+def build_match_keys(item):
+    keys = set()
+    if item.get("id"):
+        keys.add(f"id:{item['id']}")
+    if item.get("url"):
+        keys.add(f"url:{item['url'].rstrip('/')}")
+    title = slugify(item.get("title") or "")
+    brand = slugify(item.get("brand") or "")
+    volume = slugify(item.get("volume") or "")
+    if title and brand:
+        keys.add(f"brand_title:{brand}::{title}")
+    if title and brand and volume:
+        keys.add(f"brand_title_volume:{brand}::{title}::{volume}")
+    return keys
+
+
+def merge_item(base_item, override_item):
+    merged = dict(base_item)
+    for key, value in override_item.items():
+        if key == "id":
+            continue
+        if value in ("", [], None):
+            continue
+        merged[key] = value
+    return merged
+
+
+def merge_catalog(shopify_items, csv_items):
+    merged = []
+    matched_csv_ids = set()
+    csv_by_key = {}
+
+    for item in csv_items:
+        for key in build_match_keys(item):
+            csv_by_key.setdefault(key, []).append(item)
+
+    for item in shopify_items:
+        override = None
+        for key in build_match_keys(item):
+            matches = csv_by_key.get(key) or []
+            if matches:
+                override = matches[0]
+                matched_csv_ids.add(override["id"])
+                break
+
+        merged.append(merge_item(item, override) if override else item)
+
+    for item in csv_items:
+        if item["id"] not in matched_csv_ids:
+            merged.append(item)
+
+    merged.sort(key=lambda item: (item.get("rank") or 9999, (item.get("title") or "").lower()))
+    return merged
+
+
+def main():
+    csv_items = read_csv_items()
+    shopify_items = load_shopify_items()
+    items = merge_catalog(shopify_items, csv_items)
     payload = json.dumps(items, ensure_ascii=False, indent=2) + "\n"
     OUT_PATH.write_text(payload, encoding="utf-8")
     PUBLIC_OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     PUBLIC_OUT_PATH.write_text(payload, encoding="utf-8")
-    print(f"{len(items)} references synchronisees vers {OUT_PATH}")
+    print(
+        f"{len(items)} references synchronisees vers {OUT_PATH} "
+        f"({len(shopify_items)} Shopify + {len(csv_items)} CSV)"
+    )
 
 
 if __name__ == "__main__":
