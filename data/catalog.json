@@ -290,8 +290,8 @@
     "gender": "Homme",
     "statusKey": "available",
     "statusLabel": "Disponible",
-    "priceValue": null,
-    "priceLabel": "",
+    "priceValue": 55.0,
+    "priceLabel": "55,00 €",
     "tags": [
       "paco rabanne",
       "xs",
