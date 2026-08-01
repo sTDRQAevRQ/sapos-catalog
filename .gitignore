@@ -4,3 +4,4 @@ out
 dist
 npm-debug.log*
 scripts/__pycache__
+scripts/google-credentials.json

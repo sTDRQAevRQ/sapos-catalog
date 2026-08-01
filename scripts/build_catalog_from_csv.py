@@ -69,6 +69,16 @@ def parse_bool(raw: str) -> bool:
     return (raw or "").strip().lower() in TRUE_VALUES
 
 
+def parse_quantity(raw: str):
+    cleaned = (raw or "").strip().replace(",", ".")
+    if not cleaned:
+        return None
+    try:
+        return int(float(cleaned))
+    except ValueError:
+        return None
+
+
 def read_csv_items():
     if not SOURCE_PATH.exists():
         raise SystemExit(f"Source CSV introuvable: {SOURCE_PATH}")
@@ -96,6 +106,7 @@ def read_csv_items():
             gender = (row.get("gender") or "").strip() or "Mixte"
             best_seller = parse_bool(row.get("best_seller") or "")
             discontinued = parse_bool(row.get("discontinued") or "")
+            quantity = parse_quantity(row.get("quantite") or row.get("quantité") or "")
 
             items.append(
                 {
@@ -118,6 +129,7 @@ def read_csv_items():
                     "tags": tags,
                     "bestSeller": best_seller,
                     "discontinued": discontinued,
+                    "quantity": quantity,
                     "rank": int((row.get("rank") or index)),
                     "publishedAt": (row.get("published_at") or "").strip() or None,
                 }

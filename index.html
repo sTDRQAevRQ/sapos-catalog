@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=20">
+  <link rel="stylesheet" href="./styles.css?v=21">
 </head>
 <body>
   <div class="top-bar">
@@ -76,7 +76,7 @@
               <button type="button" class="filter-clear" data-clear="brand">Effacer</button>
             </div>
             <input id="brand-search" class="filter-search" type="search" placeholder="Rechercher une marque…">
-            <div class="filter-list" id="brand-filters"></div>
+            <div class="filter-list filter-list-grouped" id="brand-filters"></div>
           </div>
 
           <div class="filter-block">
@@ -110,7 +110,7 @@
           <div class="toolbar-left">
             <p class="toolbar-label">Catalogue</p>
             <h2 id="results-title">References</h2>
-            <p class="toolbar-note">Vue liste premium, concue pour partager rapidement les references disponibles.</p>
+            <p class="toolbar-note">Parcourez et filtrez nos références par marque, famille olfactive ou disponibilité.</p>
           </div>
           <div class="toolbar-right">
             <label class="sort-box" for="sort">
@@ -146,6 +146,8 @@
           </div>
         </div>
 
+        <p class="results-count-line" id="results-count-line"></p>
+
         <div class="active-filters" id="active-filters"></div>
 
         <div class="skeleton-list" id="skeleton-list">
@@ -155,6 +157,7 @@
           <div class="skeleton-row"></div>
         </div>
         <div class="catalog-list" id="catalog-list"></div>
+        <button type="button" class="load-more-btn hidden" id="load-more-btn"></button>
         <div class="empty-state hidden" id="empty-state">
           <p>Aucune reference ne correspond aux filtres actuels.</p>
           <button type="button" id="reset-filters">Reinitialiser les filtres</button>
@@ -308,6 +311,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=20" type="module"></script>
+  <script src="./app.js?v=21" type="module"></script>
 </body>
 </html>

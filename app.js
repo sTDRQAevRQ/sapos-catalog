@@ -1,11 +1,21 @@
 const DATA_URL = "./data/catalog.json";
 const BRAND_LOGOS_URL = "./data/brand-logos.json";
+const PAGE_SIZE = 24;
+
+const HOUSE_BRANDS = new Set([
+  "sapos parfums",
+  "signature royale",
+  "noble essence",
+  "atelier d'orient",
+  "maison lazaar paris",
+]);
 
 let brandLogoMap = new Map();
 
 const state = {
   items: [],
   view: "catalog",
+  visibleCount: PAGE_SIZE,
   filters: {
     query: "",
     brand: new Set(),
@@ -18,6 +28,7 @@ const state = {
 };
 
 let currentView = "list";
+let lastFilterSignature = "";
 
 let availableStatusLabels = new Set();
 const NEW_WINDOW_DAYS = 30;
@@ -38,6 +49,10 @@ function buildBadgeList(item) {
   return badges;
 }
 
+function isHouseBrand(brand) {
+  return HOUSE_BRANDS.has(String(brand || "").trim().toLowerCase());
+}
+
 const els = {
   heroSummary: document.querySelector("#hero-summary"),
   overviewPanel: document.querySelector("#overview-panel"),
@@ -50,6 +65,8 @@ const els = {
   skeletonList: document.querySelector("#skeleton-list"),
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
+  resultsCountLine: document.querySelector("#results-count-line"),
+  loadMoreBtn: document.querySelector("#load-more-btn"),
   activeFilters: document.querySelector("#active-filters"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
@@ -127,7 +144,7 @@ async function init() {
 function updateHeroSummary() {
   if (!els.heroSummary) return;
   const totalBrands = new Set(state.items.map((item) => item.brand).filter(Boolean)).size;
-  els.heroSummary.textContent = `${state.items.length} references${
+  els.heroSummary.textContent = `${state.items.length} références au catalogue${
     totalBrands ? ` · ${totalBrands} marques` : ""
   }`;
 }
@@ -252,6 +269,11 @@ function bindUi() {
 
   els.viewListBtn?.addEventListener("click", () => setView("list"));
   els.viewGridBtn?.addEventListener("click", () => setView("grid"));
+
+  els.loadMoreBtn?.addEventListener("click", () => {
+    state.visibleCount += PAGE_SIZE;
+    render();
+  });
 
   bindFabScrollBehavior();
 }
@@ -379,8 +401,9 @@ function filterBrandChips(query) {
 }
 
 function renderFilterOptions() {
+  renderBrandFilterOptions();
+
   const options = {
-    brand: uniqueValues("brand"),
     family: uniqueValues("families"),
     gender: uniqueValues("gender"),
     status: uniqueValues("statusLabel"),
@@ -394,16 +417,91 @@ function renderFilterOptions() {
   }
 }
 
+function renderBrandFilterOptions() {
+  const brands = uniqueValues("brand");
+  const houseBrands = brands.filter((brand) => isHouseBrand(brand));
+  const partnerBrands = brands.filter((brand) => !isHouseBrand(brand));
+
+  els.filters.brand.innerHTML = "";
+
+  if (houseBrands.length) {
+    els.filters.brand.appendChild(createGroupLabel("Nos marques"));
+    houseBrands.forEach((brand) => {
+      els.filters.brand.appendChild(createFilterChip("brand", brand));
+    });
+  }
+
+  if (partnerBrands.length) {
+    els.filters.brand.appendChild(createGroupLabel("Marques partenaires"));
+    partnerBrands.forEach((brand) => {
+      els.filters.brand.appendChild(createFilterChip("brand", brand));
+    });
+  }
+}
+
+function createGroupLabel(text) {
+  const label = document.createElement("p");
+  label.className = "filter-group-label";
+  label.textContent = text;
+  return label;
+}
+
+function getFilterSignature() {
+  return JSON.stringify({
+    q: state.filters.query,
+    b: [...state.filters.brand].sort(),
+    f: [...state.filters.family].sort(),
+    g: [...state.filters.gender].sort(),
+    s: [...state.filters.status].sort(),
+    bs: state.filters.bestSeller,
+    sort: state.filters.sort,
+    view: state.view,
+  });
+}
+
 function render() {
+  const signature = getFilterSignature();
+  if (signature !== lastFilterSignature) {
+    state.visibleCount = PAGE_SIZE;
+    lastFilterSignature = signature;
+  }
+
   const results = sortItems(filterItems());
+  const visibleResults = results.slice(0, state.visibleCount);
+
   renderOverview(results);
-  renderRows(results);
+  renderRows(visibleResults);
   renderActiveFilters();
   updateFiltersFabCount();
   syncQuickAvailableToggle();
+  updateLoadMoreButton(results.length);
+  updateResultsCount(results.length);
 
   els.title.textContent = `${results.length} reference${results.length > 1 ? "s" : ""}`;
   els.empty.classList.toggle("hidden", results.length !== 0);
+}
+
+function updateResultsCount(totalFiltered) {
+  if (!els.resultsCountLine) return;
+  const totalCatalog = state.items.length;
+  if (totalFiltered === totalCatalog) {
+    els.resultsCountLine.textContent = `${totalCatalog} référence${totalCatalog > 1 ? "s" : ""} au catalogue`;
+    return;
+  }
+  els.resultsCountLine.textContent = `${totalFiltered} référence${totalFiltered > 1 ? "s" : ""} affichée${
+    totalFiltered > 1 ? "s" : ""
+  } sur ${totalCatalog} au catalogue`;
+}
+
+function updateLoadMoreButton(totalFiltered) {
+  if (!els.loadMoreBtn) return;
+  const remaining = totalFiltered - state.visibleCount;
+  if (remaining > 0) {
+    els.loadMoreBtn.textContent = `Afficher ${Math.min(remaining, PAGE_SIZE)} de plus (${remaining} restantes)`;
+    els.loadMoreBtn.classList.add("is-visible");
+  } else {
+    els.loadMoreBtn.classList.remove("is-visible");
+  }
 }
 
 function syncQuickAvailableToggle() {
@@ -505,9 +603,9 @@ function renderRows(results) {
     status.dataset.status = item.statusKey || "available";
     brand.textContent = item.brand || "Marque";
     title.textContent = item.title;
-    volume.textContent = item.volume || "Contenance a preciser";
+    volume.textContent = item.volume || "Contenance à préciser";
     price.textContent = item.priceLabel || "Prix sur demande";
-    note.textContent = item.note || item.subtitle || "Reference prete a recommander.";
+    note.textContent = item.note || item.subtitle || "Référence prête à être recommandée.";
 
     [
       ...(item.families || []).slice(0, 2),
@@ -603,7 +701,7 @@ function openDialog(item) {
 
   els.dialogBrand.textContent = item.brand || "Marque";
   els.dialogTitle.textContent = item.title;
-  els.dialogNote.textContent = item.note || item.subtitle || "Reference prete a etre conseillee.";
+  els.dialogNote.textContent = item.note || item.subtitle || "Référence prête à être conseillée.";
   els.dialogLink.href = item.url || "#";
   els.dialogLink.classList.toggle("hidden", !item.url);
 
@@ -889,9 +987,4 @@ function buildMonogram(value) {
     .slice(0, 2)
     .map((part) => part[0].toUpperCase())
     .join("");
-}
-
-function formatRowIndex(rank, fallbackIndex) {
-  const numeric = Number(rank);
-  return String(Number.isFinite(numeric) && numeric > 0 ? numeric : fallbackIndex).padStart(2, "0");
 }

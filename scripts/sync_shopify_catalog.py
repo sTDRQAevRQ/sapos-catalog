@@ -50,6 +50,10 @@ GENERIC_COLLECTION_PREFIXES = (
     "sapos parfums",
 )
 
+COLLECTION_BRAND_DELIMITERS = (" — ", " – ", " - ")
+
+VOLUME_PATTERN = re.compile(r"\d+[\.,]?\d*\s?(?:ml|cl|l)\b", re.IGNORECASE)
+
 
 def load_env(path: Path):
     env = {}
@@ -111,6 +115,16 @@ def normalize_collection_name(product):
     return [match.group(1).strip()] if match else []
 
 
+def extract_brand_from_collection(collection_title: str) -> str:
+    """Une collection Shopify est souvent nommee 'Marque — description'.
+    On ne garde jamais le titre complet comme marque, seulement le segment
+    avant le premier delimiteur connu."""
+    for delimiter in COLLECTION_BRAND_DELIMITERS:
+        if delimiter in collection_title:
+            return collection_title.split(delimiter, 1)[0].strip()
+    return collection_title.strip()
+
+
 def infer_brand(product):
     tags = [tag.lower() for tag in (product.get("tags") or [])]
     for raw_tag, brand in BRAND_TAG_MAP.items():
@@ -121,7 +135,7 @@ def infer_brand(product):
     for collection in collections:
         lower = collection.lower()
         if not lower.startswith(GENERIC_COLLECTION_PREFIXES):
-            return collection
+            return extract_brand_from_collection(collection)
     return product.get("vendor") or "Sapos Parfums"
 
 
@@ -144,6 +158,25 @@ def infer_gender(tags):
         if any(raw_tag in tag for tag in lower_tags):
             return gender
     return "Mixte"
+
+
+def infer_volume(product):
+    """Cherche la contenance dans les options de variante (ex: 'Contenance: 50 ml'),
+    puis dans le titre de la variante, puis dans le titre du produit."""
+    for variant in product.get("variants", {}).get("nodes", []):
+        for opt in variant.get("selectedOptions") or []:
+            value = opt.get("value") or ""
+            if VOLUME_PATTERN.search(value):
+                return value.strip()
+        title = variant.get("title") or ""
+        if title and title != "Default Title" and VOLUME_PATTERN.search(title):
+            return title.strip()
+
+    match = VOLUME_PATTERN.search(product.get("title") or "")
+    if match:
+        return match.group(0).strip()
+
+    return ""
 
 
 def infer_subtitle(product, families, collections):
@@ -187,6 +220,12 @@ def fetch_all_products(store: str, token: str):
           featuredImage { url altText }
           priceRangeV2 { minVariantPrice { amount currencyCode } }
           collections(first: 8) { nodes { title handle } }
+          variants(first: 5) {
+            nodes {
+              title
+              selectedOptions { name value }
+            }
+          }
         }
       }
     }
@@ -220,6 +259,7 @@ def normalize_products(products):
                 "url": product.get("onlineStoreUrl") or f"https://saposparfums.fr/products/{product['handle']}",
                 "image": (product.get("featuredImage") or {}).get("url"),
                 "imageAlt": (product.get("featuredImage") or {}).get("altText") or product["title"],
+                "volume": infer_volume(product),
                 "families": families,
                 "collections": collections,
                 "gender": infer_gender(tags),
