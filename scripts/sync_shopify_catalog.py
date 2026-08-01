@@ -324,7 +324,7 @@ def fetch_all_products(store: str, token: str):
           status
           tags
           totalInventory
-          featuredImage { url altText }
+          featuredImage { id url altText }
           priceRangeV2 { minVariantPrice { amount currencyCode } }
           collections(first: 8) { nodes { title handle } }
           variants(first: 5) {
