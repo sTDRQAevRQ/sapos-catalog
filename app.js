@@ -27,7 +27,7 @@ const state = {
   },
 };
 
-let currentView = "cards";
+let currentView = "list";
 let lastFilterSignature = "";
 
 let availableStatusLabels = new Set();
@@ -109,6 +109,7 @@ const els = {
 
 init().catch((error) => {
   console.error(error);
+  if (els.resultsCountLine) els.resultsCountLine.textContent = "Erreur de chargement du catalogue.";
   els.skeletonList?.classList.add("hidden");
 });
 
@@ -130,7 +131,7 @@ async function init() {
 
   let savedView = "cards";
   try {
-    savedView = normalizeViewMode(localStorage.getItem("sapos-catalog-view"));
+    savedView = localStorage.getItem("sapos-catalog-view") || "cards";
   } catch (error) {
     savedView = "cards";
   }
@@ -205,11 +206,11 @@ function bindUi() {
       syncFilterInputs(key);
       if (key === "brand" && els.brandSearch) {
         els.brandSearch.value = "";
-        filterBrandChips("");
+        filterChipsInContainer(els.filters.brand, "");
       }
       if (key === "family" && els.familySearch) {
         els.familySearch.value = "";
-        filterFamilyChips("");
+        filterChipsInContainer(els.filters.family, "");
       }
       render();
     });
@@ -250,11 +251,11 @@ function bindUi() {
   });
 
   els.brandSearch?.addEventListener("input", (event) => {
-    filterBrandChips(event.target.value.trim().toLowerCase());
+    filterChipsInContainer(els.filters.brand, event.target.value.trim().toLowerCase());
   });
 
   els.familySearch?.addEventListener("input", (event) => {
-    filterFamilyChips(event.target.value.trim().toLowerCase());
+    filterChipsInContainer(els.filters.family, event.target.value.trim().toLowerCase());
   });
 
   els.quickAvailable?.addEventListener("change", (event) => {
@@ -286,7 +287,7 @@ function applyQuickAvailable(checked) {
 }
 
 function setView(mode) {
-  currentView = normalizeViewMode(mode);
+  currentView = mode === "text" ? "text" : "cards";
   els.list.classList.toggle("is-text", currentView === "text");
   els.viewCardsBtn?.classList.toggle("is-active", currentView === "cards");
   els.viewTextBtn?.classList.toggle("is-active", currentView === "text");
@@ -383,25 +384,17 @@ function applyCategoryFilter({ gender, bestSeller } = {}) {
   syncFilterInputs("gender");
   if (els.brandSearch) {
     els.brandSearch.value = "";
-    filterBrandChips("");
+    filterChipsInContainer(els.filters.brand, "");
   }
   if (els.familySearch) {
     els.familySearch.value = "";
-    filterFamilyChips("");
+    filterChipsInContainer(els.filters.family, "");
   }
   closeAllDrawers();
   navigateToView("catalog");
 }
 
-function filterBrandChips(query) {
-  filterChoiceList(els.filters.brand, query);
-}
-
-function filterFamilyChips(query) {
-  filterChoiceList(els.filters.family, query);
-}
-
-function filterChoiceList(container, query) {
+function filterChipsInContainer(container, query) {
   if (!container) return;
   const choices = container.querySelectorAll(".filter-choice");
   choices.forEach((choice) => {
@@ -566,7 +559,7 @@ function renderOverview(results) {
 function renderRows(results) {
   els.list.innerHTML = "";
 
-  results.forEach((item) => {
+  results.forEach((item, itemIndex) => {
     const fragment = els.template.content.cloneNode(true);
     const button = fragment.querySelector(".product-row-button");
     const badgesEl = fragment.querySelector(".product-badges");
@@ -580,9 +573,6 @@ function renderRows(results) {
     const price = fragment.querySelector(".product-price");
     const note = fragment.querySelector(".product-note");
     const meta = fragment.querySelector(".product-meta");
-    const isTextView = currentView === "text";
-
-    button.classList.toggle("is-text-row", isTextView);
 
     monogram.textContent = buildMonogram(item.brand || item.title);
     buildBadgeList(item).forEach(({ text, cls }) => {
@@ -884,11 +874,11 @@ function resetAllFilters() {
   syncFilterInputs("status");
   if (els.brandSearch) {
     els.brandSearch.value = "";
-    filterBrandChips("");
+    filterChipsInContainer(els.filters.brand, "");
   }
   if (els.familySearch) {
     els.familySearch.value = "";
-    filterFamilyChips("");
+    filterChipsInContainer(els.filters.family, "");
   }
   state.filters.sort = "title-asc";
   els.sort.value = "title-asc";
@@ -1004,9 +994,4 @@ function buildMonogram(value) {
     .slice(0, 2)
     .map((part) => part[0].toUpperCase())
     .join("");
-}
-
-function normalizeViewMode(mode) {
-  if (mode === "text" || mode === "grid") return "text";
-  return "cards";
 }
