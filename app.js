@@ -27,7 +27,7 @@ const state = {
   },
 };
 
-let currentView = "list";
+let currentView = "cards";
 let lastFilterSignature = "";
 
 let availableStatusLabels = new Set();
@@ -54,7 +54,6 @@ function isHouseBrand(brand) {
 }
 
 const els = {
-  heroSummary: document.querySelector("#hero-summary"),
   overviewPanel: document.querySelector("#overview-panel"),
   overviewList: document.querySelector("#overview-list"),
   overviewLabel: document.querySelector("#overview-label"),
@@ -74,8 +73,8 @@ const els = {
   reset: document.querySelector("#reset-filters"),
   quickAvailable: document.querySelector("#quick-available"),
   quickAvailableMobile: document.querySelector("#quick-available-mobile"),
-  viewListBtn: document.querySelector("#view-list-btn"),
-  viewGridBtn: document.querySelector("#view-grid-btn"),
+  viewCardsBtn: document.querySelector("#view-cards-btn"),
+  viewTextBtn: document.querySelector("#view-text-btn"),
   filters: {
     brand: document.querySelector("#brand-filters"),
     family: document.querySelector("#family-filters"),
@@ -100,6 +99,7 @@ const els = {
   filtersClose: document.querySelector("#filters-close"),
   filtersFabCount: document.querySelector("#filters-fab-count"),
   brandSearch: document.querySelector("#brand-search"),
+  familySearch: document.querySelector("#family-search"),
   drawerBackdrop: document.querySelector("#drawer-backdrop"),
   navPanel: document.querySelector("#nav-panel"),
   navToggle: document.querySelector("#nav-toggle"),
@@ -109,7 +109,6 @@ const els = {
 
 init().catch((error) => {
   console.error(error);
-  els.heroSummary.textContent = "Erreur de chargement du catalogue.";
   els.skeletonList?.classList.add("hidden");
 });
 
@@ -124,29 +123,20 @@ async function init() {
 
   availableStatusLabels = getAvailableStatusLabels();
   availableStatusLabels.forEach((label) => state.filters.status.add(label));
-  updateHeroSummary();
 
   syncViewFromHash();
   renderFilterOptions();
   ["brand", "family", "gender", "status"].forEach(syncFilterInputs);
 
-  let savedView = "list";
+  let savedView = "cards";
   try {
-    savedView = localStorage.getItem("sapos-catalog-view") || "list";
+    savedView = normalizeViewMode(localStorage.getItem("sapos-catalog-view"));
   } catch (error) {
-    savedView = "list";
+    savedView = "cards";
   }
   setView(savedView);
 
   render();
-}
-
-function updateHeroSummary() {
-  if (!els.heroSummary) return;
-  const totalBrands = new Set(state.items.map((item) => item.brand).filter(Boolean)).size;
-  els.heroSummary.textContent = `${state.items.length} références au catalogue${
-    totalBrands ? ` · ${totalBrands} marques` : ""
-  }`;
 }
 
 function getAvailableStatusLabels() {
@@ -217,6 +207,10 @@ function bindUi() {
         els.brandSearch.value = "";
         filterBrandChips("");
       }
+      if (key === "family" && els.familySearch) {
+        els.familySearch.value = "";
+        filterFamilyChips("");
+      }
       render();
     });
   });
@@ -259,6 +253,10 @@ function bindUi() {
     filterBrandChips(event.target.value.trim().toLowerCase());
   });
 
+  els.familySearch?.addEventListener("input", (event) => {
+    filterFamilyChips(event.target.value.trim().toLowerCase());
+  });
+
   els.quickAvailable?.addEventListener("change", (event) => {
     applyQuickAvailable(event.target.checked);
   });
@@ -267,8 +265,8 @@ function bindUi() {
     applyQuickAvailable(event.target.checked);
   });
 
-  els.viewListBtn?.addEventListener("click", () => setView("list"));
-  els.viewGridBtn?.addEventListener("click", () => setView("grid"));
+  els.viewCardsBtn?.addEventListener("click", () => setView("cards"));
+  els.viewTextBtn?.addEventListener("click", () => setView("text"));
 
   els.loadMoreBtn?.addEventListener("click", () => {
     state.visibleCount += PAGE_SIZE;
@@ -288,10 +286,10 @@ function applyQuickAvailable(checked) {
 }
 
 function setView(mode) {
-  currentView = mode === "grid" ? "grid" : "list";
-  els.list.classList.toggle("is-grid", currentView === "grid");
-  els.viewListBtn?.classList.toggle("is-active", currentView === "list");
-  els.viewGridBtn?.classList.toggle("is-active", currentView === "grid");
+  currentView = normalizeViewMode(mode);
+  els.list.classList.toggle("is-text", currentView === "text");
+  els.viewCardsBtn?.classList.toggle("is-active", currentView === "cards");
+  els.viewTextBtn?.classList.toggle("is-active", currentView === "text");
   try {
     localStorage.setItem("sapos-catalog-view", currentView);
   } catch (error) {
@@ -387,13 +385,25 @@ function applyCategoryFilter({ gender, bestSeller } = {}) {
     els.brandSearch.value = "";
     filterBrandChips("");
   }
+  if (els.familySearch) {
+    els.familySearch.value = "";
+    filterFamilyChips("");
+  }
   closeAllDrawers();
   navigateToView("catalog");
 }
 
 function filterBrandChips(query) {
-  if (!els.filters.brand) return;
-  const choices = els.filters.brand.querySelectorAll(".filter-choice");
+  filterChoiceList(els.filters.brand, query);
+}
+
+function filterFamilyChips(query) {
+  filterChoiceList(els.filters.family, query);
+}
+
+function filterChoiceList(container, query) {
+  if (!container) return;
+  const choices = container.querySelectorAll(".filter-choice");
   choices.forEach((choice) => {
     const label = choice.querySelector("span")?.textContent?.toLowerCase() || "";
     choice.classList.toggle("hidden", Boolean(query) && !label.includes(query));
@@ -556,7 +566,7 @@ function renderOverview(results) {
 function renderRows(results) {
   els.list.innerHTML = "";
 
-  results.forEach((item, itemIndex) => {
+  results.forEach((item) => {
     const fragment = els.template.content.cloneNode(true);
     const button = fragment.querySelector(".product-row-button");
     const badgesEl = fragment.querySelector(".product-badges");
@@ -570,6 +580,9 @@ function renderRows(results) {
     const price = fragment.querySelector(".product-price");
     const note = fragment.querySelector(".product-note");
     const meta = fragment.querySelector(".product-meta");
+    const isTextView = currentView === "text";
+
+    button.classList.toggle("is-text-row", isTextView);
 
     monogram.textContent = buildMonogram(item.brand || item.title);
     buildBadgeList(item).forEach(({ text, cls }) => {
@@ -873,6 +886,10 @@ function resetAllFilters() {
     els.brandSearch.value = "";
     filterBrandChips("");
   }
+  if (els.familySearch) {
+    els.familySearch.value = "";
+    filterFamilyChips("");
+  }
   state.filters.sort = "title-asc";
   els.sort.value = "title-asc";
   if (els.sortMobile) els.sortMobile.value = "title-asc";
@@ -987,4 +1004,9 @@ function buildMonogram(value) {
     .slice(0, 2)
     .map((part) => part[0].toUpperCase())
     .join("");
+}
+
+function normalizeViewMode(mode) {
+  if (mode === "text" || mode === "grid") return "text";
+  return "cards";
 }
