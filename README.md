@@ -21,6 +21,7 @@ V1 autonome d'un catalogue client mobile-first pour `saposparfums.fr`.
 - `scripts/build_catalog_from_csv.py` : fusion Shopify + CSV vers `catalog.json`
 - `scripts/build_catalog_from_sheet.py` : fusion Shopify + Google Sheet vers `catalog.json` (alternative au CSV)
 - `scripts/sync_shopify_catalog.py` : sync Shopify seule si besoin de debug
+- `scripts/setup_shopify_brand_metaobjects.py` : initialise la base marques Shopify via metaobjects
 - `.github/workflows/rebuild-catalog.yml` : republication automatique depuis le Google Sheet (toutes les 15 min)
 - `data/catalog.json` : donnee affichee
 
@@ -79,7 +80,36 @@ python3 scripts/build_catalog_from_csv.py
 - format : `{ "Nom de la marque exact": "https://url-du-logo.png" }`
 - la marque est comparee sans tenir compte de la casse/espaces, mais doit correspondre au champ `brand` du CSV
 - ordre d'affichage sur une ref : photo produit (`image`) > logo de la marque (`brand-logos.json`) > monogramme
-- pas besoin de relancer le script Python : ce fichier est charge directement par le catalogue au chargement de la page
+- ce fichier peut etre regenere automatiquement depuis les metaobjects Shopify `brand`
+
+### Base marques Shopify (V2)
+
+Le script suivant initialise une base marques Shopify via metaobjects :
+
+```bash
+cd /home/openclaw/.openclaw/workspace/sapos-catalog-v1
+python3 scripts/setup_shopify_brand_metaobjects.py
+```
+
+Il :
+
+- cree la definition metaobject `brand` si elle n'existe pas
+- cree les entrees de marque manquantes a partir des marques detectees dans Shopify
+- laisse ensuite les champs `logo` / `fallback_image` a completer dans l'admin Shopify
+
+Champs prevus :
+
+- `name`
+- `slug`
+- `logo`
+- `fallback_image`
+- `description`
+
+Logique d'affichage :
+
+1. image produit si presente
+2. sinon fallback via `logo` ou `fallback_image` de la marque Shopify
+3. sinon monogramme
 
 ## Source Google Sheets (alternative au CSV)
 

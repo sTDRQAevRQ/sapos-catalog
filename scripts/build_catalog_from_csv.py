@@ -5,9 +5,12 @@ from pathlib import Path
 
 from sync_shopify_catalog import (
     fetch_all_products,
+    fetch_brand_metaobjects,
+    build_brand_meta_map,
     load_env,
     normalize_products,
     refresh_access_token,
+    write_brand_logo_files,
     ENV_PATH,
 )
 
@@ -157,8 +160,9 @@ def load_shopify_items():
             raise
         token = refresh_access_token(store, client_id, client_secret)
         products = fetch_all_products(store, token)
-
-    return normalize_products(products)
+    brand_meta_map = build_brand_meta_map(fetch_brand_metaobjects(store, token))
+    write_brand_logo_files(brand_meta_map)
+    return normalize_products(products, brand_meta_map=brand_meta_map)
 
 
 def slugify(value: str):

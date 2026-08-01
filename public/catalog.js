@@ -12,6 +12,15 @@ const state = {
   },
 };
 
+function normalizeBrandKey(value) {
+  return String(value || "")
+    .trim()
+    .replaceAll("’", "'")
+    .replaceAll("`", "'")
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 const els = {
   heroStats: document.querySelector("#hero-stats"),
   list: document.querySelector("#catalog-list"),

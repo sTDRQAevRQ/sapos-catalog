@@ -34,6 +34,15 @@ let lastFilterSignature = "";
 let availableStatusLabels = new Set();
 const NEW_WINDOW_DAYS = 30;
 
+function normalizeBrandKey(value) {
+  return String(value || "")
+    .trim()
+    .replaceAll("’", "'")
+    .replaceAll("`", "'")
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 function isNewItem(item) {
   if (!item.publishedAt) return false;
   const published = new Date(item.publishedAt);
@@ -51,7 +60,7 @@ function buildBadgeList(item) {
 }
 
 function isHouseBrand(brand) {
-  return HOUSE_BRANDS.has(String(brand || "").trim().toLowerCase());
+  return HOUSE_BRANDS.has(normalizeBrandKey(brand));
 }
 
 const els = {
@@ -128,7 +137,7 @@ async function init() {
   const [items, brandLogos] = await Promise.all([loadCatalogItems(), loadBrandLogos()]);
   state.items = items;
   brandLogoMap = new Map(
-    Object.entries(brandLogos || {}).map(([brand, url]) => [brand.trim().toLowerCase(), url])
+    Object.entries(brandLogos || {}).map(([brand, url]) => [normalizeBrandKey(brand), url])
   );
   els.skeletonList?.classList.add("hidden");
 
@@ -172,7 +181,7 @@ async function loadBrandLogos() {
 
 function getBrandLogo(brand) {
   if (!brand) return null;
-  return brandLogoMap.get(String(brand).trim().toLowerCase()) || null;
+  return brandLogoMap.get(normalizeBrandKey(brand)) || null;
 }
 
 async function loadCatalogItems() {
