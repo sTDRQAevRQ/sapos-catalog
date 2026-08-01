@@ -108,6 +108,85 @@ Et dans Settings > Actions > General > Workflow permissions, activer "Read and w
 
 Si le deploiement de `catalogue.saposparfums.fr` n'est pas deja declenche automatiquement par un push sur `main` (a verifier selon l'hebergeur), une etape de deploiement supplementaire devra etre ajoutee a ce workflow.
 
+## Sync produits Google Sheet -> Shopify
+
+Le script `scripts/sync_shopify_products_from_sheet.py` lit l'onglet `products` du Google Sheet de synchronisation produits et pilote Shopify avec la logique suivante :
+
+- cree le produit si le `sku` n'existe pas encore
+- met a jour le produit si le `sku` existe deja
+- met a jour le prix
+- met a jour le stock
+- publie ou depublie sur `Online Store`
+- ecrit dans le sheet : `shopify_product_id`, `shopify_variant_id`, `handle`, `product_url`, `published_status`, `last_sync_at`, `last_sync_result`
+
+### Colonnes attendues
+
+Le script attend au minimum ces colonnes dans l'onglet `products` :
+
+- `sku`
+- `brand`
+- `title`
+- `concentration`
+- `volume`
+- `product_type`
+- `price`
+- `stock`
+- `status`
+- `gender`
+- `families`
+- `image`
+- `notes`
+- `sync_enabled`
+- `shopify_product_id`
+- `shopify_variant_id`
+- `handle`
+- `product_url`
+- `published_status`
+- `last_sync_at`
+- `last_sync_result`
+
+### Regles de format
+
+- `volume` = nombre seul (`50`, `100`, `30`)
+- `concentration` = texte exact (`Extrait de parfum`, `Eau de toilette`, etc.)
+- `price` = nombre
+- `stock` = entier
+- `sync_enabled` = `oui` ou `non`
+
+### Configuration Google
+
+Le plugin Google Drive dans ChatGPT aide pour lire/verifier le sheet en conversation, mais pour une automatisation locale il faut un compte de service Google Cloud partage sur le sheet.
+
+Variables utilisees par le script :
+
+- `GOOGLE_SHEETS_ID`
+- `GOOGLE_SHEETS_CREDENTIALS` (par defaut `scripts/google-credentials.json`)
+- `GOOGLE_SHEETS_TAB` (par defaut `products`)
+
+### Lancer la sync
+
+Dry-run de verification :
+
+```bash
+cd /home/openclaw/.openclaw/workspace/sapos-catalog-v1
+export GOOGLE_SHEETS_ID="l-id-du-sheet"
+python3 scripts/sync_shopify_products_from_sheet.py
+```
+
+Execution reelle :
+
+```bash
+cd /home/openclaw/.openclaw/workspace/sapos-catalog-v1
+export GOOGLE_SHEETS_ID="l-id-du-sheet"
+python3 scripts/sync_shopify_products_from_sheet.py --apply
+```
+
+Pour limiter a un SKU :
+
+```bash
+python3 scripts/sync_shopify_products_from_sheet.py --sku SAP-SUGMIL-050
+```
+
 ## Suite logique
 
 1. brancher un vrai Google Sheet ou un CSV d'inventaire reel

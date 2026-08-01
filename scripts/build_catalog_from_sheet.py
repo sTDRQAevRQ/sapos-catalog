@@ -1,37 +1,33 @@
 #!/usr/bin/env python3
 """
-Genere data/catalog.json a partir d'un Google Sheet, a la place du CSV local.
+Genere data/catalog.json a partir d'un Google Sheet.
+
+Le script supporte 2 formats :
+1. ancien onglet "catalogue" (meme structure que le CSV local)
+2. nouvel onglet "products" utilise pour la sync Shopify
 
 Variables d'environnement requises :
   GOOGLE_SHEETS_ID           : ID de la feuille (dans l'URL, entre /d/ et /edit)
   GOOGLE_SHEETS_CREDENTIALS  : chemin vers le fichier JSON du compte de service
                                 (defaut: scripts/google-credentials.json)
-  GOOGLE_SHEETS_TAB          : nom de l'onglet a lire (defaut: "catalogue")
-
-Dependances :
-  pip install gspread google-auth
-
-La premiere ligne de l'onglet doit contenir les memes en-tetes que le CSV :
-  id, rank, brand, title, volume, price, status, families, gender, note,
-  tags, url, image, collections, published_at, best_seller, discontinued,
-  quantite
+  GOOGLE_SHEETS_TAB          : nom de l'onglet a lire (defaut: "products")
 """
 import json
 import os
+import re
 from pathlib import Path
 
 import gspread
 from google.oauth2.service_account import Credentials
 
 from build_catalog_from_csv import (
+    TRUE_VALUES,
     parse_price,
     format_price,
     normalize_status,
     split_values,
     parse_bool,
     parse_quantity,
-    load_shopify_items,
-    merge_catalog,
     OUT_PATH,
     PUBLIC_OUT_PATH,
 )
@@ -43,20 +39,117 @@ SPREADSHEET_ID = os.environ.get("GOOGLE_SHEETS_ID")
 CREDENTIALS_PATH = os.environ.get(
     "GOOGLE_SHEETS_CREDENTIALS", str(ROOT / "scripts" / "google-credentials.json")
 )
-SHEET_TAB = os.environ.get("GOOGLE_SHEETS_TAB", "catalogue")
+SHEET_TAB = os.environ.get("GOOGLE_SHEETS_TAB", "products")
+
+LEGACY_HEADERS = {
+    "id",
+    "rank",
+    "brand",
+    "title",
+    "volume",
+    "price",
+    "status",
+    "families",
+    "gender",
+    "note",
+    "tags",
+    "url",
+    "image",
+    "collections",
+    "published_at",
+}
+
+PRODUCT_HEADERS = {
+    "sku",
+    "brand",
+    "title",
+    "concentration",
+    "volume",
+    "product_type",
+    "price",
+    "stock",
+    "status",
+    "gender",
+    "families",
+    "image",
+    "notes",
+    "sync_enabled",
+}
+
+STATUS_ACTIVE = {"disponible", "en stock", "rupture", "arrivage", "bientot", "bientôt"}
+STATUS_DRAFT = {"brouillon", "draft"}
+STATUS_ARCHIVED = {"archive", "archivé", "archived"}
+FAMILY_TAG_MAP = {
+    "ambré": "parfum ambré",
+    "boisé": "parfum boisé",
+    "épicé": "parfum épicé",
+    "floral": "parfum floral",
+    "frais": "parfum frais",
+    "fruité": "parfum fruité",
+    "gourmand": "parfum gourmand",
+    "oriental": "parfum oriental",
+    "oud": "oud",
+}
 
 
-def read_sheet_items():
-    if not SPREADSHEET_ID:
-        raise SystemExit("GOOGLE_SHEETS_ID manquant (variable d'environnement)")
-    if not Path(CREDENTIALS_PATH).exists():
-        raise SystemExit(f"Fichier d'identifiants introuvable: {CREDENTIALS_PATH}")
+def normalize_header(value: str) -> str:
+    return re.sub(r"\s+", "_", (value or "").strip().lower())
 
-    creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
-    client = gspread.authorize(creds)
-    worksheet = client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_TAB)
-    rows = worksheet.get_all_records()
 
+def as_bool(value: str) -> bool:
+    return (value or "").strip().lower() in TRUE_VALUES
+
+
+def normalize_shopify_status(value: str) -> str:
+    key = (value or "").strip().lower()
+    if key in STATUS_DRAFT:
+        return "draft"
+    if key in STATUS_ARCHIVED:
+        return "archived"
+    if key in STATUS_ACTIVE:
+        return "active"
+    return "active"
+
+
+def parse_volume_label(value: str) -> str:
+    cleaned = str(value or "").strip()
+    if not cleaned:
+        return ""
+    if cleaned.lower().endswith("ml"):
+        cleaned = cleaned[:-2].strip()
+    try:
+        numeric = float(cleaned.replace(",", "."))
+    except ValueError:
+        return str(value).strip()
+    if numeric.is_integer():
+        return f"{int(numeric)} ml"
+    return f"{str(numeric).replace('.', ',')} ml"
+
+
+def build_product_tags(row: dict[str, str]) -> list[str]:
+    tags: list[str] = []
+    gender = (row.get("gender") or "").strip().lower()
+    if gender == "homme":
+        tags.append("parfum homme")
+    elif gender == "femme":
+        tags.append("parfum femme")
+    else:
+        tags.append("parfum mixte")
+
+    for family in split_values(str(row.get("families") or "")):
+        mapped = FAMILY_TAG_MAP.get(family.lower())
+        if mapped and mapped not in tags:
+            tags.append(mapped)
+
+    for key in ("concentration", "product_type"):
+        value = (row.get(key) or "").strip().lower()
+        if value and value not in tags:
+            tags.append(value)
+
+    return tags
+
+
+def read_legacy_items(rows: list[dict[str, str]]) -> list[dict]:
     items = []
     for index, row in enumerate(rows, start=1):
         title = str(row.get("title") or "").strip()
@@ -105,21 +198,119 @@ def read_sheet_items():
                 "publishedAt": str(row.get("published_at") or "").strip() or None,
             }
         )
-
     return items
+
+
+def read_product_items(rows: list[dict[str, str]]) -> list[dict]:
+    items = []
+    for index, row in enumerate(rows, start=1):
+        if not as_bool(str(row.get("sync_enabled") or "")):
+            continue
+
+        title = str(row.get("title") or "").strip()
+        brand = str(row.get("brand") or "").strip()
+        if not title or not brand:
+            continue
+
+        published_status = str(row.get("published_status") or "").strip().lower()
+        handle = str(row.get("handle") or "").strip()
+        product_url = str(row.get("product_url") or "").strip()
+        if published_status != "published":
+            continue
+        if not product_url and handle:
+            product_url = f"https://saposparfums.fr/products/{handle}"
+        if not product_url:
+            continue
+
+        price_value = parse_price(str(row.get("price") or ""))
+        status_key, status_label = normalize_status(str(row.get("status") or ""))
+        if normalize_shopify_status(str(row.get("status") or "")) != "active":
+            status_key = "out"
+
+        notes = str(row.get("notes") or "").strip()
+        volume = parse_volume_label(str(row.get("volume") or ""))
+        concentration = str(row.get("concentration") or "").strip()
+        if concentration and volume:
+            subtitle = f"{concentration} · {volume}"
+        else:
+            subtitle = concentration or volume or notes
+
+        quantity = parse_quantity(str(row.get("stock") or ""))
+        families = split_values(str(row.get("families") or ""))
+        gender = str(row.get("gender") or "").strip() or "Mixte"
+        image = str(row.get("image") or "").strip()
+        tags = build_product_tags(row)
+
+        items.append(
+            {
+                "id": str(row.get("sku") or f"product-{index}").strip(),
+                "title": title,
+                "subtitle": subtitle,
+                "note": notes or subtitle,
+                "brand": brand,
+                "volume": volume,
+                "url": product_url,
+                "image": image,
+                "imageAlt": title,
+                "families": families,
+                "collections": [],
+                "gender": gender,
+                "statusKey": status_key,
+                "statusLabel": status_label,
+                "priceValue": price_value,
+                "priceLabel": format_price(price_value),
+                "tags": tags,
+                "bestSeller": False,
+                "discontinued": status_key == "out" and quantity == 0,
+                "quantity": quantity,
+                "rank": index,
+                "publishedAt": str(row.get("last_sync_at") or "").strip() or None,
+            }
+        )
+    return items
+
+
+def read_sheet_items():
+    if not SPREADSHEET_ID:
+        raise SystemExit("GOOGLE_SHEETS_ID manquant (variable d'environnement)")
+    if not Path(CREDENTIALS_PATH).exists():
+        raise SystemExit(f"Fichier d'identifiants introuvable: {CREDENTIALS_PATH}")
+
+    creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
+    client = gspread.authorize(creds)
+    worksheet = client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_TAB)
+    raw_rows = worksheet.get_all_values()
+    if not raw_rows:
+        return []
+
+    headers = [normalize_header(value) for value in raw_rows[0]]
+    rows = []
+    for raw in raw_rows[1:]:
+        values = {}
+        for idx, header in enumerate(headers):
+            values[header] = raw[idx].strip() if idx < len(raw) else ""
+        rows.append(values)
+
+    header_set = set(headers)
+    if PRODUCT_HEADERS.issubset(header_set):
+        return read_product_items(rows)
+    if LEGACY_HEADERS.issubset(header_set):
+        return read_legacy_items(rows)
+
+    raise SystemExit(
+        "Format de sheet non reconnu: il faut soit le schema catalogue historique, "
+        "soit le schema products de sync Shopify."
+    )
 
 
 def main():
     sheet_items = read_sheet_items()
-    shopify_items = load_shopify_items()
-    items = merge_catalog(shopify_items, sheet_items)
-    payload = json.dumps(items, ensure_ascii=False, indent=2) + "\n"
+    payload = json.dumps(sheet_items, ensure_ascii=False, indent=2) + "\n"
     OUT_PATH.write_text(payload, encoding="utf-8")
     PUBLIC_OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     PUBLIC_OUT_PATH.write_text(payload, encoding="utf-8")
     print(
-        f"{len(items)} references synchronisees depuis Google Sheets vers {OUT_PATH} "
-        f"({len(shopify_items)} Shopify + {len(sheet_items)} Sheet)"
+        f"{len(sheet_items)} references synchronisees depuis Google Sheets vers {OUT_PATH}"
     )
 
 
