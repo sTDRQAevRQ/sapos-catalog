@@ -28,6 +28,8 @@ from build_catalog_from_csv import (
     split_values,
     parse_bool,
     parse_quantity,
+    load_shopify_items,
+    merge_catalog,
     OUT_PATH,
     PUBLIC_OUT_PATH,
 )
@@ -305,12 +307,15 @@ def read_sheet_items():
 
 def main():
     sheet_items = read_sheet_items()
-    payload = json.dumps(sheet_items, ensure_ascii=False, indent=2) + "\n"
+    shopify_items = load_shopify_items()
+    items = merge_catalog(shopify_items, sheet_items)
+    payload = json.dumps(items, ensure_ascii=False, indent=2) + "\n"
     OUT_PATH.write_text(payload, encoding="utf-8")
     PUBLIC_OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     PUBLIC_OUT_PATH.write_text(payload, encoding="utf-8")
     print(
-        f"{len(sheet_items)} references synchronisees depuis Google Sheets vers {OUT_PATH}"
+        f"{len(items)} references synchronisees vers {OUT_PATH} "
+        f"({len(shopify_items)} Shopify + {len(sheet_items)} Sheet)"
     )
 
 
