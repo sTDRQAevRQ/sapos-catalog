@@ -1,6 +1,7 @@
 const DATA_URL = "./data/catalog.json";
 const BRAND_LOGOS_URL = "./data/brand-logos.json";
 const PAGE_SIZE = 24;
+const PARTNER_PREVIEW_COUNT = 5;
 
 const HOUSE_BRANDS = new Set([
   "sapos parfums",
@@ -65,8 +66,11 @@ const els = {
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
   resultsCountLine: document.querySelector("#results-count-line"),
+  loadMoreBar: document.querySelector("#load-more-bar"),
+  loadMoreCount: document.querySelector("#load-more-count"),
   loadMoreBtn: document.querySelector("#load-more-btn"),
   activeFilters: document.querySelector("#active-filters"),
+  familyShortcuts: document.querySelector("#family-shortcuts"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
   sortMobile: document.querySelector("#sort-mobile"),
@@ -100,6 +104,11 @@ const els = {
   filtersFabCount: document.querySelector("#filters-fab-count"),
   brandSearch: document.querySelector("#brand-search"),
   familySearch: document.querySelector("#family-search"),
+  brandMoreBtn: document.querySelector("#brand-more-btn"),
+  brandPickerDialog: document.querySelector("#brand-picker-dialog"),
+  brandPickerClose: document.querySelector("#brand-picker-close"),
+  brandPickerSearch: document.querySelector("#brand-picker-search"),
+  brandPickerList: document.querySelector("#brand-picker-list"),
   drawerBackdrop: document.querySelector("#drawer-backdrop"),
   navPanel: document.querySelector("#nav-panel"),
   navToggle: document.querySelector("#nav-toggle"),
@@ -258,6 +267,23 @@ function bindUi() {
     filterChipsInContainer(els.filters.family, event.target.value.trim().toLowerCase());
   });
 
+  els.brandMoreBtn?.addEventListener("click", () => {
+    els.brandPickerSearch.value = "";
+    filterChipsInContainer(els.brandPickerList, "");
+    els.brandPickerDialog?.showModal();
+  });
+
+  els.brandPickerClose?.addEventListener("click", () => els.brandPickerDialog?.close());
+  els.brandPickerDialog?.addEventListener("click", (event) => {
+    if (event.target === els.brandPickerDialog) {
+      els.brandPickerDialog.close();
+    }
+  });
+
+  els.brandPickerSearch?.addEventListener("input", (event) => {
+    filterChipsInContainer(els.brandPickerList, event.target.value.trim().toLowerCase());
+  });
+
   els.quickAvailable?.addEventListener("change", (event) => {
     applyQuickAvailable(event.target.checked);
   });
@@ -310,9 +336,10 @@ function bindFabScrollBehavior() {
       ticking = true;
       window.requestAnimationFrame(() => {
         const currentY = window.scrollY;
-        if (currentY > lastY && currentY > 140) {
+        const delta = currentY - lastY;
+        if (delta > 8 && currentY > 140) {
           els.filtersToggle.classList.add("is-hidden");
-        } else {
+        } else if (delta < -8 || currentY <= 140) {
           els.filtersToggle.classList.remove("is-hidden");
         }
         lastY = currentY;
@@ -350,6 +377,10 @@ function handleNavAction(action) {
     case "brands":
       closeAllDrawers();
       navigateToView("brands");
+      break;
+    case "families":
+      closeAllDrawers();
+      navigateToView("families");
       break;
     case "men":
       applyCategoryFilter({ gender: "Homme" });
@@ -424,6 +455,8 @@ function renderBrandFilterOptions() {
   const brands = uniqueValues("brand");
   const houseBrands = brands.filter((brand) => isHouseBrand(brand));
   const partnerBrands = brands.filter((brand) => !isHouseBrand(brand));
+  const previewPartners = partnerBrands.slice(0, PARTNER_PREVIEW_COUNT);
+  const hasMore = partnerBrands.length > previewPartners.length;
 
   els.filters.brand.innerHTML = "";
 
@@ -434,11 +467,32 @@ function renderBrandFilterOptions() {
     });
   }
 
-  if (partnerBrands.length) {
+  if (previewPartners.length) {
     els.filters.brand.appendChild(createGroupLabel("Marques partenaires"));
-    partnerBrands.forEach((brand) => {
+    previewPartners.forEach((brand) => {
       els.filters.brand.appendChild(createFilterChip("brand", brand));
     });
+  }
+
+  if (els.brandMoreBtn) {
+    els.brandMoreBtn.classList.toggle("hidden", !hasMore);
+    els.brandMoreBtn.textContent = `Voir toutes les marques (${brands.length})`;
+  }
+
+  if (els.brandPickerList) {
+    els.brandPickerList.innerHTML = "";
+    if (houseBrands.length) {
+      els.brandPickerList.appendChild(createGroupLabel("Nos marques"));
+      houseBrands.forEach((brand) => {
+        els.brandPickerList.appendChild(createFilterChip("brand", brand));
+      });
+    }
+    if (partnerBrands.length) {
+      els.brandPickerList.appendChild(createGroupLabel("Marques partenaires"));
+      partnerBrands.forEach((brand) => {
+        els.brandPickerList.appendChild(createFilterChip("brand", brand));
+      });
+    }
   }
 }
 
@@ -447,6 +501,31 @@ function createGroupLabel(text) {
   label.className = "filter-group-label";
   label.textContent = text;
   return label;
+}
+
+function renderFamilyShortcuts() {
+  if (!els.familyShortcuts) return;
+  const families = uniqueValues("families");
+  els.familyShortcuts.innerHTML = "";
+
+  families.forEach((family) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "family-chip";
+    button.classList.toggle("is-active", state.filters.family.has(family));
+    button.textContent = family;
+    button.addEventListener("click", () => {
+      if (state.filters.family.has(family) && state.filters.family.size === 1) {
+        state.filters.family.clear();
+      } else {
+        state.filters.family.clear();
+        state.filters.family.add(family);
+      }
+      syncFilterInputs("family");
+      render();
+    });
+    els.familyShortcuts.appendChild(button);
+  });
 }
 
 function getFilterSignature() {
@@ -475,6 +554,7 @@ function render() {
   renderOverview(results);
   renderRows(visibleResults);
   renderActiveFilters();
+  renderFamilyShortcuts();
   updateFiltersFabCount();
   syncQuickAvailableToggle();
   updateLoadMoreButton(results.length);
@@ -497,13 +577,19 @@ function updateResultsCount(totalFiltered) {
 }
 
 function updateLoadMoreButton(totalFiltered) {
-  if (!els.loadMoreBtn) return;
+  if (!els.loadMoreBar || !els.loadMoreBtn) return;
   const remaining = totalFiltered - state.visibleCount;
   if (remaining > 0) {
-    els.loadMoreBtn.textContent = `Afficher ${Math.min(remaining, PAGE_SIZE)} de plus (${remaining} restantes)`;
-    els.loadMoreBtn.classList.add("is-visible");
+    const shown = Math.min(state.visibleCount, totalFiltered);
+    if (els.loadMoreCount) {
+      els.loadMoreCount.textContent = `${shown} sur ${totalFiltered} références affichées`;
+    }
+    els.loadMoreBtn.textContent = `Afficher ${Math.min(remaining, PAGE_SIZE)} de plus`;
+    els.loadMoreBar.classList.add("is-visible");
+    document.body.classList.add("has-load-more-bar");
   } else {
-    els.loadMoreBtn.classList.remove("is-visible");
+    els.loadMoreBar.classList.remove("is-visible");
+    document.body.classList.remove("has-load-more-bar");
   }
 }
 
@@ -604,6 +690,7 @@ function renderRows(results) {
     }
     status.textContent = item.statusLabel || "Disponible";
     status.dataset.status = item.statusKey || "available";
+    status.classList.toggle("hidden", (item.statusKey || "available") === "available");
     brand.textContent = item.brand || "Marque";
     title.textContent = item.title;
     volume.textContent = item.volume || "Contenance à préciser";
@@ -712,7 +799,7 @@ function openDialog(item) {
   [
     item.volume,
     item.priceLabel,
-    item.statusLabel,
+    (item.statusKey || "available") !== "available" ? item.statusLabel : null,
     ...(item.families || []).slice(0, 3),
     item.gender,
   ]
