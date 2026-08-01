@@ -71,6 +71,7 @@ const els = {
   loadMoreBtn: document.querySelector("#load-more-btn"),
   activeFilters: document.querySelector("#active-filters"),
   familyShortcuts: document.querySelector("#family-shortcuts"),
+  familyToggle: document.querySelector("#family-toggle"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
   sortMobile: document.querySelector("#sort-mobile"),
@@ -282,6 +283,11 @@ function bindUi() {
 
   els.brandPickerSearch?.addEventListener("input", (event) => {
     filterChipsInContainer(els.brandPickerList, event.target.value.trim().toLowerCase());
+  });
+
+  els.familyToggle?.addEventListener("click", () => {
+    const isOpen = els.familyShortcuts?.classList.toggle("hidden") === false;
+    els.familyToggle.classList.toggle("is-open", isOpen);
   });
 
   els.quickAvailable?.addEventListener("change", (event) => {
@@ -586,10 +592,8 @@ function updateLoadMoreButton(totalFiltered) {
     }
     els.loadMoreBtn.textContent = `Afficher ${Math.min(remaining, PAGE_SIZE)} de plus`;
     els.loadMoreBar.classList.add("is-visible");
-    document.body.classList.add("has-load-more-bar");
   } else {
     els.loadMoreBar.classList.remove("is-visible");
-    document.body.classList.remove("has-load-more-bar");
   }
 }
 

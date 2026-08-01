@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=24">
+  <link rel="stylesheet" href="./styles.css?v=25">
 </head>
 <body>
   <div class="top-bar">
@@ -149,7 +149,11 @@
 
         <p class="results-count-line" id="results-count-line"></p>
 
-        <div class="family-shortcuts" id="family-shortcuts"></div>
+        <button type="button" class="family-toggle" id="family-toggle">
+          <span>Parcourir par famille</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="family-shortcuts hidden" id="family-shortcuts"></div>
 
         <div class="active-filters" id="active-filters"></div>
 
@@ -160,6 +164,10 @@
           <div class="skeleton-row"></div>
         </div>
         <div class="catalog-list" id="catalog-list"></div>
+        <div class="load-more-bar" id="load-more-bar">
+          <span class="load-more-count" id="load-more-count"></span>
+          <button type="button" class="load-more-action" id="load-more-btn">Afficher plus</button>
+        </div>
         <div class="empty-state hidden" id="empty-state">
           <p>Aucune reference ne correspond aux filtres actuels.</p>
           <button type="button" id="reset-filters">Reinitialiser les filtres</button>
@@ -236,11 +244,6 @@
       <p>© 2026 Sapos Parfums — <a href="https://saposparfums.fr/" target="_blank" rel="noreferrer">saposparfums.fr</a></p>
     </div>
   </footer>
-
-  <div class="load-more-bar" id="load-more-bar">
-    <span class="load-more-count" id="load-more-count"></span>
-    <button type="button" class="load-more-action" id="load-more-btn">Afficher plus</button>
-  </div>
 
   <dialog class="picker-dialog" id="brand-picker-dialog">
     <div class="picker-card">
@@ -330,6 +333,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=24" type="module"></script>
+  <script src="./app.js?v=25" type="module"></script>
 </body>
 </html>
