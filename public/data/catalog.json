@@ -1,5 +1,38 @@
 [
   {
+    "id": "SAP-SUGMIL-050",
+    "title": "Sugar Milk",
+    "subtitle": "extrait de parfum · 12 ml",
+    "note": "Lait sucré, vanille et muscs blancs",
+    "brand": "Sapos Parfums",
+    "volume": "12 ml",
+    "url": "https://saposparfums.fr/products/sugar-milk",
+    "image": "",
+    "imageAlt": "Sugar Milk",
+    "families": [
+      "Gourmand",
+      "Lacté",
+      "Vanillé"
+    ],
+    "collections": [],
+    "gender": "Mixte",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 49.9,
+    "priceLabel": "49,90 €",
+    "tags": [
+      "parfum mixte",
+      "parfum gourmand",
+      "extrait de parfum",
+      "parfum"
+    ],
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 18,
+    "rank": 1,
+    "publishedAt": "2026-08-01T19:43:06Z"
+  },
+  {
     "id": "GBH-Giorgio-090",
     "title": "Beverly Hills",
     "subtitle": "eau de toilette · 90 ml",
@@ -27,6 +60,6 @@
     "discontinued": false,
     "quantity": 2,
     "rank": 2,
-    "publishedAt": "2026-08-01T19:24:58Z"
+    "publishedAt": "2026-08-01T19:43:07Z"
   }
 ]
