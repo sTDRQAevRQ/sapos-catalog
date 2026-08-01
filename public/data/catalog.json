@@ -45,7 +45,7 @@
     "subtitle": "extrait de parfum · 12 ml",
     "brand": "Sapos Parfums",
     "url": "https://saposparfums.fr/products/sugar-milk",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/rn-image_picker_lib_temp_4a3ba629-74f2-4bfd-b652-ee9a4af544ee.png?v=1785271768",
     "imageAlt": "Sugar Milk",
     "volume": "12 ml",
     "families": [
@@ -68,7 +68,7 @@
       "parfum"
     ],
     "rank": 1,
-    "publishedAt": "2026-08-01T20:15:15Z",
+    "publishedAt": "2026-08-01T20:30:14Z",
     "note": "Lait sucré, vanille et muscs blancs",
     "bestSeller": false,
     "discontinued": false,
@@ -140,7 +140,7 @@
       "parfum"
     ],
     "rank": 2,
-    "publishedAt": "2026-08-01T20:15:16Z",
+    "publishedAt": "2026-08-01T20:30:16Z",
     "note": "Bois précieux, épices chaudes et ambre",
     "bestSeller": false,
     "discontinued": false,
@@ -281,7 +281,7 @@
     "subtitle": "Floral · Gourmand — Tous nos parfums — Parfums de niche longue tenue — En préparation",
     "brand": "Noble Essence",
     "url": "https://saposparfums.fr/products/bourbons-de-sicile-noble-essence",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/Rio_Grande_Parfum_de_niche_Noble_Essence.png?v=1780080191",
     "imageAlt": "Bourbons de Sicile – Parfum gourmand vanillé",
     "volume": "50ml",
     "families": [
@@ -1442,7 +1442,7 @@
     "subtitle": "Floral · Ambré — Tous nos parfums — Parfums de niche longue tenue — En préparation",
     "brand": "Noble Essence",
     "url": "https://saposparfums.fr/products/mediterranean-amber-noble-essence",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/Rio_Grande_Parfum_de_niche_Noble_Essence.png?v=1780080191",
     "imageAlt": "Mediterranean Amber – Parfum ambré hespéridé",
     "volume": "50ml",
     "families": [
