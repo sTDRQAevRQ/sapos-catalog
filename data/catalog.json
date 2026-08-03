@@ -5,7 +5,7 @@
     "subtitle": "extrait de parfum · 12 ml",
     "brand": "Sapos Parfums",
     "url": "https://saposparfums.fr/products/sugar-milk",
-    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/rn-image_picker_lib_temp_4a3ba629-74f2-4bfd-b652-ee9a4af544ee.png?v=1785271768",
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/logo-sapos-parfums-horizontal-transparent_f1794b56-a598-4b65-842c-341884734d88.png?v=1785749417",
     "imageAlt": "Sugar Milk",
     "volume": "12 ml",
     "families": [
@@ -28,7 +28,7 @@
       "parfum"
     ],
     "rank": 1,
-    "publishedAt": "2026-08-03T09:15:16Z",
+    "publishedAt": "2026-08-03T09:30:18Z",
     "note": "Lait sucré, vanille et muscs blancs",
     "bestSeller": false,
     "discontinued": false,
@@ -100,7 +100,7 @@
       "parfum"
     ],
     "rank": 2,
-    "publishedAt": "2026-08-03T09:15:18Z",
+    "publishedAt": "2026-08-03T09:30:19Z",
     "note": "Bois précieux, épices chaudes et ambre",
     "bestSeller": false,
     "discontinued": false,
@@ -195,7 +195,7 @@
     "subtitle": "eau de parfum · 30 ml",
     "brand": "Atelier Cologne",
     "url": "https://saposparfums.fr/products/atlas-cedre",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_ada9bb76-15bf-4fd3-8278-5fceb3453c3a.png?v=1785749422",
     "imageAlt": "Atlas Cèdre",
     "volume": "30 ml",
     "families": [],
@@ -213,7 +213,7 @@
       "parfum"
     ],
     "rank": 4,
-    "publishedAt": "2026-08-03T09:15:20Z",
+    "publishedAt": "2026-08-03T09:30:23Z",
     "note": "eau de parfum · 30 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -269,7 +269,7 @@
     "subtitle": "eau de toilette · 100 ml",
     "brand": "Acqua di Parma",
     "url": "https://saposparfums.fr/products/colonia-pura-testeur",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_eed75ae2-fab3-4a99-a7f9-f038c9521e3e.png?v=1785749427",
     "imageAlt": "Colonia Pura – Testeur",
     "volume": "100 ml",
     "families": [],
@@ -287,7 +287,7 @@
       "parfum"
     ],
     "rank": 5,
-    "publishedAt": "2026-08-03T09:15:21Z",
+    "publishedAt": "2026-08-03T09:30:27Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -341,7 +341,7 @@
     "subtitle": "eau de toilette · 150 ml",
     "brand": "Acqua di Parma",
     "url": "https://saposparfums.fr/products/cipresso-testeur",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_0d753805-e154-4d6e-bec4-51d314915ce9.png?v=1785749430",
     "imageAlt": "Cipresso – Testeur",
     "volume": "150 ml",
     "families": [],
@@ -359,7 +359,7 @@
       "parfum"
     ],
     "rank": 6,
-    "publishedAt": "2026-08-03T09:15:22Z",
+    "publishedAt": "2026-08-03T09:30:30Z",
     "note": "eau de toilette · 150 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -371,7 +371,7 @@
     "subtitle": "eau de toilette · 30 ml",
     "brand": "Acqua di Parma",
     "url": "https://saposparfums.fr/products/mirto-di-panarea",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_4457ac04-a6c5-4609-a823-8a6666b7ab7a.png?v=1785749433",
     "imageAlt": "Mirto di Panarea",
     "volume": "30 ml",
     "families": [],
@@ -389,7 +389,7 @@
       "parfum"
     ],
     "rank": 7,
-    "publishedAt": "2026-08-03T09:15:23Z",
+    "publishedAt": "2026-08-03T09:30:34Z",
     "note": "eau de toilette · 30 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -401,7 +401,7 @@
     "subtitle": "eau de parfum · 100 ml",
     "brand": "Acqua di Parma",
     "url": "https://saposparfums.fr/products/mirra",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_3a6b5fbb-903a-4b29-bd35-295532b76784.png?v=1785749437",
     "imageAlt": "Mirra",
     "volume": "100 ml",
     "families": [],
@@ -419,7 +419,7 @@
       "parfum"
     ],
     "rank": 8,
-    "publishedAt": "2026-08-03T09:15:24Z",
+    "publishedAt": "2026-08-03T09:30:37Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -449,7 +449,7 @@
       "parfum"
     ],
     "rank": 9,
-    "publishedAt": "2026-08-03T09:15:25Z",
+    "publishedAt": "2026-08-03T09:30:39Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -461,7 +461,7 @@
     "subtitle": "eau de parfum · 125 ml",
     "brand": "Boucheron",
     "url": "https://saposparfums.fr/products/oud-de-carthage",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_f47798f5-6b66-42f6-af1e-b4e565d747c6.png?v=1785749441",
     "imageAlt": "Oud de Carthage",
     "volume": "125 ml",
     "families": [],
@@ -479,7 +479,7 @@
       "parfum"
     ],
     "rank": 10,
-    "publishedAt": "2026-08-03T09:15:27Z",
+    "publishedAt": "2026-08-03T09:30:42Z",
     "note": "eau de parfum · 125 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -491,7 +491,7 @@
     "subtitle": "eau de parfum · 125 ml",
     "brand": "Boucheron",
     "url": "https://saposparfums.fr/products/patchouli-d-angkor",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_c0a569d3-70e7-4950-9b51-8e1c8976072a.png?v=1785749444",
     "imageAlt": "Patchouli d’Angkor",
     "volume": "125 ml",
     "families": [],
@@ -509,7 +509,7 @@
       "parfum"
     ],
     "rank": 11,
-    "publishedAt": "2026-08-03T09:15:28Z",
+    "publishedAt": "2026-08-03T09:30:45Z",
     "note": "eau de parfum · 125 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -521,7 +521,7 @@
     "subtitle": "eau de parfum · 125 ml",
     "brand": "Boucheron",
     "url": "https://saposparfums.fr/products/cuir-de-venise",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_96a4205e-3e92-4839-80e5-52c54b278c7d.png?v=1785749448",
     "imageAlt": "Cuir de Venise",
     "volume": "125 ml",
     "families": [],
@@ -539,7 +539,7 @@
       "parfum"
     ],
     "rank": 12,
-    "publishedAt": "2026-08-03T09:15:30Z",
+    "publishedAt": "2026-08-03T09:30:49Z",
     "note": "eau de parfum · 125 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -551,7 +551,7 @@
     "subtitle": "eau de parfum · 30 ml",
     "brand": "Bvlgari",
     "url": "https://saposparfums.fr/products/le-gemme-orom-coffret",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_03ecfd22-e511-4fd5-93e5-fd437080e1ee.png?v=1785749452",
     "imageAlt": "Le Gemme Orom – Coffret",
     "volume": "30 ml",
     "families": [],
@@ -569,7 +569,7 @@
       "parfum"
     ],
     "rank": 13,
-    "publishedAt": "2026-08-03T09:15:31Z",
+    "publishedAt": "2026-08-03T09:30:52Z",
     "note": "eau de parfum · 30 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1656,7 +1656,7 @@
       "parfum"
     ],
     "rank": 36,
-    "publishedAt": "2026-08-03T09:00:56Z",
+    "publishedAt": "2026-08-03T09:15:57Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1725,7 +1725,7 @@
       "parfum"
     ],
     "rank": 37,
-    "publishedAt": "2026-08-03T09:00:57Z",
+    "publishedAt": "2026-08-03T09:15:58Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1799,7 +1799,7 @@
       "parfum"
     ],
     "rank": 38,
-    "publishedAt": "2026-08-03T09:00:58Z",
+    "publishedAt": "2026-08-03T09:15:59Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1829,7 +1829,7 @@
       "parfum"
     ],
     "rank": 39,
-    "publishedAt": "2026-08-03T09:00:59Z",
+    "publishedAt": "2026-08-03T09:16:00Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1900,7 +1900,7 @@
       "parfum"
     ],
     "rank": 40,
-    "publishedAt": "2026-08-03T09:01:00Z",
+    "publishedAt": "2026-08-03T09:16:01Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -1973,7 +1973,7 @@
       "parfum"
     ],
     "rank": 41,
-    "publishedAt": "2026-08-03T09:01:01Z",
+    "publishedAt": "2026-08-03T09:16:02Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2003,7 +2003,7 @@
       "parfum"
     ],
     "rank": 42,
-    "publishedAt": "2026-08-03T09:01:02Z",
+    "publishedAt": "2026-08-03T09:16:04Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2075,7 +2075,7 @@
       "parfum"
     ],
     "rank": 43,
-    "publishedAt": "2026-08-03T09:01:04Z",
+    "publishedAt": "2026-08-03T09:16:05Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2145,7 +2145,7 @@
       "parfum"
     ],
     "rank": 44,
-    "publishedAt": "2026-08-03T09:01:05Z",
+    "publishedAt": "2026-08-03T09:16:06Z",
     "note": "eau de parfum · 60 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2175,7 +2175,7 @@
       "parfum"
     ],
     "rank": 45,
-    "publishedAt": "2026-08-03T09:01:06Z",
+    "publishedAt": "2026-08-03T09:16:07Z",
     "note": "eau de parfum · 120 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2205,7 +2205,7 @@
       "parfum"
     ],
     "rank": 46,
-    "publishedAt": "2026-08-03T09:01:07Z",
+    "publishedAt": "2026-08-03T09:16:08Z",
     "note": "eau de parfum · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2279,7 +2279,7 @@
       "parfum"
     ],
     "rank": 47,
-    "publishedAt": "2026-08-03T09:01:08Z",
+    "publishedAt": "2026-08-03T09:16:09Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2349,7 +2349,7 @@
       "parfum"
     ],
     "rank": 48,
-    "publishedAt": "2026-08-03T09:01:09Z",
+    "publishedAt": "2026-08-03T09:16:10Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2379,7 +2379,7 @@
       "parfum"
     ],
     "rank": 49,
-    "publishedAt": "2026-08-03T09:01:10Z",
+    "publishedAt": "2026-08-03T09:16:11Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2409,7 +2409,7 @@
       "parfum"
     ],
     "rank": 50,
-    "publishedAt": "2026-08-03T09:01:11Z",
+    "publishedAt": "2026-08-03T09:16:12Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2477,7 +2477,7 @@
       "parfum"
     ],
     "rank": 51,
-    "publishedAt": "2026-08-03T09:01:12Z",
+    "publishedAt": "2026-08-03T09:16:13Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2507,7 +2507,7 @@
       "parfum"
     ],
     "rank": 52,
-    "publishedAt": "2026-08-03T09:01:14Z",
+    "publishedAt": "2026-08-03T09:16:14Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2574,7 +2574,7 @@
       "parfum"
     ],
     "rank": 53,
-    "publishedAt": "2026-08-03T09:01:15Z",
+    "publishedAt": "2026-08-03T09:16:15Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2604,7 +2604,7 @@
       "parfum"
     ],
     "rank": 54,
-    "publishedAt": "2026-08-03T09:01:16Z",
+    "publishedAt": "2026-08-03T09:16:16Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2679,7 +2679,7 @@
       "parfum"
     ],
     "rank": 55,
-    "publishedAt": "2026-08-03T09:01:17Z",
+    "publishedAt": "2026-08-03T09:16:17Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2748,7 +2748,7 @@
       "parfum"
     ],
     "rank": 56,
-    "publishedAt": "2026-08-03T09:01:18Z",
+    "publishedAt": "2026-08-03T09:16:18Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2818,7 +2818,7 @@
       "lait pour le corps"
     ],
     "rank": 57,
-    "publishedAt": "2026-08-03T09:01:19Z",
+    "publishedAt": "2026-08-03T09:16:19Z",
     "note": "crème parfumée · 250 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2848,7 +2848,7 @@
       "parfum"
     ],
     "rank": 58,
-    "publishedAt": "2026-08-03T09:01:20Z",
+    "publishedAt": "2026-08-03T09:16:20Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2878,7 +2878,7 @@
       "parfum"
     ],
     "rank": 59,
-    "publishedAt": "2026-08-03T09:01:21Z",
+    "publishedAt": "2026-08-03T09:16:21Z",
     "note": "eau de parfum · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -2947,7 +2947,7 @@
       "parfum"
     ],
     "rank": 60,
-    "publishedAt": "2026-08-03T09:01:22Z",
+    "publishedAt": "2026-08-03T09:16:22Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3015,7 +3015,7 @@
       "parfum"
     ],
     "rank": 61,
-    "publishedAt": "2026-08-03T09:01:22Z",
+    "publishedAt": "2026-08-03T09:16:23Z",
     "note": "eau de toilette · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3083,7 +3083,7 @@
       "parfum"
     ],
     "rank": 62,
-    "publishedAt": "2026-08-03T09:01:23Z",
+    "publishedAt": "2026-08-03T09:16:24Z",
     "note": "eau de toilette · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3149,7 +3149,7 @@
       "parfum"
     ],
     "rank": 63,
-    "publishedAt": "2026-08-03T09:01:24Z",
+    "publishedAt": "2026-08-03T09:16:25Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3179,7 +3179,7 @@
       "parfum"
     ],
     "rank": 64,
-    "publishedAt": "2026-08-03T09:01:25Z",
+    "publishedAt": "2026-08-03T09:16:26Z",
     "note": "eau de parfum · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3209,7 +3209,7 @@
       "parfum"
     ],
     "rank": 65,
-    "publishedAt": "2026-08-03T09:01:26Z",
+    "publishedAt": "2026-08-03T09:16:27Z",
     "note": "eau de parfum · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3239,7 +3239,7 @@
       "parfum"
     ],
     "rank": 66,
-    "publishedAt": "2026-08-03T09:01:27Z",
+    "publishedAt": "2026-08-03T09:16:27Z",
     "note": "eau de parfum · 50 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3251,7 +3251,7 @@
     "subtitle": "eau de parfum · 75 ml",
     "brand": "Van Cleef & Arpels",
     "url": "https://saposparfums.fr/products/moonlight-rose-testeur",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/faviconV2_30a0ff57-c63e-483d-9f2e-a8d813c99bd8.png?v=1785749421",
     "imageAlt": "Moonlight Rose – Testeur",
     "volume": "75 ml",
     "families": [],
@@ -3269,7 +3269,7 @@
       "parfum"
     ],
     "rank": 67,
-    "publishedAt": "2026-08-03T09:01:28Z",
+    "publishedAt": "2026-08-03T09:16:28Z",
     "note": "eau de parfum · 75 ml",
     "bestSeller": false,
     "discontinued": false,
@@ -3299,7 +3299,7 @@
       "parfum"
     ],
     "rank": 68,
-    "publishedAt": "2026-08-03T09:01:28Z",
+    "publishedAt": "2026-08-03T09:16:29Z",
     "note": "eau de parfum · 100 ml",
     "bestSeller": false,
     "discontinued": false,
