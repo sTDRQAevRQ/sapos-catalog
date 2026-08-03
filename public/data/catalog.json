@@ -1,5 +1,40 @@
 [
   {
+    "id": "gid://shopify/Product/10946810642778",
+    "title": "Sugar Milk",
+    "subtitle": "extrait de parfum · 12 ml",
+    "brand": "Sapos Parfums",
+    "url": "https://saposparfums.fr/products/sugar-milk",
+    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/rn-image_picker_lib_temp_4a3ba629-74f2-4bfd-b652-ee9a4af544ee.png?v=1785271768",
+    "imageAlt": "Sugar Milk",
+    "volume": "12 ml",
+    "families": [
+      "Gourmand",
+      "Lacté",
+      "Vanillé"
+    ],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Mixte",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 49.9,
+    "priceLabel": "49,90 €",
+    "tags": [
+      "parfum mixte",
+      "parfum gourmand",
+      "extrait de parfum",
+      "parfum"
+    ],
+    "rank": 1,
+    "publishedAt": "2026-08-03T00:45:16Z",
+    "note": "Lait sucré, vanille et muscs blancs",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 18
+  },
+  {
     "id": "gid://shopify/Product/8042216128765",
     "title": "African Legend – Parfum boisé épicé puissant",
     "subtitle": "Boisé · Épicé — Tous nos parfums — Parfums de niche longue tenue",
@@ -36,22 +71,20 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 1,
+    "rank": 2,
     "publishedAt": "2023-03-07T11:52:49Z"
   },
   {
-    "id": "gid://shopify/Product/10946810642778",
-    "title": "Sugar Milk",
-    "subtitle": "extrait de parfum · 12 ml",
-    "brand": "Sapos Parfums",
-    "url": "https://saposparfums.fr/products/sugar-milk",
-    "image": "https://cdn.shopify.com/s/files/1/0635/6280/9597/files/rn-image_picker_lib_temp_4a3ba629-74f2-4bfd-b652-ee9a4af544ee.png?v=1785271768",
-    "imageAlt": "Sugar Milk",
-    "volume": "12 ml",
+    "id": "gid://shopify/Product/10946797044058",
+    "title": "Beverly Hills",
+    "subtitle": "eau de toilette · 90 ml",
+    "brand": "Giorgio",
+    "url": "https://saposparfums.fr/products/beverly-hills",
+    "image": null,
+    "imageAlt": "Beverly Hills",
+    "volume": "90 ml",
     "families": [
-      "Gourmand",
-      "Lacté",
-      "Vanillé"
+      "aromatique"
     ],
     "collections": [
       "AVADA - Best Sellers"
@@ -59,20 +92,19 @@
     "gender": "Mixte",
     "statusKey": "available",
     "statusLabel": "Disponible",
-    "priceValue": 49.9,
-    "priceLabel": "49,90 €",
+    "priceValue": 29.0,
+    "priceLabel": "29,00 €",
     "tags": [
       "parfum mixte",
-      "parfum gourmand",
-      "extrait de parfum",
+      "eau de toilette",
       "parfum"
     ],
-    "rank": 1,
-    "publishedAt": "2026-08-03T00:15:15Z",
-    "note": "Lait sucré, vanille et muscs blancs",
+    "rank": 2,
+    "publishedAt": "2026-08-03T00:45:18Z",
+    "note": "Bois précieux, épices chaudes et ambre",
     "bestSeller": false,
     "discontinued": false,
-    "quantity": 18
+    "quantity": 2
   },
   {
     "id": "gid://shopify/Product/8449836679514",
@@ -111,40 +143,8 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 2,
+    "rank": 3,
     "publishedAt": "2023-06-20T12:23:23Z"
-  },
-  {
-    "id": "gid://shopify/Product/10946797044058",
-    "title": "Beverly Hills",
-    "subtitle": "eau de toilette · 90 ml",
-    "brand": "Giorgio",
-    "url": "https://saposparfums.fr/products/beverly-hills",
-    "image": null,
-    "imageAlt": "Beverly Hills",
-    "volume": "90 ml",
-    "families": [
-      "aromatique"
-    ],
-    "collections": [
-      "AVADA - Best Sellers"
-    ],
-    "gender": "Mixte",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
-    "priceValue": 29.0,
-    "priceLabel": "29,00 €",
-    "tags": [
-      "parfum mixte",
-      "eau de toilette",
-      "parfum"
-    ],
-    "rank": 2,
-    "publishedAt": "2026-08-03T00:15:16Z",
-    "note": "Bois précieux, épices chaudes et ambre",
-    "bestSeller": false,
-    "discontinued": false,
-    "quantity": 2
   },
   {
     "id": "gid://shopify/Product/7784325906685",
@@ -186,8 +186,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 3,
+    "rank": 4,
     "publishedAt": "2022-07-12T10:52:40Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947184361818",
+    "title": "Atlas Cèdre",
+    "subtitle": "eau de parfum · 30 ml",
+    "brand": "Atelier Cologne",
+    "url": "https://saposparfums.fr/products/atlas-cedre",
+    "image": null,
+    "imageAlt": "Atlas Cèdre",
+    "volume": "30 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 45.0,
+    "priceLabel": "45,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 4,
+    "publishedAt": "2026-08-03T00:45:20Z",
+    "note": "eau de parfum · 30 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8449832190298",
@@ -230,8 +260,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 4,
+    "rank": 5,
     "publishedAt": "2023-06-20T12:14:40Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947184394586",
+    "title": "Colonia Pura – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Acqua di Parma",
+    "url": "https://saposparfums.fr/products/colonia-pura-testeur",
+    "image": null,
+    "imageAlt": "Colonia Pura – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 5,
+    "publishedAt": "2026-08-03T00:45:21Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10822777700698",
@@ -272,8 +332,428 @@
       "parfum vanillé",
       "parfum épicé"
     ],
-    "rank": 5,
+    "rank": 6,
     "publishedAt": "2026-04-14T19:37:25Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947184427354",
+    "title": "Cipresso – Testeur",
+    "subtitle": "eau de toilette · 150 ml",
+    "brand": "Acqua di Parma",
+    "url": "https://saposparfums.fr/products/cipresso-testeur",
+    "image": null,
+    "imageAlt": "Cipresso – Testeur",
+    "volume": "150 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 6,
+    "publishedAt": "2026-08-03T00:45:22Z",
+    "note": "eau de toilette · 150 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184460122",
+    "title": "Mirto di Panarea",
+    "subtitle": "eau de toilette · 30 ml",
+    "brand": "Acqua di Parma",
+    "url": "https://saposparfums.fr/products/mirto-di-panarea",
+    "image": null,
+    "imageAlt": "Mirto di Panarea",
+    "volume": "30 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 55.0,
+    "priceLabel": "55,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 7,
+    "publishedAt": "2026-08-03T00:45:23Z",
+    "note": "eau de toilette · 30 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184492890",
+    "title": "Mirra",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Acqua di Parma",
+    "url": "https://saposparfums.fr/products/mirra",
+    "image": null,
+    "imageAlt": "Mirra",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 130.0,
+    "priceLabel": "130,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 8,
+    "publishedAt": "2026-08-03T00:45:24Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184525658",
+    "title": "Madawi Gold",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Arabian Oud",
+    "url": "https://saposparfums.fr/products/madawi-gold",
+    "image": null,
+    "imageAlt": "Madawi Gold",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 160.0,
+    "priceLabel": "160,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 9,
+    "publishedAt": "2026-08-03T00:45:25Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184558426",
+    "title": "Oud de Carthage",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Boucheron",
+    "url": "https://saposparfums.fr/products/oud-de-carthage",
+    "image": null,
+    "imageAlt": "Oud de Carthage",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 10,
+    "publishedAt": "2026-08-03T00:45:27Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184591194",
+    "title": "Patchouli d’Angkor",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Boucheron",
+    "url": "https://saposparfums.fr/products/patchouli-d-angkor",
+    "image": null,
+    "imageAlt": "Patchouli d’Angkor",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 11,
+    "publishedAt": "2026-08-03T00:45:28Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184623962",
+    "title": "Cuir de Venise",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Boucheron",
+    "url": "https://saposparfums.fr/products/cuir-de-venise",
+    "image": null,
+    "imageAlt": "Cuir de Venise",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 12,
+    "publishedAt": "2026-08-03T00:45:29Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184656730",
+    "title": "Le Gemme Orom – Coffret",
+    "subtitle": "eau de parfum · 30 ml",
+    "brand": "Bvlgari",
+    "url": "https://saposparfums.fr/products/le-gemme-orom-coffret",
+    "image": null,
+    "imageAlt": "Le Gemme Orom – Coffret",
+    "volume": "30 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 13,
+    "publishedAt": "2026-08-03T00:45:30Z",
+    "note": "eau de parfum · 30 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184689498",
+    "title": "Le Gemme Sahare – Coffret",
+    "subtitle": "eau de parfum · 30 ml",
+    "brand": "Bvlgari",
+    "url": "https://saposparfums.fr/products/le-gemme-sahare-coffret",
+    "image": null,
+    "imageAlt": "Le Gemme Sahare – Coffret",
+    "volume": "30 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 14,
+    "publishedAt": "2026-08-03T00:45:31Z",
+    "note": "eau de parfum · 30 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184722266",
+    "title": "Le Gemme Yasep – Coffret",
+    "subtitle": "eau de parfum · 30 ml",
+    "brand": "Bvlgari",
+    "url": "https://saposparfums.fr/products/le-gemme-yasep-coffret",
+    "image": null,
+    "imageAlt": "Le Gemme Yasep – Coffret",
+    "volume": "30 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 15,
+    "publishedAt": "2026-08-03T00:45:32Z",
+    "note": "eau de parfum · 30 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184755034",
+    "title": "Rivière Insouciante",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Cartier",
+    "url": "https://saposparfums.fr/products/riviere-insouciante",
+    "image": null,
+    "imageAlt": "Rivière Insouciante",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 16,
+    "publishedAt": "2026-08-03T00:45:33Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184787802",
+    "title": "XI L’Heure Perdue – Testeur",
+    "subtitle": "eau de parfum · 75 ml",
+    "brand": "Cartier",
+    "url": "https://saposparfums.fr/products/xi-l-heure-perdue-testeur",
+    "image": null,
+    "imageAlt": "XI L’Heure Perdue – Testeur",
+    "volume": "75 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 17,
+    "publishedAt": "2026-08-03T00:45:35Z",
+    "note": "eau de parfum · 75 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184820570",
+    "title": "XII L’Heure Mystérieuse – Testeur",
+    "subtitle": "eau de parfum · 75 ml",
+    "brand": "Cartier",
+    "url": "https://saposparfums.fr/products/xii-l-heure-mysterieuse-testeur",
+    "image": null,
+    "imageAlt": "XII L’Heure Mystérieuse – Testeur",
+    "volume": "75 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 18,
+    "publishedAt": "2026-08-03T00:45:36Z",
+    "note": "eau de parfum · 75 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184853338",
+    "title": "Uomo",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Carthusia",
+    "url": "https://saposparfums.fr/products/uomo",
+    "image": null,
+    "imageAlt": "Uomo",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 40.0,
+    "priceLabel": "40,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 19,
+    "publishedAt": "2026-08-03T00:45:38Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10283752489306",
@@ -312,8 +792,68 @@
       "parfum unisexe",
       "parfum vanillé"
     ],
-    "rank": 7,
+    "rank": 20,
     "publishedAt": null
+  },
+  {
+    "id": "gid://shopify/Product/10947184886106",
+    "title": "Rose Seljuke",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Chopard",
+    "url": "https://saposparfums.fr/products/rose-seljuke",
+    "image": null,
+    "imageAlt": "Rose Seljuke",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 140.0,
+    "priceLabel": "140,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 20,
+    "publishedAt": "2026-08-03T00:45:39Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184918874",
+    "title": "Bloody Rose",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Dear Rose",
+    "url": "https://saposparfums.fr/products/bloody-rose",
+    "image": null,
+    "imageAlt": "Bloody Rose",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 59.0,
+    "priceLabel": "59,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 21,
+    "publishedAt": "2026-08-03T00:45:40Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10053789942106",
@@ -355,7 +895,7 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 8,
+    "rank": 21,
     "publishedAt": "2025-07-25T15:48:15Z"
   },
   {
@@ -395,8 +935,98 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 9,
+    "rank": 22,
     "publishedAt": "2022-07-12T11:07:46Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947184951642",
+    "title": "Escale aux Marquises – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Dior",
+    "url": "https://saposparfums.fr/products/escale-aux-marquises-testeur",
+    "image": null,
+    "imageAlt": "Escale aux Marquises – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 75.0,
+    "priceLabel": "75,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 22,
+    "publishedAt": "2026-08-03T00:45:41Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947184984410",
+    "title": "Cologne Blanche – Testeur",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Dior",
+    "url": "https://saposparfums.fr/products/cologne-blanche-testeur",
+    "image": null,
+    "imageAlt": "Cologne Blanche – Testeur",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 190.0,
+    "priceLabel": "190,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 23,
+    "publishedAt": "2026-08-03T00:45:43Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185017178",
+    "title": "Angéliques sous la pluie – Testeur",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Frédéric Malle",
+    "url": "https://saposparfums.fr/products/angeliques-sous-la-pluie-testeur",
+    "image": null,
+    "imageAlt": "Angéliques sous la pluie – Testeur",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 145.0,
+    "priceLabel": "145,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 24,
+    "publishedAt": "2026-08-03T00:45:44Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10130364367194",
@@ -433,8 +1063,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 10,
+    "rank": 24,
     "publishedAt": "2025-04-03T19:21:28Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185049946",
+    "title": "Aqua Allegoria Nettare di Sole – Testeur",
+    "subtitle": "eau de toilette · 125 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/aqua-allegoria-nettare-di-sole-testeur",
+    "image": null,
+    "imageAlt": "Aqua Allegoria Nettare di Sole – Testeur",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 25,
+    "publishedAt": "2026-08-03T00:45:45Z",
+    "note": "eau de toilette · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10905558548826",
@@ -473,8 +1133,38 @@
       "parfum-de-niche",
       "rio-grande"
     ],
-    "rank": 11,
+    "rank": 25,
     "publishedAt": "2026-06-29T00:43:54Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185082714",
+    "title": "Aqua Allegoria Flora Cherrysia – Testeur",
+    "subtitle": "eau de toilette · 125 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/aqua-allegoria-flora-cherrysia-testeur",
+    "image": null,
+    "imageAlt": "Aqua Allegoria Flora Cherrysia – Testeur",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 26,
+    "publishedAt": "2026-08-03T00:45:47Z",
+    "note": "eau de toilette · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8781499990362",
@@ -510,8 +1200,68 @@
       "signature royale",
       "échantillons parfum"
     ],
-    "rank": 12,
+    "rank": 26,
     "publishedAt": "2024-02-28T20:45:56Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185115482",
+    "title": "Aqua Allegoria Flora Salvaggia – Testeur",
+    "subtitle": "eau de toilette · 125 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/aqua-allegoria-flora-salvaggia-testeur",
+    "image": null,
+    "imageAlt": "Aqua Allegoria Flora Salvaggia – Testeur",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 27,
+    "publishedAt": "2026-08-03T00:45:48Z",
+    "note": "eau de toilette · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185148250",
+    "title": "Eau de Cologne du Coq – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/eau-de-cologne-du-coq-testeur",
+    "image": null,
+    "imageAlt": "Eau de Cologne du Coq – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 60.0,
+    "priceLabel": "60,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 28,
+    "publishedAt": "2026-08-03T00:45:49Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8781509984602",
@@ -554,8 +1304,98 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 13,
+    "rank": 29,
     "publishedAt": "2024-02-29T13:48:43Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185181018",
+    "title": "Rose Amira",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/rose-amira",
+    "image": null,
+    "imageAlt": "Rose Amira",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 120.0,
+    "priceLabel": "120,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 29,
+    "publishedAt": "2026-08-03T00:45:50Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185213786",
+    "title": "Santal Royal",
+    "subtitle": "eau de parfum · 125 ml",
+    "brand": "Guerlain",
+    "url": "https://saposparfums.fr/products/santal-royal",
+    "image": null,
+    "imageAlt": "Santal Royal",
+    "volume": "125 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 120.0,
+    "priceLabel": "120,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 30,
+    "publishedAt": "2026-08-03T00:45:51Z",
+    "note": "eau de parfum · 125 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185246554",
+    "title": "Basilic Pourpre – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Hermès",
+    "url": "https://saposparfums.fr/products/basilic-pourpre-testeur",
+    "image": null,
+    "imageAlt": "Basilic Pourpre – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 69.0,
+    "priceLabel": "69,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 31,
+    "publishedAt": "2026-08-03T00:45:52Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7999254757629",
@@ -595,8 +1435,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 14,
+    "rank": 31,
     "publishedAt": "2023-01-03T22:25:43Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185279322",
+    "title": "Un Jardin sur la Lagune – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Hermès",
+    "url": "https://saposparfums.fr/products/un-jardin-sur-la-lagune-testeur",
+    "image": null,
+    "imageAlt": "Un Jardin sur la Lagune – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 60.0,
+    "priceLabel": "60,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 32,
+    "publishedAt": "2026-08-03T00:45:53Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7678087561469",
@@ -633,8 +1503,68 @@
       "sapos parfums",
       "ébène"
     ],
-    "rank": 15,
+    "rank": 33,
     "publishedAt": "2022-05-04T19:00:23Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185312090",
+    "title": "Osmanthe Yunnan – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Hermès",
+    "url": "https://saposparfums.fr/products/osmanthe-yunnan-testeur",
+    "image": null,
+    "imageAlt": "Osmanthe Yunnan – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 120.0,
+    "priceLabel": "120,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 33,
+    "publishedAt": "2026-08-03T00:31:04Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185344858",
+    "title": "Jacques Zolty",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/jacques-zolty",
+    "image": null,
+    "imageAlt": "Jacques Zolty",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 34,
+    "publishedAt": "2026-08-03T00:31:06Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10307257794906",
@@ -669,8 +1599,38 @@
       "sapos parfums",
       "échantillons parfum"
     ],
-    "rank": 16,
+    "rank": 34,
     "publishedAt": "2025-07-25T16:14:24Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185377626",
+    "title": "À Bientôt",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/a-bientot",
+    "image": null,
+    "imageAlt": "À Bientôt",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 35,
+    "publishedAt": "2026-08-03T00:31:07Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8042214490365",
@@ -708,8 +1668,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 17,
+    "rank": 35,
     "publishedAt": "2023-03-07T11:43:26Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185410394",
+    "title": "Lily Beach",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/lily-beach",
+    "image": null,
+    "imageAlt": "Lily Beach",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 36,
+    "publishedAt": "2026-08-03T00:31:08Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10698297770330",
@@ -752,8 +1742,68 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 18,
+    "rank": 37,
     "publishedAt": "2026-01-21T23:54:41Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185443162",
+    "title": "Leonella",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/leonella",
+    "image": null,
+    "imageAlt": "Leonella",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 37,
+    "publishedAt": "2026-08-03T00:31:10Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185475930",
+    "title": "Me Gustas",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/me-gustas",
+    "image": null,
+    "imageAlt": "Me Gustas",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 38,
+    "publishedAt": "2026-08-03T00:31:11Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7784301592829",
@@ -793,8 +1843,38 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 19,
+    "rank": 38,
     "publishedAt": "2022-07-12T10:40:19Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185508698",
+    "title": "Ombrella Crash",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/ombrella-crash",
+    "image": null,
+    "imageAlt": "Ombrella Crash",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 39,
+    "publishedAt": "2026-08-03T00:31:12Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10053800919386",
@@ -836,8 +1916,68 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 20,
+    "rank": 39,
     "publishedAt": "2025-07-25T15:48:16Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185541466",
+    "title": "Sparkling Sand",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Jacques Zolty",
+    "url": "https://saposparfums.fr/products/sparkling-sand",
+    "image": null,
+    "imageAlt": "Sparkling Sand",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 40,
+    "publishedAt": "2026-08-03T00:31:14Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185574234",
+    "title": "Another Oud",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Juliette Has a Gun",
+    "url": "https://saposparfums.fr/products/another-oud",
+    "image": null,
+    "imageAlt": "Another Oud",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 90.0,
+    "priceLabel": "90,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 41,
+    "publishedAt": "2026-08-03T00:31:15Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10053808685402",
@@ -878,8 +2018,38 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 21,
+    "rank": 42,
     "publishedAt": "2025-07-25T15:48:17Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185607002",
+    "title": "Not a Perfume",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Juliette Has a Gun",
+    "url": "https://saposparfums.fr/products/not-a-perfume",
+    "image": null,
+    "imageAlt": "Not a Perfume",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 90.0,
+    "priceLabel": "90,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 42,
+    "publishedAt": "2026-08-03T00:31:16Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8042211606781",
@@ -918,8 +2088,98 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 22,
+    "rank": 43,
     "publishedAt": "2023-03-07T11:42:33Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185639770",
+    "title": "Vanilla Vibes",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Juliette Has a Gun",
+    "url": "https://saposparfums.fr/products/vanilla-vibes",
+    "image": null,
+    "imageAlt": "Vanilla Vibes",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 100.0,
+    "priceLabel": "100,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 43,
+    "publishedAt": "2026-08-03T00:31:18Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185705306",
+    "title": "Pink Roses",
+    "subtitle": "eau de parfum · 60 ml",
+    "brand": "Mancera",
+    "url": "https://saposparfums.fr/products/pink-roses",
+    "image": null,
+    "imageAlt": "Pink Roses",
+    "volume": "60 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 50.0,
+    "priceLabel": "50,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 44,
+    "publishedAt": "2026-08-03T00:31:19Z",
+    "note": "eau de parfum · 60 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185738074",
+    "title": "Red Tobacco",
+    "subtitle": "eau de parfum · 120 ml",
+    "brand": "Mancera",
+    "url": "https://saposparfums.fr/products/red-tobacco",
+    "image": null,
+    "imageAlt": "Red Tobacco",
+    "volume": "120 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 90.0,
+    "priceLabel": "90,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 45,
+    "publishedAt": "2026-08-03T00:31:21Z",
+    "note": "eau de parfum · 120 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/10698248388954",
@@ -962,8 +2222,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 23,
+    "rank": 46,
     "publishedAt": "2026-01-21T23:12:39Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185770842",
+    "title": "Moreta",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Moresque",
+    "url": "https://saposparfums.fr/products/moreta",
+    "image": null,
+    "imageAlt": "Moreta",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 120.0,
+    "priceLabel": "120,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 46,
+    "publishedAt": "2026-08-03T00:31:22Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7784330887421",
@@ -1002,8 +2292,98 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 24,
+    "rank": 47,
     "publishedAt": "2022-07-12T11:00:44Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185803610",
+    "title": "Intense Café",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Montale",
+    "url": "https://saposparfums.fr/products/intense-cafe",
+    "image": null,
+    "imageAlt": "Intense Café",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 47,
+    "publishedAt": "2026-08-03T00:31:23Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185836378",
+    "title": "Roses Musk",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Montale",
+    "url": "https://saposparfums.fr/products/roses-musk",
+    "image": null,
+    "imageAlt": "Roses Musk",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 48,
+    "publishedAt": "2026-08-03T00:31:25Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185869146",
+    "title": "Angelys Pear – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Nicolaï",
+    "url": "https://saposparfums.fr/products/angelys-pear-testeur",
+    "image": null,
+    "imageAlt": "Angelys Pear – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 75.0,
+    "priceLabel": "75,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 49,
+    "publishedAt": "2026-08-03T00:31:26Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7784333148413",
@@ -1040,8 +2420,38 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 25,
+    "rank": 50,
     "publishedAt": "2022-07-12T11:03:40Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185901914",
+    "title": "Néroli Intense",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Nicolaï",
+    "url": "https://saposparfums.fr/products/neroli-intense",
+    "image": null,
+    "imageAlt": "Néroli Intense",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 175.0,
+    "priceLabel": "175,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 50,
+    "publishedAt": "2026-08-03T00:31:27Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7678085464317",
@@ -1077,8 +2487,68 @@
       "parfum élégant",
       "sapos parfums"
     ],
-    "rank": 26,
+    "rank": 51,
     "publishedAt": "2022-05-04T18:54:10Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947185934682",
+    "title": "Vétiver",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Perris Monte Carlo",
+    "url": "https://saposparfums.fr/products/vetiver",
+    "image": null,
+    "imageAlt": "Vétiver",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 90.0,
+    "priceLabel": "90,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 51,
+    "publishedAt": "2026-08-03T00:31:29Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947185967450",
+    "title": "Infusion de Rose – Testeur",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Prada",
+    "url": "https://saposparfums.fr/products/infusion-de-rose-testeur",
+    "image": null,
+    "imageAlt": "Infusion de Rose – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 52,
+    "publishedAt": "2026-08-03T00:31:30Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7784336457981",
@@ -1122,8 +2592,68 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 27,
+    "rank": 53,
     "publishedAt": "2022-07-12T11:09:09Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186000218",
+    "title": "Néroli",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Roger & Gallet",
+    "url": "https://saposparfums.fr/products/neroli",
+    "image": null,
+    "imageAlt": "Néroli",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 30.0,
+    "priceLabel": "30,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 53,
+    "publishedAt": "2026-08-03T00:31:31Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186032986",
+    "title": "Gingembre",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Roger & Gallet",
+    "url": "https://saposparfums.fr/products/gingembre",
+    "image": null,
+    "imageAlt": "Gingembre",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 30.0,
+    "priceLabel": "30,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 54,
+    "publishedAt": "2026-08-03T00:31:33Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7678086742269",
@@ -1161,8 +2691,38 @@
       "parfum jasmin",
       "parfum longue tenue"
     ],
-    "rank": 28,
+    "rank": 54,
     "publishedAt": "2022-05-04T18:55:24Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186065754",
+    "title": "Gingembre Rouge",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Roger & Gallet",
+    "url": "https://saposparfums.fr/products/gingembre-rouge",
+    "image": null,
+    "imageAlt": "Gingembre Rouge",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 30.0,
+    "priceLabel": "30,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 55,
+    "publishedAt": "2026-08-03T00:31:34Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7784334491901",
@@ -1201,8 +2761,68 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 29,
+    "rank": 55,
     "publishedAt": "2022-07-12T11:05:16Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186098522",
+    "title": "Bois d’Orange",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Roger & Gallet",
+    "url": "https://saposparfums.fr/products/bois-d-orange",
+    "image": null,
+    "imageAlt": "Bois d’Orange",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 30.0,
+    "priceLabel": "30,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 56,
+    "publishedAt": "2026-08-03T00:31:36Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186131290",
+    "title": "Ambre Sultan",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Serge Lutens",
+    "url": "https://saposparfums.fr/products/ambre-sultan",
+    "image": null,
+    "imageAlt": "Ambre Sultan",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 130.0,
+    "priceLabel": "130,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 58,
+    "publishedAt": "2026-08-03T00:31:37Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8551163527514",
@@ -1240,8 +2860,38 @@
       "parfum élégant",
       "sapos parfums"
     ],
-    "rank": 30,
+    "rank": 59,
     "publishedAt": "2023-09-30T13:47:20Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186164058",
+    "title": "Un Bois Vanille",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Serge Lutens",
+    "url": "https://saposparfums.fr/products/un-bois-vanille",
+    "image": null,
+    "imageAlt": "Un Bois Vanille",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 75.0,
+    "priceLabel": "75,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 59,
+    "publishedAt": "2026-08-03T00:31:39Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/8042200891645",
@@ -1278,8 +2928,38 @@
       "parfum élégant",
       "sapos parfums"
     ],
-    "rank": 31,
+    "rank": 60,
     "publishedAt": "2023-03-07T10:47:28Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186196826",
+    "title": "L’Eau d’Armoise",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Serge Lutens",
+    "url": "https://saposparfums.fr/products/l-eau-d-armoise",
+    "image": null,
+    "imageAlt": "L’Eau d’Armoise",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 60,
+    "publishedAt": "2026-08-03T00:31:40Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7679966150909",
@@ -1316,8 +2996,38 @@
       "parfum élégant",
       "sapos parfums"
     ],
-    "rank": 32,
+    "rank": 61,
     "publishedAt": "2022-05-21T22:42:31Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186229594",
+    "title": "Nuit de Cellophane – Testeur",
+    "subtitle": "eau de toilette · 50 ml",
+    "brand": "Serge Lutens",
+    "url": "https://saposparfums.fr/products/nuit-de-cellophane-testeur",
+    "image": null,
+    "imageAlt": "Nuit de Cellophane – Testeur",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 70.0,
+    "priceLabel": "70,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 61,
+    "publishedAt": "2026-08-03T00:31:41Z",
+    "note": "eau de toilette · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7677569925373",
@@ -1352,8 +3062,218 @@
       "parfum élégant",
       "sapos parfums"
     ],
-    "rank": 33,
+    "rank": 62,
     "publishedAt": "2022-05-21T22:42:31Z"
+  },
+  {
+    "id": "gid://shopify/Product/10947186262362",
+    "title": "Parole d’Eau – Testeur",
+    "subtitle": "eau de toilette · 100 ml",
+    "brand": "Serge Lutens",
+    "url": "https://saposparfums.fr/products/parole-d-eau-testeur",
+    "image": null,
+    "imageAlt": "Parole d’Eau – Testeur",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 60.0,
+    "priceLabel": "60,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de toilette",
+      "parfum"
+    ],
+    "rank": 62,
+    "publishedAt": "2026-08-03T00:31:43Z",
+    "note": "eau de toilette · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186295130",
+    "title": "Spirito Fiorentino",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Tiziana Terenzi",
+    "url": "https://saposparfums.fr/products/spirito-fiorentino",
+    "image": null,
+    "imageAlt": "Spirito Fiorentino",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 210.0,
+    "priceLabel": "210,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 63,
+    "publishedAt": "2026-08-03T00:31:44Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186327898",
+    "title": "Bitter Peach",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Tom Ford",
+    "url": "https://saposparfums.fr/products/bitter-peach",
+    "image": null,
+    "imageAlt": "Bitter Peach",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 200.0,
+    "priceLabel": "200,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 64,
+    "publishedAt": "2026-08-03T00:31:45Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186360666",
+    "title": "Electric Cherry",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Tom Ford",
+    "url": "https://saposparfums.fr/products/electric-cherry",
+    "image": null,
+    "imageAlt": "Electric Cherry",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 200.0,
+    "priceLabel": "200,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 65,
+    "publishedAt": "2026-08-03T00:31:47Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186393434",
+    "title": "Lost Cherry",
+    "subtitle": "eau de parfum · 50 ml",
+    "brand": "Tom Ford",
+    "url": "https://saposparfums.fr/products/lost-cherry",
+    "image": null,
+    "imageAlt": "Lost Cherry",
+    "volume": "50 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 200.0,
+    "priceLabel": "200,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 66,
+    "publishedAt": "2026-08-03T00:31:48Z",
+    "note": "eau de parfum · 50 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186426202",
+    "title": "Moonlight Rose – Testeur",
+    "subtitle": "eau de parfum · 75 ml",
+    "brand": "Van Cleef & Arpels",
+    "url": "https://saposparfums.fr/products/moonlight-rose-testeur",
+    "image": null,
+    "imageAlt": "Moonlight Rose – Testeur",
+    "volume": "75 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 80.0,
+    "priceLabel": "80,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 67,
+    "publishedAt": "2026-08-03T00:31:50Z",
+    "note": "eau de parfum · 75 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
+  },
+  {
+    "id": "gid://shopify/Product/10947186458970",
+    "title": "Erba Pura",
+    "subtitle": "eau de parfum · 100 ml",
+    "brand": "Xerjoff",
+    "url": "https://saposparfums.fr/products/erba-pura",
+    "image": null,
+    "imageAlt": "Erba Pura",
+    "volume": "100 ml",
+    "families": [],
+    "collections": [
+      "AVADA - Best Sellers"
+    ],
+    "gender": "Homme|Femme|Unisexe",
+    "statusKey": "available",
+    "statusLabel": "Disponible",
+    "priceValue": 200.0,
+    "priceLabel": "200,00 €",
+    "tags": [
+      "parfum mixte",
+      "eau de parfum",
+      "parfum"
+    ],
+    "rank": 68,
+    "publishedAt": "2026-08-03T00:31:51Z",
+    "note": "eau de parfum · 100 ml",
+    "bestSeller": false,
+    "discontinued": false,
+    "quantity": 1
   },
   {
     "id": "gid://shopify/Product/7677587128573",
@@ -1391,7 +3311,7 @@
       "parfum solaire",
       "parfum unisexe"
     ],
-    "rank": 34,
+    "rank": 68,
     "publishedAt": "2022-05-04T10:48:43Z"
   },
   {
@@ -1433,7 +3353,7 @@
       "parfum longue tenue",
       "parfum unisexe"
     ],
-    "rank": 35,
+    "rank": 69,
     "publishedAt": "2026-04-14T22:27:35Z"
   },
   {
@@ -1473,7 +3393,7 @@
       "parfum lumineux",
       "parfum unisexe"
     ],
-    "rank": 36,
+    "rank": 71,
     "publishedAt": null
   },
   {
@@ -1516,7 +3436,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 37,
+    "rank": 76,
     "publishedAt": "2026-01-21T23:22:39Z"
   },
   {
@@ -1555,7 +3475,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 38,
+    "rank": 77,
     "publishedAt": "2024-06-06T15:57:08Z"
   },
   {
@@ -1597,7 +3517,7 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 39,
+    "rank": 84,
     "publishedAt": "2022-05-04T18:54:24Z"
   },
   {
@@ -1639,7 +3559,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 40,
+    "rank": 86,
     "publishedAt": "2023-01-03T22:17:17Z"
   },
   {
@@ -1681,7 +3601,7 @@
       "parfum unisexe",
       "parfum vanillé"
     ],
-    "rank": 41,
+    "rank": 87,
     "publishedAt": "2026-04-14T19:23:59Z"
   },
   {
@@ -1715,7 +3635,7 @@
       "sapos parfums",
       "échantillons parfum"
     ],
-    "rank": 42,
+    "rank": 88,
     "publishedAt": "2022-08-20T22:39:11Z"
   },
   {
@@ -1758,7 +3678,7 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 43,
+    "rank": 89,
     "publishedAt": "2025-07-25T15:48:14Z"
   },
   {
@@ -1799,7 +3719,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 44,
+    "rank": 93,
     "publishedAt": "2026-01-21T22:56:22Z"
   },
   {
@@ -1838,7 +3758,7 @@
       "printemps",
       "sapos parfums"
     ],
-    "rank": 45,
+    "rank": 94,
     "publishedAt": "2022-05-04T18:55:02Z"
   },
   {
@@ -1879,7 +3799,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 46,
+    "rank": 96,
     "publishedAt": "2022-07-12T11:02:09Z"
   },
   {
@@ -1920,7 +3840,7 @@
       "parfum unisexe",
       "rio grande"
     ],
-    "rank": 47,
+    "rank": 97,
     "publishedAt": "2026-05-29T18:35:53Z"
   },
   {
@@ -1959,7 +3879,7 @@
       "rubis",
       "sapos parfums"
     ],
-    "rank": 48,
+    "rank": 102,
     "publishedAt": "2022-07-12T10:09:11Z"
   },
   {
@@ -1999,7 +3919,7 @@
       "sahara",
       "sapos parfums"
     ],
-    "rank": 49,
+    "rank": 103,
     "publishedAt": "2022-07-12T10:30:08Z"
   },
   {
@@ -2040,7 +3960,7 @@
       "parfum épicé",
       "samarcande"
     ],
-    "rank": 50,
+    "rank": 104,
     "publishedAt": "2026-05-29T18:35:52Z"
   },
   {
@@ -2079,7 +3999,7 @@
       "parfum vanillé",
       "santal balade"
     ],
-    "rank": 51,
+    "rank": 105,
     "publishedAt": "2026-04-14T19:30:54Z"
   },
   {
@@ -2118,7 +4038,7 @@
       "saphir",
       "sapos parfums"
     ],
-    "rank": 52,
+    "rank": 107,
     "publishedAt": "2022-07-12T10:17:56Z"
   },
   {
@@ -2160,7 +4080,7 @@
       "parfum unisexe",
       "sapos parfums"
     ],
-    "rank": 53,
+    "rank": 108,
     "publishedAt": "2025-07-25T15:48:15Z"
   },
   {
@@ -2203,7 +4123,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 54,
+    "rank": 109,
     "publishedAt": "2022-07-12T11:06:35Z"
   },
   {
@@ -2243,7 +4163,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 55,
+    "rank": 110,
     "publishedAt": "2022-07-12T11:12:04Z"
   },
   {
@@ -2285,7 +4205,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 57,
+    "rank": 114,
     "publishedAt": "2026-01-21T22:56:41Z"
   },
   {
@@ -2330,7 +4250,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 58,
+    "rank": 115,
     "publishedAt": "2026-01-21T23:32:57Z"
   },
   {
@@ -2376,7 +4296,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 59,
+    "rank": 116,
     "publishedAt": "2023-03-07T11:59:21Z"
   },
   {
@@ -2420,7 +4340,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 60,
+    "rank": 117,
     "publishedAt": "2022-07-12T11:10:36Z"
   },
   {
@@ -2463,7 +4383,7 @@
       "parfum unisexe",
       "tabac du caire"
     ],
-    "rank": 61,
+    "rank": 118,
     "publishedAt": "2026-04-14T18:58:57Z"
   },
   {
@@ -2507,7 +4427,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 62,
+    "rank": 119,
     "publishedAt": "2026-01-21T23:49:02Z"
   },
   {
@@ -2543,7 +4463,7 @@
       "sapos parfums",
       "vaniglia di sicilia"
     ],
-    "rank": 63,
+    "rank": 123,
     "publishedAt": "2022-07-12T10:26:00Z"
   },
   {
@@ -2585,7 +4505,7 @@
       "sapos parfums",
       "signature royale"
     ],
-    "rank": 64,
+    "rank": 125,
     "publishedAt": "2023-01-03T22:11:00Z"
   },
   {
@@ -2624,7 +4544,7 @@
       "parfum yuzu",
       "yuzu nara"
     ],
-    "rank": 65,
+    "rank": 129,
     "publishedAt": "2026-05-29T18:35:54Z"
   }
 ]
