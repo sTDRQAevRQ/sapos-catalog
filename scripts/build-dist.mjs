@@ -27,6 +27,7 @@ const indexHtml = readFileSync(path.join(publicDir, "index.html"), "utf8");
 const stylesCss = readFileSync(path.join(publicDir, "styles.css"), "utf8");
 const appJs = readFileSync(path.join(publicDir, "app.js"), "utf8");
 const catalogJson = readFileSync(path.join(publicDir, "data", "catalog.json"), "utf8");
+const brandLogosJson = readFileSync(path.join(publicDir, "data", "brand-logos.json"), "utf8");
 
 writeFileSync(
   path.join(serverDir, "index.js"),
@@ -35,7 +36,8 @@ writeFileSync(
   "/index.html": { type: "text/html; charset=utf-8", body: ${JSON.stringify(indexHtml)} },
   "/styles.css": { type: "text/css; charset=utf-8", body: ${JSON.stringify(stylesCss)} },
   "/app.js": { type: "application/javascript; charset=utf-8", body: ${JSON.stringify(appJs)} },
-  "/data/catalog.json": { type: "application/json; charset=utf-8", body: ${JSON.stringify(catalogJson)} }
+  "/data/catalog.json": { type: "application/json; charset=utf-8", body: ${JSON.stringify(catalogJson)} },
+  "/data/brand-logos.json": { type: "application/json; charset=utf-8", body: ${JSON.stringify(brandLogosJson)} }
 };
 
 function matchAsset(pathname) {
