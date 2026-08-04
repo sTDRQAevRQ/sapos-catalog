@@ -391,7 +391,7 @@ function handleNavAction(action) {
       break;
     case "brands":
       closeAllDrawers();
-      navigateToView("brands");
+      window.location.href = "https://saposparfums.fr/pages/toutes-les-marques";
       break;
     case "families":
       closeAllDrawers();
@@ -988,6 +988,14 @@ function resetAllFilters() {
 
 function syncViewFromHash() {
   const hash = window.location.hash.replace(/^#/, "");
+  if (hash.startsWith("brand=")) {
+    const value = decodeURIComponent(hash.slice("brand=".length));
+    state.filters.brand.clear();
+    state.filters.brand.add(value);
+    state.view = "catalog";
+    syncFilterInputs("brand");
+    return;
+  }
   state.view = ["brands", "families", "available"].includes(hash) ? hash : "catalog";
 }
 
