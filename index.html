@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=25">
+  <link rel="stylesheet" href="./styles.css?v=26">
 </head>
 <body>
   <div class="top-bar">
@@ -28,6 +28,7 @@
           <div class="hero-copy">
             <h1>Le catalogue Sapos Parfums</h1>
             <h2 class="hero-text">Une selection elegante a parcourir selon vos envies.</h2>
+            <button type="button" class="hero-cta" id="hero-catalog-cta">Découvrir le catalogue ↓</button>
           </div>
         </header>
 
@@ -149,10 +150,16 @@
 
         <p class="results-count-line" id="results-count-line"></p>
 
-        <button type="button" class="family-toggle" id="family-toggle">
-          <span>Parcourir par famille</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
+        <div class="shortcut-actions">
+          <button type="button" class="family-toggle" id="family-toggle">
+            <span>Parcourir par famille</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button type="button" class="family-toggle" id="brand-picker-toggle">
+            <span>Parcourir par marque</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
         <div class="family-shortcuts hidden" id="family-shortcuts"></div>
 
         <div class="active-filters" id="active-filters"></div>
@@ -322,6 +329,7 @@
                 <span class="product-status"></span>
               </div>
           <h3 class="product-title"></h3>
+          <p class="product-price-inline"></p>
           <p class="product-note"></p>
           <div class="product-meta"></div>
         </div>
@@ -333,6 +341,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=25" type="module"></script>
+  <script src="./app.js?v=26" type="module"></script>
 </body>
 </html>

@@ -81,9 +81,11 @@ const els = {
   activeFilters: document.querySelector("#active-filters"),
   familyShortcuts: document.querySelector("#family-shortcuts"),
   familyToggle: document.querySelector("#family-toggle"),
+  brandPickerToggle: document.querySelector("#brand-picker-toggle"),
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
   sortMobile: document.querySelector("#sort-mobile"),
+  heroCatalogCta: document.querySelector("#hero-catalog-cta"),
   reset: document.querySelector("#reset-filters"),
   quickAvailable: document.querySelector("#quick-available"),
   quickAvailableMobile: document.querySelector("#quick-available-mobile"),
@@ -278,9 +280,11 @@ function bindUi() {
   });
 
   els.brandMoreBtn?.addEventListener("click", () => {
-    els.brandPickerSearch.value = "";
-    filterChipsInContainer(els.brandPickerList, "");
-    els.brandPickerDialog?.showModal();
+    openBrandPicker();
+  });
+
+  els.brandPickerToggle?.addEventListener("click", () => {
+    openBrandPicker();
   });
 
   els.brandPickerClose?.addEventListener("click", () => els.brandPickerDialog?.close());
@@ -297,6 +301,10 @@ function bindUi() {
   els.familyToggle?.addEventListener("click", () => {
     const isOpen = els.familyShortcuts?.classList.toggle("hidden") === false;
     els.familyToggle.classList.toggle("is-open", isOpen);
+  });
+
+  els.heroCatalogCta?.addEventListener("click", () => {
+    document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   els.quickAvailable?.addEventListener("change", (event) => {
@@ -668,6 +676,7 @@ function renderRows(results) {
     const status = fragment.querySelector(".product-status");
     const brand = fragment.querySelector(".product-brand");
     const title = fragment.querySelector(".product-title");
+    const priceInline = fragment.querySelector(".product-price-inline");
     const volume = fragment.querySelector(".product-volume");
     const price = fragment.querySelector(".product-price");
     const note = fragment.querySelector(".product-note");
@@ -706,6 +715,7 @@ function renderRows(results) {
     status.classList.toggle("hidden", (item.statusKey || "available") === "available");
     brand.textContent = item.brand || "Marque";
     title.textContent = item.title;
+    priceInline.textContent = item.priceLabel || "Prix sur demande";
     volume.textContent = item.volume || "Contenance à préciser";
     price.textContent = item.priceLabel || "Prix sur demande";
     note.textContent = item.note || item.subtitle || "Référence prête à être recommandée.";
@@ -996,7 +1006,7 @@ function syncViewFromHash() {
     syncFilterInputs("brand");
     return;
   }
-  state.view = ["brands", "families", "available"].includes(hash) ? hash : "catalog";
+  state.view = ["families", "available"].includes(hash) ? hash : "catalog";
 }
 
 function navigateToView(view) {
@@ -1015,19 +1025,6 @@ function navigateToView(view) {
 }
 
 function getOverviewConfig(results) {
-  if (state.view === "brands") {
-    return {
-      label: "Marques",
-      title: "Toutes les marques disponibles",
-      text: "Choisissez une marque pour afficher directement ses references dans le catalogue.",
-      items: summarizeCounts(results, (item) => item.brand).map(({ value, count }) => ({
-        title: value,
-        meta: `${count} reference${count > 1 ? "s" : ""}`,
-        action: () => applySingleFilter("brand", value),
-      })),
-    };
-  }
-
   if (state.view === "families") {
     return {
       label: "Familles",
@@ -1084,6 +1081,13 @@ function applySingleFilter(key, value) {
   state.filters[key].add(value);
   syncFilterInputs(key);
   navigateToView("catalog");
+}
+
+function openBrandPicker() {
+  if (!els.brandPickerDialog) return;
+  els.brandPickerSearch.value = "";
+  filterChipsInContainer(els.brandPickerList, "");
+  els.brandPickerDialog.showModal();
 }
 
 function escapeHtml(value) {
