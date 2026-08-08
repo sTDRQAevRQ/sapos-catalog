@@ -313,6 +313,9 @@ def infer_subtitle(product, families, collections):
 
 def infer_status(product):
     status = (product.get("status") or "").upper()
+    total_inventory = int(product.get("totalInventory") or 0)
+    if status == "ACTIVE" and total_inventory <= 0:
+        return "out", "Rupture"
     if status == "ACTIVE":
         return "available", "Disponible"
     if status == "DRAFT":

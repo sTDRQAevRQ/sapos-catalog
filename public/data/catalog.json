@@ -1694,8 +1694,8 @@
       "Clinique"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 65.0,
     "priceLabel": "65,00 €",
     "tags": [
@@ -1709,7 +1709,7 @@
       "parfum clinique femme",
       "parfum femme clinique"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 47,
     "publishedAt": "2026-08-05T22:34:09Z"
@@ -2744,8 +2744,8 @@
       "Grès"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 22.0,
     "priceLabel": "22,00 €",
     "tags": [
@@ -2759,7 +2759,7 @@
       "parfum grès floral",
       "Vert"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 76,
     "publishedAt": "2026-08-05T22:34:09Z"
@@ -3279,8 +3279,8 @@
       "Nina Ricci"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 45.0,
     "priceLabel": "45,00 €",
     "tags": [
@@ -3294,7 +3294,7 @@
       "parfum framboise caramel",
       "testeur parfum femme"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 90,
     "publishedAt": "2026-08-05T22:37:52Z"
@@ -8097,8 +8097,8 @@
       "Women'secret"
     ],
     "gender": "Mixte",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 25.0,
     "priceLabel": "25,00 €",
     "tags": [
@@ -8112,7 +8112,7 @@
       "Occasion spéciale",
       "Soirée"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 220,
     "publishedAt": "2026-08-05T22:39:11Z"
@@ -8964,8 +8964,8 @@
       "Jimmy Choo"
     ],
     "gender": "Mixte",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 90.0,
     "priceLabel": "90,00 €",
     "tags": [
@@ -8979,7 +8979,7 @@
       "Hiver",
       "Soirée"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 243,
     "publishedAt": "2026-08-05T22:40:18Z"
@@ -11502,8 +11502,8 @@
       "Mercedes-Benz"
     ],
     "gender": "Homme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 45.0,
     "priceLabel": "45,00 €",
     "tags": [
@@ -11517,7 +11517,7 @@
       "parfum homme mercedes-benz",
       "Épicé"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 312,
     "publishedAt": "2026-08-05T22:31:50Z"
@@ -12135,8 +12135,8 @@
       "Lolita Lempicka"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 55.0,
     "priceLabel": "55,00 €",
     "tags": [
@@ -12150,7 +12150,7 @@
       "parfum lolita lempicka femme",
       "Vanillé"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 329,
     "publishedAt": "2026-08-05T22:36:41Z"
@@ -12584,8 +12584,8 @@
       "Hugo Boss"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 30.0,
     "priceLabel": "30,00 €",
     "tags": [
@@ -12599,7 +12599,7 @@
       "parfum hugo boss femme",
       "Vert"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 341,
     "publishedAt": "2026-08-05T22:35:23Z"
@@ -15618,8 +15618,8 @@
       "Lolita Lempicka"
     ],
     "gender": "Femme",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 55.0,
     "priceLabel": "55,00 €",
     "tags": [
@@ -15633,7 +15633,7 @@
       "parfum lolita lempicka",
       "parfum musqué femme"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 423,
     "publishedAt": "2026-08-05T22:36:41Z"
@@ -17821,8 +17821,8 @@
       "Women'secret"
     ],
     "gender": "Mixte",
-    "statusKey": "available",
-    "statusLabel": "Disponible",
+    "statusKey": "out",
+    "statusLabel": "Rupture",
     "priceValue": 25.0,
     "priceLabel": "25,00 €",
     "tags": [
@@ -17836,7 +17836,7 @@
       "Occasion spéciale",
       "Soirée"
     ],
-    "discontinued": false,
+    "discontinued": true,
     "quantity": 0,
     "rank": 483,
     "publishedAt": "2026-08-05T22:39:11Z"
