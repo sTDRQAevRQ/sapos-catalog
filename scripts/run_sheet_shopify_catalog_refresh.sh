@@ -36,13 +36,16 @@ export GOOGLE_SHEETS_ID="$SHEET_ID"
 export GOOGLE_SHEETS_TAB="$SHEET_TAB"
 export GOOGLE_SHEETS_CREDENTIALS="$CREDENTIALS_PATH"
 
-echo "[1/3] Sync Google Sheet -> Shopify"
-"$PYTHON_BIN" scripts/sync_shopify_products_from_sheet.py "${SYNC_ARGS[@]}"
+if ((${#SYNC_ARGS[@]})); then
+  echo "This wrapper no longer supports local Sheet -> Shopify sync arguments." >&2
+  echo "The production Apps Script owns the Sheet -> Shopify step." >&2
+  exit 2
+fi
 
-echo "[2/3] Rebuild catalog from Google Sheet"
+echo "[1/2] Rebuild catalog from Shopify"
 "$PYTHON_BIN" scripts/build_catalog_from_sheet.py
 
-echo "[3/3] Build static catalog"
+echo "[2/2] Build static catalog"
 npm run build
 
 echo "Refresh completed"

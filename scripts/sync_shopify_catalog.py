@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import unicodedata
+from html.parser import HTMLParser
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -56,6 +57,19 @@ GENERIC_COLLECTION_PREFIXES = (
 COLLECTION_BRAND_DELIMITERS = (" — ", " – ", " - ")
 
 VOLUME_PATTERN = re.compile(r"\d+[\.,]?\d*\s?(?:ml|cl|l)\b", re.IGNORECASE)
+
+
+class _HtmlTextExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+
+    def handle_data(self, data):
+        if data:
+            self.parts.append(data)
+
+    def get_text(self):
+        return " ".join(part.strip() for part in self.parts if part.strip())
 
 
 def load_env(path: Path):
@@ -306,6 +320,13 @@ def infer_status(product):
     return "out", "Masqué"
 
 
+def extract_note(product):
+    parser = _HtmlTextExtractor()
+    parser.feed(product.get("descriptionHtml") or "")
+    parser.close()
+    return parser.get_text()
+
+
 def fetch_all_products(store: str, token: str):
     items = []
     cursor = None
@@ -322,6 +343,7 @@ def fetch_all_products(store: str, token: str):
           onlineStoreUrl
           publishedAt
           status
+          descriptionHtml
           tags
           totalInventory
           featuredImage { id url altText }
@@ -368,6 +390,7 @@ def normalize_products(products, brand_meta_map=None):
                 "id": product["id"],
                 "title": product["title"],
                 "subtitle": infer_subtitle(product, families, collections),
+                "note": extract_note(product),
                 "brand": brand,
                 "url": product.get("onlineStoreUrl") or f"https://saposparfums.fr/products/{product['handle']}",
                 "image": image_url,
@@ -381,6 +404,8 @@ def normalize_products(products, brand_meta_map=None):
                 "priceValue": price_value,
                 "priceLabel": format_price(price_value, currency),
                 "tags": tags[:12],
+                "discontinued": status_key == "out" and int(product.get("totalInventory") or 0) == 0,
+                "quantity": product.get("totalInventory"),
                 "rank": rank,
                 "publishedAt": product.get("publishedAt"),
             }
