@@ -407,7 +407,7 @@ def normalize_products(products, brand_meta_map=None):
                 "priceValue": price_value,
                 "priceLabel": format_price(price_value, currency),
                 "tags": tags[:12],
-                "discontinued": status_key == "out" and int(product.get("totalInventory") or 0) == 0,
+                "discontinued": False,
                 "quantity": product.get("totalInventory"),
                 "rank": rank,
                 "publishedAt": product.get("publishedAt"),
