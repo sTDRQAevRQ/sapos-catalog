@@ -5,3 +5,11 @@ dist
 npm-debug.log*
 scripts/__pycache__
 scripts/google-credentials.json
+artifacts/
+site-dist*.tar
+site-dist*.tar.gz
+dist.tar.gz
+photo-list-dist.tar.gz
+photo-list-site-dist.tar.gz
+clickable-overview-site-dist.tar.gz
+no-badges-site-dist.tar.gz
