@@ -357,9 +357,10 @@ def normalize_products(products, brand_meta_map=None):
         price_value = round(float(amount), 2) if amount else None
         currency = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("currencyCode") or "EUR"
         brand = infer_brand(product)
-        brand_meta = (brand_meta_map or {}).get(normalize_brand_key(brand), {})
         featured_image = product.get("featuredImage") or {}
-        image_url = featured_image.get("url") or brand_meta.get("fallback_image")
+        # Keep the product image field reserved for real Shopify product media.
+        # Brand logos stay in brand-logos.json and are only used by the frontend fallback.
+        image_url = featured_image.get("url")
         image_alt = featured_image.get("altText") or product["title"]
 
         normalized.append(
