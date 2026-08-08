@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=26">
+  <link rel="stylesheet" href="./styles.css?v=27">
 </head>
 <body>
   <div class="top-bar">
@@ -65,7 +65,7 @@
               </select>
             </label>
             <label class="quick-toggle" for="quick-available-mobile">
-              <input type="checkbox" id="quick-available-mobile" checked>
+              <input type="checkbox" id="quick-available-mobile">
               <span>Disponible uniquement</span>
             </label>
           </div>
@@ -135,7 +135,7 @@
             <input id="search" type="search" placeholder="Nom, marque, famille, note…">
           </label>
           <label class="quick-toggle" for="quick-available">
-            <input type="checkbox" id="quick-available" checked>
+            <input type="checkbox" id="quick-available">
             <span>Disponible uniquement</span>
           </label>
           <div class="view-toggle" role="group" aria-label="Mode d'affichage">
@@ -330,7 +330,6 @@
               </div>
           <h3 class="product-title"></h3>
           <p class="product-price-inline"></p>
-          <p class="product-note"></p>
           <div class="product-meta"></div>
         </div>
         <div class="product-side">
@@ -338,9 +337,15 @@
           <p class="product-price"></p>
         </div>
       </button>
+      <div class="product-note-wrap hidden">
+        <button type="button" class="product-note-toggle" aria-expanded="false">
+          <span>Voir les notes</span>
+        </button>
+        <div class="product-note-detail hidden"></div>
+      </div>
     </article>
   </template>
 
-  <script src="./app.js?v=26" type="module"></script>
+  <script src="./app.js?v=27" type="module"></script>
 </body>
 </html>

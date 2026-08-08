@@ -247,6 +247,10 @@ def extract_brand_from_collection(collection_title: str) -> str:
 
 
 def infer_brand(product):
+    vendor = (product.get("vendor") or "").strip()
+    if vendor:
+        return vendor
+
     tags = [tag.lower() for tag in (product.get("tags") or [])]
     for raw_tag, brand in BRAND_TAG_MAP.items():
         if any(raw_tag in tag for tag in tags):
@@ -257,7 +261,7 @@ def infer_brand(product):
         lower = collection.lower()
         if not lower.startswith(GENERIC_COLLECTION_PREFIXES):
             return extract_brand_from_collection(collection)
-    return product.get("vendor") or "Sapos Parfums"
+    return "Sapos Parfums"
 
 
 def infer_families(tags):
@@ -330,6 +334,10 @@ def extract_note(product):
     return parser.get_text()
 
 
+def extract_note_html(product):
+    return (product.get("descriptionHtml") or "").strip()
+
+
 def fetch_all_products(store: str, token: str):
     items = []
     cursor = None
@@ -394,6 +402,7 @@ def normalize_products(products, brand_meta_map=None):
                 "title": product["title"],
                 "subtitle": infer_subtitle(product, families, collections),
                 "note": extract_note(product),
+                "noteHtml": extract_note_html(product),
                 "brand": brand,
                 "url": product.get("onlineStoreUrl") or f"https://saposparfums.fr/products/{product['handle']}",
                 "image": image_url,

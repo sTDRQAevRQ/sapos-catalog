@@ -503,8 +503,8 @@ select {
 
 .catalog-list.is-text .product-visual,
 .catalog-list.is-text .product-badges,
-.catalog-list.is-text .product-note,
-.catalog-list.is-text .product-meta {
+.catalog-list.is-text .product-meta,
+.catalog-list.is-text .product-note-wrap {
   display: none;
 }
 
@@ -914,8 +914,7 @@ select {
 
 .product-brand,
 .product-volume,
-.product-price,
-.product-note {
+.product-price {
   margin: 0;
 }
 
@@ -931,13 +930,6 @@ select {
   font-size: 1.65rem;
   line-height: 1.02;
   font-weight: 600;
-}
-
-.product-note {
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.55;
-  margin-bottom: 12px;
 }
 
 .product-side {
@@ -970,6 +962,64 @@ select {
   padding: 7px 10px;
   background: var(--accent-soft);
   color: #5c3f22;
+}
+
+.product-note-wrap {
+  margin-top: 10px;
+  padding-left: calc(116px + 20px);
+}
+
+.product-note-toggle {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.product-note-detail {
+  margin-top: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 251, 246, 0.82);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.product-note-detail h1,
+.product-note-detail h2,
+.product-note-detail h3,
+.product-note-detail h4,
+.dialog-note h1,
+.dialog-note h2,
+.dialog-note h3,
+.dialog-note h4 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.product-note-detail p,
+.dialog-note p {
+  margin: 0 0 10px;
+}
+
+.product-note-detail ul,
+.product-note-detail ol,
+.dialog-note ul,
+.dialog-note ol {
+  margin: 0 0 12px 18px;
+  padding: 0;
+}
+
+.product-note-detail li,
+.dialog-note li {
+  margin-bottom: 6px;
 }
 
 .empty-state {
@@ -1461,6 +1511,10 @@ select {
     width: 92px;
   }
 
+  .product-note-wrap {
+    padding-left: calc(92px + 20px);
+  }
+
   .footer-inner {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1509,6 +1563,10 @@ select {
 
   .product-side {
     gap: 8px;
+  }
+
+  .product-note-wrap {
+    padding-left: 0;
   }
 }
 

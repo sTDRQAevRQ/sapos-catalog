@@ -144,7 +144,6 @@ async function init() {
   els.skeletonList?.classList.add("hidden");
 
   availableStatusLabels = getAvailableStatusLabels();
-  availableStatusLabels.forEach((label) => state.filters.status.add(label));
 
   syncViewFromHash();
   renderFilterOptions();
@@ -184,6 +183,19 @@ async function loadBrandLogos() {
 function getBrandLogo(brand) {
   if (!brand) return null;
   return brandLogoMap.get(normalizeBrandKey(brand)) || null;
+}
+
+function hasRichNote(item) {
+  return Boolean((item.noteHtml || "").trim() || (item.note || "").trim());
+}
+
+function setRichContent(element, item) {
+  const html = (item.noteHtml || "").trim();
+  if (html) {
+    element.innerHTML = html;
+    return;
+  }
+  element.textContent = item.note || item.subtitle || "Référence prête à être recommandée.";
 }
 
 async function loadCatalogItems() {
@@ -679,8 +691,10 @@ function renderRows(results) {
     const priceInline = fragment.querySelector(".product-price-inline");
     const volume = fragment.querySelector(".product-volume");
     const price = fragment.querySelector(".product-price");
-    const note = fragment.querySelector(".product-note");
     const meta = fragment.querySelector(".product-meta");
+    const noteWrap = fragment.querySelector(".product-note-wrap");
+    const noteToggle = fragment.querySelector(".product-note-toggle");
+    const noteDetail = fragment.querySelector(".product-note-detail");
 
     monogram.textContent = buildMonogram(item.brand || item.title);
     buildBadgeList(item).forEach(({ text, cls }) => {
@@ -718,19 +732,25 @@ function renderRows(results) {
     priceInline.textContent = item.priceLabel || "Prix sur demande";
     volume.textContent = item.volume || "Contenance à préciser";
     price.textContent = item.priceLabel || "Prix sur demande";
-    note.textContent = item.note || item.subtitle || "Référence prête à être recommandée.";
 
-    [
-      ...(item.families || []).slice(0, 2),
-      item.gender,
-    ]
-      .filter(Boolean)
-      .forEach((value) => {
-        const badge = document.createElement("span");
-        badge.className = "badge";
-        badge.textContent = value;
-        meta.appendChild(badge);
+    (item.families || []).slice(0, 3).forEach((value) => {
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = value;
+      meta.appendChild(badge);
+    });
+
+    if (hasRichNote(item)) {
+      noteWrap.classList.remove("hidden");
+      setRichContent(noteDetail, item);
+      noteToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const expanded = noteToggle.getAttribute("aria-expanded") === "true";
+        noteToggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+        noteToggle.querySelector("span").textContent = expanded ? "Voir les notes" : "Masquer les notes";
+        noteDetail.classList.toggle("hidden", expanded);
       });
+    }
 
     button.addEventListener("click", () => openDialog(item));
     els.list.appendChild(fragment);
@@ -814,7 +834,7 @@ function openDialog(item) {
 
   els.dialogBrand.textContent = item.brand || "Marque";
   els.dialogTitle.textContent = item.title;
-  els.dialogNote.textContent = item.note || item.subtitle || "Référence prête à être conseillée.";
+  setRichContent(els.dialogNote, item);
   els.dialogLink.href = item.url || "#";
   els.dialogLink.classList.toggle("hidden", !item.url);
 
@@ -980,8 +1000,6 @@ function resetAllFilters() {
     syncFilterInputs(key);
   });
   state.filters.bestSeller = false;
-  availableStatusLabels.forEach((label) => state.filters.status.add(label));
-  syncFilterInputs("status");
   if (els.brandSearch) {
     els.brandSearch.value = "";
     filterChipsInContainer(els.filters.brand, "");
