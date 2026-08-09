@@ -427,8 +427,6 @@ def normalize_products(products, brand_meta_map=None):
         families = infer_families(tags)
         collections = normalize_collection_name(product)
         status_key, status_label = infer_status(product)
-        if status_key == "out":
-            continue
         amount = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("amount")
         price_value = round(float(amount), 2) if amount else None
         currency = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("currencyCode") or "EUR"

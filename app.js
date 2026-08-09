@@ -558,7 +558,7 @@ async function loadCatalogItems() {
   if (inlineData?.textContent) {
     const raw = inlineData.textContent.trim();
     if (raw && raw !== "__CATALOG_DATA__") {
-      return JSON.parse(raw).filter((item) => (item.statusKey || "available") !== "out");
+      return JSON.parse(raw);
     }
   }
 
@@ -567,7 +567,7 @@ async function loadCatalogItems() {
     throw new Error(`Catalogue HTTP ${response.status}`);
   }
   const items = await response.json();
-  return items.filter((item) => (item.statusKey || "available") !== "out");
+  return items;
 }
 
 function bindUi() {
