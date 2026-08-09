@@ -32,7 +32,7 @@ let currentView = "list";
 let lastFilterSignature = "";
 
 let availableStatusLabels = new Set();
-const NEW_WINDOW_DAYS = 30;
+const NEW_WINDOW_DAYS = 15;
 
 function normalizeBrandKey(value) {
   return String(value || "")
@@ -108,6 +108,7 @@ const els = {
   dialogMeta: document.querySelector("#dialog-meta"),
   dialogNote: document.querySelector("#dialog-note"),
   dialogTags: document.querySelector("#dialog-tags"),
+  dialogCartLink: document.querySelector("#dialog-cart-link"),
   dialogLink: document.querySelector("#dialog-link"),
   template: document.querySelector("#product-row-template"),
   filtersPanel: document.querySelector("#filters-panel"),
@@ -117,6 +118,7 @@ const els = {
   brandSearch: document.querySelector("#brand-search"),
   familySearch: document.querySelector("#family-search"),
   brandMoreBtn: document.querySelector("#brand-more-btn"),
+  familyMoreBtn: document.querySelector("#family-more-btn"),
   brandPickerDialog: document.querySelector("#brand-picker-dialog"),
   brandPickerClose: document.querySelector("#brand-picker-close"),
   brandPickerSearch: document.querySelector("#brand-picker-search"),
@@ -185,8 +187,361 @@ function getBrandLogo(brand) {
   return brandLogoMap.get(normalizeBrandKey(brand)) || null;
 }
 
+function buildCartUrl(item) {
+  const variantId = String(item.variantId || "").trim();
+  if (!variantId) return null;
+  return `https://saposparfums.fr/cart/${variantId}:1`;
+}
+
 function hasRichNote(item) {
   return Boolean((item.noteHtml || "").trim() || (item.note || "").trim());
+}
+
+function stripHtmlToText(html) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return (doc.body?.textContent || "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function htmlToStructuredLines(html) {
+  return String(html || "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h1|h2|h3|h4|li|ul|ol|table|tr|td)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\u00a0/g, " ")
+    .split(/\n+/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+}
+
+function formatNotesParagraphs(sections) {
+  return sections
+    .filter((section) => section?.value)
+    .map(
+      (section) =>
+        `<p><strong>${escapeHtml(section.label)} :</strong> ${escapeHtml(section.value)}</p>`
+    )
+    .join("");
+}
+
+function normalizeNoteHeading(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .replaceAll("œ", "oe")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function isNoteBoundaryLine(text) {
+  const compact = String(text || "").replace(/\s+/g, " ").trim();
+  if (!compact) return false;
+  if (
+    /^(pour quelle occasion|tenue et sillage|pourquoi choisir|extrait de parfum|disponible en flacon|livraison offerte|commandez)/i.test(
+      compact
+    )
+  ) {
+    return true;
+  }
+
+  // Some Shopify descriptions place a marketing title right after the notes block.
+  if (/^[A-ZÀ-ÖØ-Þ0-9][^.!?]{0,120}[–-][^.!?]{0,120}$/.test(compact) && !/,/.test(compact)) {
+    return true;
+  }
+
+  return false;
+}
+
+function cleanupNoteValue(text) {
+  return String(text || "")
+    .split(
+      /(?=\b(?:Pour quelle occasion\s*\?|Tenue et sillage|Pourquoi choisir|Saison conseillée\s*:|Disponible en flacon|Livraison offerte|Commandez(?:\s+dès\s+maintenant)?|Extrait de parfum)\b)/i
+    )[0]
+    .split(/(?=\s+[A-ZÀ-ÖØ-Þ0-9][^.!?]{0,120}\s+[–-]\s+[A-ZÀ-ÖØ-Þ])/)
+    [0]
+    .replace(/[.,;:\s]+$/, "")
+    .trim();
+}
+
+function cleanupInlineNoteValue(text) {
+  return cleanupNoteValue(text)
+    .split(
+      /\b(?:dans une?|pour une?|avec une?|creant|créant|offrant|renforcant|renforçant|laissant)\s+(?:composition|construction|structure|ouverture|base|signature|fragrance|sensation|impression)\b/i
+    )[0]
+    .replace(/[.,;:\s]+$/, "")
+    .trim();
+}
+
+function detectNoteHeading(text) {
+  const normalized = normalizeNoteHeading(text);
+  if (/^notes?\s+de\s+tete$/.test(normalized)) return "Notes de tête";
+  if (/^notes?\s+de\s+coeur$/.test(normalized)) return "Notes de cœur";
+  if (/^notes?\s+de\s+fond$/.test(normalized)) return "Notes de fond";
+  if (/^notes?\s+principales$/.test(normalized)) return "Notes principales";
+  return null;
+}
+
+function extractStructuredNotesFromLines(lines) {
+  if (!lines.length) return "";
+
+  const sections = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const headingLabel = detectNoteHeading(lines[index]);
+    if (!headingLabel) continue;
+
+    const values = [];
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const line = lines[cursor];
+      if (detectNoteHeading(line)) break;
+      if (isNoteBoundaryLine(line)) {
+        break;
+      }
+      values.push(line.replace(/^notes?\s*:?\s*/i, "").trim());
+    }
+
+    if (values.length) {
+      const value = cleanupNoteValue(values.join(" "));
+      if (!value) continue;
+      sections.push({
+        label: headingLabel,
+        value,
+      });
+    }
+  }
+
+  if (sections.length) {
+    return formatNotesParagraphs(sections);
+  }
+
+  return "";
+}
+
+function extractStructuredNotesFromDom(doc) {
+  const children = Array.from(doc.body?.children || []);
+  if (!children.length) return "";
+
+  const sections = [];
+
+  for (let index = 0; index < children.length; index += 1) {
+    const child = children[index];
+    const headingLabel = detectNoteHeading(child.textContent);
+    if (!headingLabel) continue;
+
+    const values = [];
+    for (let cursor = index + 1; cursor < children.length; cursor += 1) {
+      const sibling = children[cursor];
+      if (detectNoteHeading(sibling.textContent)) break;
+      const text = sibling.textContent.replace(/\s+/g, " ").trim();
+      if (!text) continue;
+      if (isNoteBoundaryLine(text)) break;
+      values.push(text.replace(/^notes?\s*:?\s*/i, "").trim());
+    }
+
+    if (values.length) {
+      const value = cleanupNoteValue(values.join(" "));
+      if (!value) continue;
+      sections.push({
+        label: headingLabel,
+        value,
+      });
+    }
+  }
+
+  if (sections.length) {
+    return formatNotesParagraphs(sections);
+  }
+
+  return "";
+}
+
+function extractStructuredNotesFromText(text) {
+  const compact = String(text || "").replace(/\s+/g, " ").trim();
+  if (!compact) return "";
+
+  const specs = [
+    {
+      label: "Notes de tête",
+      regex:
+        /NOTES?\s+DE\s+T[ÊE]TE\s*:?\s*(.+?)(?=\s+NOTES?\s+DE\s+(?:CŒUR|COEUR)|\s+NOTES?\s+DE\s+FOND|\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+    {
+      label: "Notes de cœur",
+      regex:
+        /NOTES?\s+DE\s+(?:CŒUR|COEUR)\s*:?\s*(.+?)(?=\s+NOTES?\s+DE\s+FOND|\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+    {
+      label: "Notes de fond",
+      regex:
+        /NOTES?\s+DE\s+FOND\s*:?\s*(.+?)(?=\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+  ];
+
+  const sections = specs
+    .map(({ label, regex }) => {
+      const match = compact.match(regex);
+      return {
+        label,
+        value: cleanupNoteValue(match?.[1] || ""),
+      };
+    })
+    .filter((section) => section.value);
+
+  if (sections.length) {
+    return formatNotesParagraphs(sections);
+  }
+
+  return "";
+}
+
+function extractInlinePrimaryNotes(text) {
+  const compact = String(text || "").replace(/\s+/g, " ").trim();
+  if (!compact) return [];
+
+  const patterns = [
+    /\bassocie\s+([^.]*)/i,
+    /\brepose sur\s+([^.]*)/i,
+    /\bs['’]ouvre sur\s+([^.]*)/i,
+    /\bautour de\s+([^.]*)/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = compact.match(pattern);
+    if (!match?.[1]) continue;
+    const normalized = cleanupInlineNoteValue(match[1])
+      .replace(/\set\s/gi, ", ")
+      .replace(/\s+ou\s+/gi, ", ")
+      .replace(/\s*;\s*/g, ", ")
+      .trim()
+      .replace(/[.:,;]+$/, "");
+    const notes = normalized
+      .split(/\s*,\s*/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (notes.length) {
+      return notes;
+    }
+  }
+
+  return [];
+}
+
+function extractNativeNotesHtml(item) {
+  const html = (item.noteHtml || "").trim();
+  if (html) {
+    const structuredFromLines = extractStructuredNotesFromLines(htmlToStructuredLines(html));
+    if (structuredFromLines) {
+      return structuredFromLines;
+    }
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const structuredFromDom = extractStructuredNotesFromDom(doc);
+    if (structuredFromDom) {
+      return structuredFromDom;
+    }
+
+    const htmlText = stripHtmlToText(html);
+    const structuredFromHtmlText = extractStructuredNotesFromText(htmlText);
+    if (structuredFromHtmlText) {
+      return structuredFromHtmlText;
+    }
+
+    const headings = Array.from(doc.querySelectorAll("h1, h2, h3, h4, strong"));
+
+    for (const heading of headings) {
+      const headingText = heading.textContent.trim();
+      if (!/^(pyramide olfactive|notes principales)$/i.test(headingText)) continue;
+
+      const chunks = [];
+      let cursor = heading.parentElement === doc.body ? heading.nextElementSibling : heading.nextElementSibling;
+      while (cursor) {
+        if (/^H[1-4]$/i.test(cursor.tagName)) break;
+        if (cursor.matches("ul, ol")) {
+          const listItems = Array.from(cursor.querySelectorAll("li")).filter(
+            (node) => node.textContent.trim().length > 0
+          );
+          if (listItems.length) {
+            chunks.push(`<ul>${listItems.map((node) => node.outerHTML).join("")}</ul>`);
+          }
+        } else if (cursor.matches("p")) {
+          const text = cursor.textContent.trim();
+          if (text) {
+            chunks.push(cursor.outerHTML);
+          }
+        }
+        cursor = cursor.nextElementSibling;
+      }
+      if (chunks.length) return chunks.join("");
+    }
+
+    const listItems = Array.from(doc.querySelectorAll("li")).filter((node) =>
+      /^(notes?\s+de\s+t[êe]te|notes?\s+de\s+c[œoe]ur|notes?\s+de\s+fond|t[êe]te\s*:|c[œoe]ur\s*:|fond\s*:)/i.test(
+        node.textContent.trim()
+      )
+    );
+    if (listItems.length) {
+      return `<ul>${listItems.map((node) => node.outerHTML).join("")}</ul>`;
+    }
+
+    const noteBlocks = Array.from(doc.querySelectorAll("p")).filter((node) =>
+      /(notes?\s+de\s+t[êe]te|notes?\s+de\s+c[œoe]ur|notes?\s+de\s+fond|t[êe]te\s*:|c[œoe]ur\s*:|fond\s*:|^notes?\s*:)/i.test(
+        node.textContent.trim()
+      )
+    );
+    if (noteBlocks.length) {
+      return noteBlocks.map((node) => node.outerHTML).join("");
+    }
+
+    const inlineNotes = extractInlinePrimaryNotes(htmlText);
+    if (inlineNotes.length) {
+      return `<p><strong>Notes principales :</strong> ${escapeHtml(inlineNotes.join(", "))}</p>`;
+    }
+  }
+
+  const text = (item.note || "").trim();
+  if (!text) return "";
+
+  const structuredFromText = extractStructuredNotesFromText(text);
+  if (structuredFromText) {
+    return structuredFromText;
+  }
+
+  const noteLines = text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter((line) =>
+      /^(notes?\s+de\s+t[êe]te|notes?\s+de\s+c[œoe]ur|notes?\s+de\s+fond|t[êe]te\s*:|c[œoe]ur\s*:|fond\s*:|notes?\s*:)/i.test(
+        line
+      )
+    );
+
+  if (noteLines.length) {
+    return noteLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("");
+  }
+
+  const inlineNotes = extractInlinePrimaryNotes(text);
+  if (inlineNotes.length) {
+    return `<p><strong>Notes principales :</strong> ${escapeHtml(inlineNotes.join(", "))}</p>`;
+  }
+
+  return "";
+}
+
+function extractNotePreviewHtml(item) {
+  return extractNativeNotesHtml(item);
+}
+
+function hasNotePreview(item) {
+  return Boolean(extractNotePreviewHtml(item));
+}
+
+function getCardNoteHtml(item) {
+  const previewHtml = extractNotePreviewHtml(item);
+  if (previewHtml) return previewHtml;
+
+  return "<p>Notes non renseignées pour cette référence.</p>";
 }
 
 function setRichContent(element, item) {
@@ -203,7 +558,7 @@ async function loadCatalogItems() {
   if (inlineData?.textContent) {
     const raw = inlineData.textContent.trim();
     if (raw && raw !== "__CATALOG_DATA__") {
-      return JSON.parse(raw);
+      return JSON.parse(raw).filter((item) => (item.statusKey || "available") !== "out");
     }
   }
 
@@ -211,7 +566,8 @@ async function loadCatalogItems() {
   if (!response.ok) {
     throw new Error(`Catalogue HTTP ${response.status}`);
   }
-  return response.json();
+  const items = await response.json();
+  return items.filter((item) => (item.statusKey || "available") !== "out");
 }
 
 function bindUi() {
@@ -260,6 +616,9 @@ function bindUi() {
       els.dialog.close();
     }
   });
+  els.dialog.addEventListener("close", () => {
+    document.body.classList.remove("dialog-open");
+  });
   window.addEventListener("hashchange", () => {
     syncViewFromHash();
     render();
@@ -293,6 +652,12 @@ function bindUi() {
 
   els.brandMoreBtn?.addEventListener("click", () => {
     openBrandPicker();
+  });
+
+  els.familyMoreBtn?.addEventListener("click", () => {
+    familyExpanded = !familyExpanded;
+    renderFamilyFilterOptions();
+    syncFilterInputs("family");
   });
 
   els.brandPickerToggle?.addEventListener("click", () => {
@@ -469,20 +834,36 @@ function filterChipsInContainer(container, query) {
   });
 }
 
+const FAMILY_PREVIEW_COUNT = 8;
+let familyExpanded = false;
+
 function renderFilterOptions() {
   renderBrandFilterOptions();
+  renderFamilyFilterOptions();
+  renderGenderFilterOptions();
+}
 
-  const options = {
-    family: uniqueValues("families"),
-    gender: uniqueValues("gender"),
-    status: uniqueValues("statusLabel"),
-  };
+function renderGenderFilterOptions() {
+  const values = uniqueValues("gender");
+  els.filters.gender.innerHTML = "";
+  values.forEach((value) => {
+    els.filters.gender.appendChild(createFilterChip("gender", value));
+  });
+}
 
-  for (const [key, values] of Object.entries(options)) {
-    els.filters[key].innerHTML = "";
-    values.forEach((value) => {
-      els.filters[key].appendChild(createFilterChip(key, value));
-    });
+function renderFamilyFilterOptions() {
+  const counts = summarizeCounts(state.items, (item) => item.families || []);
+  els.filters.family.innerHTML = "";
+  const visible = familyExpanded ? counts : counts.slice(0, FAMILY_PREVIEW_COUNT);
+  visible.forEach(({ value, count }) => {
+    els.filters.family.appendChild(createFilterChip("family", value, count));
+  });
+  if (els.familyMoreBtn) {
+    const hasMore = counts.length > FAMILY_PREVIEW_COUNT;
+    els.familyMoreBtn.classList.toggle("hidden", !hasMore);
+    els.familyMoreBtn.textContent = familyExpanded
+      ? "Voir moins de familles"
+      : `+ voir toutes les familles (${counts.length})`;
   }
 }
 
@@ -740,17 +1121,15 @@ function renderRows(results) {
       meta.appendChild(badge);
     });
 
-    if (hasRichNote(item)) {
-      noteWrap.classList.remove("hidden");
-      setRichContent(noteDetail, item);
-      noteToggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const expanded = noteToggle.getAttribute("aria-expanded") === "true";
-        noteToggle.setAttribute("aria-expanded", expanded ? "false" : "true");
-        noteToggle.querySelector("span").textContent = expanded ? "Voir les notes" : "Masquer les notes";
-        noteDetail.classList.toggle("hidden", expanded);
-      });
-    }
+    noteWrap.classList.remove("hidden");
+    noteDetail.innerHTML = getCardNoteHtml(item);
+    noteToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const expanded = noteToggle.getAttribute("aria-expanded") === "true";
+      noteToggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+      noteToggle.querySelector("span").textContent = expanded ? "Voir les notes" : "Masquer les notes";
+      noteDetail.classList.toggle("hidden", expanded);
+    });
 
     button.addEventListener("click", () => openDialog(item));
     els.list.appendChild(fragment);
@@ -835,8 +1214,21 @@ function openDialog(item) {
   els.dialogBrand.textContent = item.brand || "Marque";
   els.dialogTitle.textContent = item.title;
   setRichContent(els.dialogNote, item);
-  els.dialogLink.href = item.url || "#";
+
+  const shopUrl = item.url || "#";
+  const cartUrl = buildCartUrl(item);
+  const canAddToCart = Boolean(
+    cartUrl && (item.statusKey || "available") === "available"
+  );
+
+  els.dialogLink.href = shopUrl;
+  els.dialogLink.textContent = "Commander sur la boutique";
   els.dialogLink.classList.toggle("hidden", !item.url);
+
+  if (els.dialogCartLink) {
+    els.dialogCartLink.href = canAddToCart ? cartUrl : "#";
+    els.dialogCartLink.classList.toggle("hidden", !canAddToCart);
+  }
 
   els.dialogMeta.innerHTML = "";
   [
@@ -854,18 +1246,10 @@ function openDialog(item) {
       els.dialogMeta.appendChild(badge);
     });
 
-  els.dialogTags.innerHTML = "";
-  [...(item.tags || []), ...(item.collections || [])]
-    .filter(Boolean)
-    .slice(0, 8)
-    .forEach((value) => {
-      const badge = document.createElement("span");
-      badge.className = "chip";
-      badge.textContent = value;
-      els.dialogTags.appendChild(badge);
-    });
-
+  document.body.classList.add("dialog-open");
   els.dialog.showModal();
+  const dialogCard = els.dialog.querySelector(".dialog-card");
+  if (dialogCard) dialogCard.scrollTop = 0;
 }
 
 function filterItems() {
@@ -952,12 +1336,13 @@ function sortItems(items) {
   return sorted;
 }
 
-function createFilterChip(key, value) {
+function createFilterChip(key, value, count) {
   const label = document.createElement("label");
   label.className = "filter-choice";
+  const countHtml = typeof count === "number" ? ` <small class="filter-count">${count}</small>` : "";
   label.innerHTML = `
     <input type="checkbox" data-filter-key="${key}" value="${escapeHtml(value)}">
-    <span>${escapeHtml(value)}</span>
+    <span>${escapeHtml(value)}${countHtml}</span>
   `;
 
   const input = label.querySelector("input");

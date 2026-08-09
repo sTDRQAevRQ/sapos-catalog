@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="./styles.css?v=27">
+  <link rel="stylesheet" href="./styles.css?v=36">
 </head>
 <body>
   <div class="top-bar">
@@ -70,14 +70,12 @@
             </label>
           </div>
 
-          <div class="filter-block">
+          <div class="filter-block filter-block-genre">
             <div class="filter-head">
-              <h2>Marques</h2>
-              <button type="button" class="filter-clear" data-clear="brand">Effacer</button>
+              <h2>Genre</h2>
+              <button type="button" class="filter-clear" data-clear="gender">Effacer</button>
             </div>
-            <input id="brand-search" class="filter-search" type="search" placeholder="Rechercher une marque…">
-            <div class="filter-list filter-list-grouped" id="brand-filters"></div>
-            <button type="button" class="filter-more-btn hidden" id="brand-more-btn"></button>
+            <div class="filter-list filter-list-plain" id="gender-filters"></div>
           </div>
 
           <div class="filter-block">
@@ -86,23 +84,18 @@
               <button type="button" class="filter-clear" data-clear="family">Effacer</button>
             </div>
             <input id="family-search" class="filter-search" type="search" placeholder="Rechercher une famille…">
-            <div class="filter-list" id="family-filters"></div>
+            <div class="filter-list filter-list-counted" id="family-filters"></div>
+            <button type="button" class="filter-more-btn" id="family-more-btn">+ voir toutes les familles</button>
           </div>
 
           <div class="filter-block">
             <div class="filter-head">
-              <h2>Genre</h2>
-              <button type="button" class="filter-clear" data-clear="gender">Effacer</button>
+              <h2>Marque</h2>
+              <button type="button" class="filter-clear" data-clear="brand">Effacer</button>
             </div>
-            <div class="filter-list" id="gender-filters"></div>
-          </div>
-
-          <div class="filter-block">
-            <div class="filter-head">
-              <h2>Statut</h2>
-              <button type="button" class="filter-clear" data-clear="status">Effacer</button>
-            </div>
-            <div class="filter-list" id="status-filters"></div>
+            <input id="brand-search" class="filter-search" type="search" placeholder="Rechercher une marque…">
+            <div class="filter-list filter-list-grouped" id="brand-filters"></div>
+            <a class="filter-more-link" href="https://saposparfums.fr/pages/toutes-les-marques" target="_blank" rel="noreferrer">Voir toutes les marques ↗</a>
           </div>
         </div>
       </aside>
@@ -295,6 +288,10 @@
       <button type="button" class="dialog-close" id="dialog-close" aria-label="Fermer">×</button>
       <div class="dialog-visual">
         <div class="dialog-badges" id="dialog-badges"></div>
+        <div class="dialog-quick-actions" id="dialog-quick-actions">
+          <a id="dialog-cart-link" class="secondary-link hidden" href="#" target="_blank" rel="noreferrer">Ajouter au panier</a>
+          <a id="dialog-link" class="primary-link hidden" href="#" target="_blank" rel="noreferrer">Commander sur la boutique</a>
+        </div>
         <img class="dialog-image hidden" id="dialog-image" alt="">
         <img class="dialog-logo hidden" id="dialog-logo" alt="">
         <span class="dialog-monogram" id="dialog-monogram"></span>
@@ -304,10 +301,6 @@
         <h3 id="dialog-title"></h3>
         <div class="dialog-meta" id="dialog-meta"></div>
         <p class="dialog-note" id="dialog-note"></p>
-        <div class="dialog-tags" id="dialog-tags"></div>
-        <div class="dialog-actions">
-          <a id="dialog-link" class="primary-link" href="#" target="_blank" rel="noreferrer">Voir le lien</a>
-        </div>
       </div>
     </article>
   </dialog>
@@ -346,6 +339,6 @@
     </article>
   </template>
 
-  <script src="./app.js?v=27" type="module"></script>
+  <script src="./app.js?v=36" type="module"></script>
 </body>
 </html>

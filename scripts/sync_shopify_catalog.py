@@ -17,18 +17,36 @@ BRAND_LOGOS_OUT_PATH = ROOT / "public" / "data" / "brand-logos.json"
 BRAND_LOGOS_LEGACY_OUT_PATH = ROOT / "data" / "brand-logos.json"
 API_VER = "2025-04"
 
-TAG_FAMILY_MAP = {
-    "agrumes": "Frais",
-    "parfum frais": "Frais",
-    "parfum fruité": "Fruité",
-    "parfum floral": "Floral",
-    "parfum gourmand": "Gourmand",
-    "parfum boisé": "Boisé",
-    "parfum oriental": "Oriental",
-    "parfum épicé": "Épicé",
-    "parfum ambré": "Ambré",
-    "oud": "Oud",
-}
+ALLOWED_FAMILY_VALUES = [
+    "Aldéhydé",
+    "Aquatique",
+    "Ambré",
+    "Animal",
+    "Aromatique",
+    "Balsamique",
+    "Boisé",
+    "Chypré",
+    "Cuiré",
+    "Épicé",
+    "Floral",
+    "Fougère",
+    "Fruité",
+    "Gourmand",
+    "Hespéridé",
+    "Lacté",
+    "Minéral",
+    "Musqué",
+    "Oriental",
+    "Oud",
+    "Poudré",
+    "Résineux",
+    "Tabac",
+    "Vanillé",
+    "Vert",
+    "Fumé",
+]
+
+ALLOWED_FAMILY_LOOKUP = {value.casefold(): value for value in ALLOWED_FAMILY_VALUES}
 
 TAG_GENDER_MAP = {
     "parfum femme": "Femme",
@@ -266,9 +284,9 @@ def infer_brand(product):
 
 def infer_families(tags):
     found = []
-    lower_tags = [tag.lower() for tag in tags]
-    for raw_tag, family in TAG_FAMILY_MAP.items():
-        if raw_tag in lower_tags and family not in found:
+    for tag in tags:
+        family = ALLOWED_FAMILY_LOOKUP.get((tag or "").strip().casefold())
+        if family and family not in found:
             found.append(family)
     return found[:3]
 
@@ -302,6 +320,18 @@ def infer_volume(product):
         return match.group(0).strip()
 
     return ""
+
+
+def infer_variant_id(product):
+    """Extrait l'identifiant numerique de la premiere variante, utilise pour
+    construire un lien panier Shopify direct (cart permalink)."""
+    variants = product.get("variants", {}).get("nodes", [])
+    if not variants:
+        return None
+    gid = variants[0].get("id") or ""
+    if "/" in gid:
+        return gid.rsplit("/", 1)[-1]
+    return gid or None
 
 
 def infer_subtitle(product, families, collections):
@@ -362,6 +392,7 @@ def fetch_all_products(store: str, token: str):
           collections(first: 8) { nodes { title handle } }
           variants(first: 5) {
             nodes {
+              id
               title
               selectedOptions { name value }
             }
@@ -379,13 +410,25 @@ def fetch_all_products(store: str, token: str):
         cursor = payload["pageInfo"]["endCursor"]
 
 
+# Fiches Shopify a exclure definitivement du catalogue, quel que soit leur
+# statut (brouillon incomplet, non destine a apparaitre comme "Bientot").
+EXCLUDED_HANDLES = {
+    "mediterranean-amber-noble-essence",
+    "bourbons-de-sicile-noble-essence",
+}
+
+
 def normalize_products(products, brand_meta_map=None):
     normalized = []
     for rank, product in enumerate(products, start=1):
+        if product.get("handle") in EXCLUDED_HANDLES:
+            continue
         tags = product.get("tags") or []
         families = infer_families(tags)
         collections = normalize_collection_name(product)
         status_key, status_label = infer_status(product)
+        if status_key == "out":
+            continue
         amount = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("amount")
         price_value = round(float(amount), 2) if amount else None
         currency = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("currencyCode") or "EUR"
@@ -408,6 +451,7 @@ def normalize_products(products, brand_meta_map=None):
                 "image": image_url,
                 "imageAlt": image_alt,
                 "volume": infer_volume(product),
+                "variantId": infer_variant_id(product),
                 "families": families,
                 "collections": collections,
                 "gender": infer_gender(tags),
