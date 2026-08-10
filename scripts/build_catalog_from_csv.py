@@ -7,7 +7,7 @@ from sync_shopify_catalog import (
     fetch_all_products,
     fetch_brand_metaobjects,
     build_brand_meta_map,
-    load_env,
+    load_shopify_config,
     normalize_products,
     refresh_access_token,
     write_brand_logo_files,
@@ -142,10 +142,7 @@ def read_csv_items():
 
 
 def load_shopify_items():
-    if not ENV_PATH.exists():
-        return []
-
-    env = load_env(ENV_PATH)
+    env = load_shopify_config(ENV_PATH)
     store = env.get("SHOPIFY_STORE")
     token = env.get("SHOPIFY_ACCESS_TOKEN")
     client_id = env.get("SHOPIFY_CLIENT_ID")

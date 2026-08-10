@@ -92,10 +92,25 @@ class _HtmlTextExtractor(HTMLParser):
 
 def load_env(path: Path):
     env = {}
-    for line in path.read_text().splitlines():
-        if "=" in line and not line.strip().startswith("#"):
-            key, value = line.split("=", 1)
-            env[key.strip()] = value.strip()
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if "=" in line and not line.strip().startswith("#"):
+                key, value = line.split("=", 1)
+                env[key.strip()] = value.strip()
+    return env
+
+
+def load_shopify_config(path: Path):
+    env = load_env(path)
+    keys = (
+        "SHOPIFY_STORE",
+        "SHOPIFY_ACCESS_TOKEN",
+        "SHOPIFY_CLIENT_ID",
+        "SHOPIFY_CLIENT_SECRET",
+    )
+    for key in keys:
+        if os.environ.get(key):
+            env[key] = os.environ[key].strip()
     return env
 
 
