@@ -7,7 +7,7 @@ from sync_shopify_catalog import (
     fetch_all_products,
     fetch_brand_metaobjects,
     build_brand_meta_map,
-    load_shopify_config,
+    load_env,
     normalize_products,
     refresh_access_token,
     write_brand_logo_files,
@@ -142,7 +142,10 @@ def read_csv_items():
 
 
 def load_shopify_items():
-    env = load_shopify_config(ENV_PATH)
+    if not ENV_PATH.exists():
+        return []
+
+    env = load_env(ENV_PATH)
     store = env.get("SHOPIFY_STORE")
     token = env.get("SHOPIFY_ACCESS_TOKEN")
     client_id = env.get("SHOPIFY_CLIENT_ID")
@@ -193,6 +196,19 @@ def merge_item(base_item, override_item):
     return merged
 
 
+def finalize_segment(item):
+    brand = slugify(item.get("brand") or "")
+    title = slugify(item.get("title") or "")
+    if brand == "estée lauder" or brand == "estee lauder":
+        if "pleasures" in title:
+            item["segment"] = "Mainstream"
+            return item
+
+    if (item.get("segment") or "").strip() not in {"Mainstream", "Niche"}:
+        item["segment"] = "Niche"
+    return item
+
+
 def merge_catalog(shopify_items, csv_items):
     merged = []
     matched_csv_ids = set()
@@ -217,6 +233,7 @@ def merge_catalog(shopify_items, csv_items):
         if item["id"] not in matched_csv_ids:
             merged.append(item)
 
+    merged = [finalize_segment(item) for item in merged]
     merged.sort(key=lambda item: (item.get("rank") or 9999, (item.get("title") or "").lower()))
     return merged
 

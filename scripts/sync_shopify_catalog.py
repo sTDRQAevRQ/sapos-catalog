@@ -48,6 +48,38 @@ ALLOWED_FAMILY_VALUES = [
 
 ALLOWED_FAMILY_LOOKUP = {value.casefold(): value for value in ALLOWED_FAMILY_VALUES}
 
+SIGNATURE_ROYALE_FAMILY_OVERRIDES = {
+    "african legend": ["Boisé", "Épicé"],
+    "after hours": ["Boisé", "Épicé"],
+    "al andaluz": ["Fruité"],
+    "albi": ["Floral", "Fruité"],
+    "caramel sugar": ["Gourmand"],
+    "creamy love": ["Gourmand"],
+    "dragee blanc": ["Gourmand"],
+    "eclats d'amande": ["Poudré"],
+    "electric nectar": ["Fruité"],
+    "emeraude": ["Fruité"],
+    "ghost oud": ["Oriental", "Oud"],
+    "golden smoothie": ["Fruité"],
+    "grey london": ["Chypré", "Aromatique"],
+    "iris imperial": ["Poudré"],
+    "jardin dorient": ["Floral", "Poudré"],
+    "layana rose": ["Floral", "Gourmand"],
+    "mylan": ["Hespéridé"],
+    "mythologia": ["Boisé", "Aromatique"],
+    "oud envoutant": ["Oud", "Gourmand", "Oriental"],
+    "poudre blanche": ["Gourmand"],
+    "renaissance": ["Aromatique", "Boisé"],
+    "skin on fire": ["Gourmand", "Oriental"],
+    "souffle de safran": ["Épicé", "Gourmand"],
+    "sugar milk": ["Gourmand", "Lacté"],
+    "sunset pop": ["Gourmand"],
+    "sunset vibes": ["Hespéridé", "Fruité"],
+    "sweet cherry": ["Fruité", "Gourmand"],
+    "tropical crush": ["Fruité"],
+    "vertigo": ["Fruité", "Gourmand"],
+}
+
 TAG_GENDER_MAP = {
     "parfum femme": "Femme",
     "parfum homme": "Homme",
@@ -76,6 +108,29 @@ COLLECTION_BRAND_DELIMITERS = (" — ", " – ", " - ")
 
 VOLUME_PATTERN = re.compile(r"\d+[\.,]?\d*\s?(?:ml|cl|l)\b", re.IGNORECASE)
 
+BEST_SELLER_HANDLES = {
+    "pr-xs-vintage-100-edt",
+    "parfum-fruite-tropical-solaire-caraiba-homme-femme",
+    "sapos-parfum-palais-dete-frais-bergamote-neroli-the-vert-musc",
+    "sunset-pop-parfum-gourmand",
+    "creamy-love-parfum-gourmand",
+    "oud-envoutant-parfum-oud-oriental-femme-homme",
+    "roc-tocade-100-edt",
+    "l-encre-noire-100-edt",
+    "dg-light-blue-100-edt",
+    "gbh-giorgio-beverly-hills-090-edt",
+    "cli-happy-100-edp",
+    "kit-echantillons-parfum-signature-royale-decouverte-best-sellers",
+    "coffret-echantillons-decouverte-parfum-niche-homme-femme",
+    "im-eau-issey-100-edt",
+    "pr-ultra-violet-100-edt",
+    "pr-ultraviolet-080-edp",
+    "bou-jaipur-bracelet-100-edp",
+    "jc-patchouli-100-edp",
+    "l-booster-125-edt",
+    "bur-brit-her-100-edp",
+}
+
 
 class _HtmlTextExtractor(HTMLParser):
     def __init__(self):
@@ -92,25 +147,10 @@ class _HtmlTextExtractor(HTMLParser):
 
 def load_env(path: Path):
     env = {}
-    if path.exists():
-        for line in path.read_text().splitlines():
-            if "=" in line and not line.strip().startswith("#"):
-                key, value = line.split("=", 1)
-                env[key.strip()] = value.strip()
-    return env
-
-
-def load_shopify_config(path: Path):
-    env = load_env(path)
-    keys = (
-        "SHOPIFY_STORE",
-        "SHOPIFY_ACCESS_TOKEN",
-        "SHOPIFY_CLIENT_ID",
-        "SHOPIFY_CLIENT_SECRET",
-    )
-    for key in keys:
-        if os.environ.get(key):
-            env[key] = os.environ[key].strip()
+    for line in path.read_text().splitlines():
+        if "=" in line and not line.strip().startswith("#"):
+            key, value = line.split("=", 1)
+            env[key.strip()] = value.strip()
     return env
 
 
@@ -123,6 +163,16 @@ def normalize_brand_key(value: str) -> str:
         .lower()
         .split()
     )
+
+
+def normalize_family_text(value: str) -> str:
+    return " ".join((value or "").strip().casefold().split())
+
+
+def normalize_title_key(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value or "")
+    ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
+    return " ".join(ascii_value.lower().strip().replace("’", "'").split())
 
 
 def slugify_brand(value: str) -> str:
@@ -300,10 +350,27 @@ def infer_brand(product):
 def infer_families(tags):
     found = []
     for tag in tags:
-        family = ALLOWED_FAMILY_LOOKUP.get((tag or "").strip().casefold())
-        if family and family not in found:
-            found.append(family)
+        normalized_tag = normalize_family_text(tag)
+        candidates = [normalized_tag]
+        if normalized_tag.startswith("parfum "):
+            candidates.append(normalized_tag.removeprefix("parfum ").strip())
+
+        for candidate in candidates:
+            family = ALLOWED_FAMILY_LOOKUP.get(candidate)
+            if family and family not in found:
+                found.append(family)
     return found[:3]
+
+
+def apply_family_overrides(brand, product, families):
+    title_key = normalize_title_key(product.get("title") or "")
+
+    if brand == "Signature Royale":
+        for prefix, override in SIGNATURE_ROYALE_FAMILY_OVERRIDES.items():
+            if title_key.startswith(prefix):
+                return override[:3]
+
+    return families[:3]
 
 
 def infer_gender(tags):
@@ -349,6 +416,34 @@ def infer_variant_id(product):
     return gid or None
 
 
+def infer_segment(tags):
+    """Lit le tag Mainstream/Niche pousse depuis le Sheet, sans deviner
+    si la valeur est absente ou inattendue."""
+    lower_tags = [(tag or "").strip().casefold() for tag in tags]
+    if "niche" in lower_tags:
+        return "Niche"
+    if "mainstream" in lower_tags:
+        return "Mainstream"
+    return ""
+
+
+def resolve_segment(product, brand, tags):
+    segment = infer_segment(tags)
+    if segment:
+        return segment
+
+    normalized_brand = normalize_brand_key(brand)
+    normalized_title = normalize_title_key(product.get("title") or "")
+    if normalized_brand == "estee lauder" and "pleasures" in normalized_title:
+        return "Mainstream"
+    return "Niche"
+
+
+def infer_best_seller(product):
+    """Conserve la selection best-sellers validee en se basant sur les handles Shopify."""
+    return (product.get("handle") or "").strip() in BEST_SELLER_HANDLES
+
+
 def infer_subtitle(product, families, collections):
     parts = []
     if families:
@@ -383,6 +478,116 @@ def extract_note_html(product):
     return (product.get("descriptionHtml") or "").strip()
 
 
+def compact_metafield_text(value: str | None):
+    return " ".join((value or "").replace("\xa0", " ").split()).strip()
+
+
+def html_to_structured_lines(html: str):
+    return (
+        (html or "")
+        .replace("<br>", "\n")
+        .replace("<br/>", "\n")
+        .replace("<br />", "\n")
+        .replace("</p>", "\n")
+        .replace("</div>", "\n")
+        .replace("</li>", "\n")
+    )
+
+
+def strip_tags(value: str):
+    return re.sub(r"<[^>]+>", " ", value or "")
+
+
+def extract_note_section_from_line(line: str):
+    compact = " ".join((line or "").replace("\xa0", " ").split()).strip()
+    if not compact:
+        return None
+
+    specs = [
+        ("Notes de tête", r"^notes?\s+de\s+t[êe]te\s*:?\s*(.+)$"),
+        ("Notes de cœur", r"^notes?\s+de\s+c[œoe]ur\s*:?\s*(.+)$"),
+        ("Notes de fond", r"^notes?\s+de\s+fond\s*:?\s*(.+)$"),
+        ("Notes principales", r"^notes?\s+principales?\s*:?\s*(.+)$"),
+        ("Notes de tête", r"^t[êe]te\s*:?\s*(.+)$"),
+        ("Notes de cœur", r"^c[œoe]ur\s*:?\s*(.+)$"),
+        ("Notes de fond", r"^fond\s*:?\s*(.+)$"),
+        ("Notes principales", r"^notes?\s*:?\s*(.+)$"),
+    ]
+    for label, pattern in specs:
+        match = re.match(pattern, compact, re.IGNORECASE)
+        if match:
+            value = " ".join(match.group(1).split()).strip(" ,;:-")
+            if value:
+                return {"label": label, "value": value}
+    return None
+
+
+def build_note_sections_from_description_html(description_html: str):
+    sections = []
+    seen = set()
+    for raw_line in html_to_structured_lines(description_html).splitlines():
+        candidate = extract_note_section_from_line(strip_tags(raw_line))
+        if not candidate:
+            continue
+        key = (candidate["label"].lower(), candidate["value"].lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        sections.append(candidate)
+    return sections
+
+
+def build_native_note_sections(product):
+    sapos_head = compact_metafield_text(
+        ((product.get("metafields") or {}).get("sapos_notes_tete") or {}).get("value")
+    )
+    sapos_heart = compact_metafield_text(
+        ((product.get("metafields") or {}).get("sapos_notes_coeur") or {}).get("value")
+    )
+    sapos_base = compact_metafield_text(
+        ((product.get("metafields") or {}).get("sapos_notes_fond") or {}).get("value")
+    )
+    custom_head = compact_metafield_text(
+        ((product.get("metafields") or {}).get("custom_head_notes") or {}).get("value")
+    )
+    custom_heart = compact_metafield_text(
+        ((product.get("metafields") or {}).get("custom_heart_notes") or {}).get("value")
+    )
+    custom_base = compact_metafield_text(
+        ((product.get("metafields") or {}).get("custom_base_notes") or {}).get("value")
+    )
+
+    note_values = [
+        sapos_head or custom_head,
+        sapos_heart or custom_heart,
+        sapos_base or custom_base,
+    ]
+    populated_values = [value for value in note_values if value]
+    if len(populated_values) == 1:
+        return [{"label": "Notes principales", "value": populated_values[0]}]
+
+    sections = []
+    if sapos_head or custom_head:
+        sections.append({"label": "Notes de tête", "value": sapos_head or custom_head})
+    if sapos_heart or custom_heart:
+        sections.append({"label": "Notes de cœur", "value": sapos_heart or custom_heart})
+    if sapos_base or custom_base:
+        sections.append({"label": "Notes de fond", "value": sapos_base or custom_base})
+    return sections
+
+
+def build_note_preview_html(product):
+    sections = build_native_note_sections(product)
+    if not sections:
+        sections = build_note_sections_from_description_html(product.get("descriptionHtml") or "")
+    if not sections:
+        return ""
+
+    return "".join(
+        f"<p><strong>{section['label']} :</strong> {section['value']}</p>" for section in sections
+    )
+
+
 def fetch_all_products(store: str, token: str):
     items = []
     cursor = None
@@ -402,6 +607,12 @@ def fetch_all_products(store: str, token: str):
           descriptionHtml
           tags
           totalInventory
+          saposNotesTete: metafield(namespace: "sapos", key: "notes_tete") { value }
+          saposNotesCoeur: metafield(namespace: "sapos", key: "notes_coeur") { value }
+          saposNotesFond: metafield(namespace: "sapos", key: "notes_fond") { value }
+          customHeadNotes: metafield(namespace: "custom", key: "head_notes") { value }
+          customHeartNotes: metafield(namespace: "custom", key: "heart_notes") { value }
+          customBaseNotes: metafield(namespace: "custom", key: "base_notes") { value }
           featuredImage { id url altText }
           priceRangeV2 { minVariantPrice { amount currencyCode } }
           collections(first: 8) { nodes { title handle } }
@@ -435,22 +646,36 @@ EXCLUDED_HANDLES = {
 
 def normalize_products(products, brand_meta_map=None):
     normalized = []
+    seen_best_seller_handles = set()
     for rank, product in enumerate(products, start=1):
         if product.get("handle") in EXCLUDED_HANDLES:
             continue
         tags = product.get("tags") or []
-        families = infer_families(tags)
+        brand = infer_brand(product)
+        families = apply_family_overrides(brand, product, infer_families(tags))
         collections = normalize_collection_name(product)
         status_key, status_label = infer_status(product)
+        if status_key != "available":
+            continue
         amount = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("amount")
         price_value = round(float(amount), 2) if amount else None
         currency = product.get("priceRangeV2", {}).get("minVariantPrice", {}).get("currencyCode") or "EUR"
-        brand = infer_brand(product)
         featured_image = product.get("featuredImage") or {}
         # Keep the product image field reserved for real Shopify product media.
         # Brand logos stay in brand-logos.json and are only used by the frontend fallback.
         image_url = featured_image.get("url")
         image_alt = featured_image.get("altText") or product["title"]
+        best_seller = infer_best_seller(product)
+        if best_seller:
+            seen_best_seller_handles.add(product.get("handle"))
+        metafields = {
+            "sapos_notes_tete": product.get("saposNotesTete"),
+            "sapos_notes_coeur": product.get("saposNotesCoeur"),
+            "sapos_notes_fond": product.get("saposNotesFond"),
+            "custom_head_notes": product.get("customHeadNotes"),
+            "custom_heart_notes": product.get("customHeartNotes"),
+            "custom_base_notes": product.get("customBaseNotes"),
+        }
 
         normalized.append(
             {
@@ -459,6 +684,12 @@ def normalize_products(products, brand_meta_map=None):
                 "subtitle": infer_subtitle(product, families, collections),
                 "note": extract_note(product),
                 "noteHtml": extract_note_html(product),
+                "notePreviewHtml": build_note_preview_html(
+                    {
+                        "metafields": metafields,
+                        "descriptionHtml": product.get("descriptionHtml") or "",
+                    }
+                ),
                 "brand": brand,
                 "url": product.get("onlineStoreUrl") or f"https://saposparfums.fr/products/{product['handle']}",
                 "image": image_url,
@@ -468,6 +699,8 @@ def normalize_products(products, brand_meta_map=None):
                 "families": families,
                 "collections": collections,
                 "gender": infer_gender(tags),
+                "segment": resolve_segment(product, brand, tags),
+                "bestSeller": best_seller,
                 "statusKey": status_key,
                 "statusLabel": status_label,
                 "priceValue": price_value,
@@ -478,6 +711,11 @@ def normalize_products(products, brand_meta_map=None):
                 "rank": rank,
                 "publishedAt": product.get("publishedAt"),
             }
+        )
+
+    if not seen_best_seller_handles:
+        raise RuntimeError(
+            "Aucun bestSeller projete dans le catalogue. Sync interrompue pour eviter une regression."
         )
 
     return normalized
