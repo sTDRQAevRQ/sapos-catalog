@@ -99,7 +99,9 @@ const els = {
   search: document.querySelector("#search"),
   sort: document.querySelector("#sort"),
   sortMobile: document.querySelector("#sort-mobile"),
-  heroCatalogCta: document.querySelector("#hero-catalog-cta"),
+  heroSegmentAllBtn: document.querySelector("#hero-segment-all"),
+  heroSegmentMainstreamBtn: document.querySelector("#hero-segment-mainstream"),
+  heroSegmentNicheBtn: document.querySelector("#hero-segment-niche"),
   reset: document.querySelector("#reset-filters"),
   quickAvailable: document.querySelector("#quick-available"),
   quickAvailableMobile: document.querySelector("#quick-available-mobile"),
@@ -110,6 +112,7 @@ const els = {
     brand: document.querySelector("#brand-filters"),
     family: document.querySelector("#family-filters"),
     gender: document.querySelector("#gender-filters"),
+    segment: document.querySelector("#segment-filters"),
     status: document.querySelector("#status-filters"),
   },
   dialog: document.querySelector("#product-dialog"),
@@ -985,8 +988,10 @@ function bindUi() {
     els.familyToggle.classList.toggle("is-open", isOpen);
   });
 
-  els.heroCatalogCta?.addEventListener("click", () => {
-    document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.querySelectorAll("[data-segment-value]").forEach((button) => {
+    button.addEventListener("click", () => {
+      applyHeroSegmentFilter(button.dataset.segmentValue || "");
+    });
   });
 
   els.quickAvailable?.addEventListener("change", (event) => {
@@ -1135,6 +1140,7 @@ function applyCategoryFilter({ gender, bestSeller, segment } = {}) {
   syncFilterInputs("brand");
   syncFilterInputs("family");
   syncFilterInputs("gender");
+  syncFilterInputs("segment");
   if (els.brandSearch) {
     els.brandSearch.value = "";
     filterChipsInContainer(els.filters.brand, "");
@@ -1163,6 +1169,7 @@ function renderFilterOptions() {
   renderBrandFilterOptions();
   renderFamilyFilterOptions();
   renderGenderFilterOptions();
+  renderSegmentFilterOptions();
 }
 
 function renderGenderFilterOptions() {
@@ -1170,6 +1177,15 @@ function renderGenderFilterOptions() {
   els.filters.gender.innerHTML = "";
   values.forEach((value) => {
     els.filters.gender.appendChild(createFilterChip("gender", value));
+  });
+}
+
+function renderSegmentFilterOptions() {
+  if (!els.filters.segment) return;
+  const values = ["Mainstream", "Niche"];
+  els.filters.segment.innerHTML = "";
+  values.forEach((value) => {
+    els.filters.segment.appendChild(createFilterChip("segment", value));
   });
 }
 
@@ -1776,6 +1792,9 @@ function syncFilterInputs(key) {
   document.querySelectorAll(`input[data-filter-key="${key}"]`).forEach((input) => {
     input.checked = state.filters[key].has(input.value);
   });
+  if (key === "segment") {
+    syncHeroSegmentControls();
+  }
 }
 
 function resetAllFilters() {
@@ -1800,6 +1819,26 @@ function resetAllFilters() {
   render();
 }
 
+function syncHeroSegmentControls() {
+  const selectedSegment = state.filters.segment.size === 1 ? [...state.filters.segment][0] : "";
+  els.heroSegmentAllBtn?.classList.toggle("is-active", !selectedSegment);
+  els.heroSegmentMainstreamBtn?.classList.toggle("is-active", selectedSegment === "Mainstream");
+  els.heroSegmentNicheBtn?.classList.toggle("is-active", selectedSegment === "Niche");
+}
+
+function scrollToCatalogPanel() {
+  document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function applyHeroSegmentFilter(segmentValue) {
+  state.filters.segment.clear();
+  if (segmentValue) {
+    state.filters.segment.add(segmentValue);
+  }
+  syncFilterInputs("segment");
+  navigateToView("catalog");
+}
+
 function syncViewFromHash() {
   const hash = window.location.hash.replace(/^#/, "");
   if (hash.startsWith("brand=")) {
@@ -1821,7 +1860,7 @@ function navigateToView(view) {
   render();
 
   if (view === "catalog") {
-    document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToCatalogPanel();
     return;
   }
 
