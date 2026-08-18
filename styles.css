@@ -1843,6 +1843,17 @@ select {
     flex-direction: column;
   }
 
+  .hero-segment-control {
+    width: 100%;
+  }
+
+  .hero-segment-btn {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 0.82rem;
+  }
+
   .overview-list {
     grid-template-columns: 1fr;
   }
