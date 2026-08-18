@@ -1,7 +1,10 @@
 const DATA_URL = "./data/catalog.json";
 const BRAND_LOGOS_URL = "./data/brand-logos.json";
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 48;
 const PARTNER_PREVIEW_COUNT = 5;
+const FEATURED_PARTNER_BRANDS = ["Hermès", "Guerlain", "Prada", "Acqua di Parma"];
+const AVAILABILITY_REFRESH_TTL_MS = 5 * 60 * 1000;
+const AVAILABILITY_BATCH_SIZE = 12;
 
 const HOUSE_BRANDS = new Set([
   "sapos parfums",
@@ -16,13 +19,14 @@ let brandLogoMap = new Map();
 const state = {
   items: [],
   view: "catalog",
-  visibleCount: PAGE_SIZE,
+  currentPage: 1,
   filters: {
     query: "",
     brand: new Set(),
     family: new Set(),
     gender: new Set(),
     status: new Set(),
+    segment: new Set(),
     bestSeller: false,
     sort: "title-asc",
   },
@@ -33,6 +37,15 @@ let lastFilterSignature = "";
 
 let availableStatusLabels = new Set();
 const NEW_WINDOW_DAYS = 15;
+const availabilityCache = new Map();
+const availabilityInFlight = new Set();
+let availabilityRenderQueued = false;
+
+function isVisibleCatalogItem(item) {
+  if (!item) return false;
+  if ((item.statusKey || "available") !== "available") return false;
+  return Number(item.quantity) > 0;
+}
 
 function normalizeBrandKey(value) {
   return String(value || "")
@@ -75,9 +88,10 @@ const els = {
   empty: document.querySelector("#empty-state"),
   title: document.querySelector("#results-title"),
   resultsCountLine: document.querySelector("#results-count-line"),
-  loadMoreBar: document.querySelector("#load-more-bar"),
-  loadMoreCount: document.querySelector("#load-more-count"),
-  loadMoreBtn: document.querySelector("#load-more-btn"),
+  paginationBar: document.querySelector("#pagination-bar"),
+  paginationNumbers: document.querySelector("#pagination-numbers"),
+  paginationPrev: document.querySelector("#pagination-prev"),
+  paginationNext: document.querySelector("#pagination-next"),
   activeFilters: document.querySelector("#active-filters"),
   familyShortcuts: document.querySelector("#family-shortcuts"),
   familyToggle: document.querySelector("#family-toggle"),
@@ -89,7 +103,8 @@ const els = {
   reset: document.querySelector("#reset-filters"),
   quickAvailable: document.querySelector("#quick-available"),
   quickAvailableMobile: document.querySelector("#quick-available-mobile"),
-  viewCardsBtn: document.querySelector("#view-cards-btn"),
+  viewGridBtn: document.querySelector("#view-grid-btn"),
+  viewDetailedBtn: document.querySelector("#view-detailed-btn"),
   viewTextBtn: document.querySelector("#view-text-btn"),
   filters: {
     brand: document.querySelector("#brand-filters"),
@@ -139,7 +154,7 @@ init().catch((error) => {
 async function init() {
   bindUi();
   const [items, brandLogos] = await Promise.all([loadCatalogItems(), loadBrandLogos()]);
-  state.items = items;
+  state.items = items.filter(isVisibleCatalogItem);
   brandLogoMap = new Map(
     Object.entries(brandLogos || {}).map(([brand, url]) => [normalizeBrandKey(brand), url])
   );
@@ -149,13 +164,13 @@ async function init() {
 
   syncViewFromHash();
   renderFilterOptions();
-  ["brand", "family", "gender", "status"].forEach(syncFilterInputs);
+  ["brand", "family", "gender", "status", "segment"].forEach(syncFilterInputs);
 
-  let savedView = "cards";
+  let savedView = "grid";
   try {
-    savedView = localStorage.getItem("sapos-catalog-view") || "cards";
+    savedView = localStorage.getItem("sapos-catalog-view") || "grid";
   } catch (error) {
-    savedView = "cards";
+    savedView = "grid";
   }
   setView(savedView);
 
@@ -193,6 +208,135 @@ function buildCartUrl(item) {
   return `https://saposparfums.fr/cart/${variantId}:1`;
 }
 
+function buildProductImageAlt(item) {
+  const explicitAlt = String(item.imageAlt || "").trim();
+  if (explicitAlt) return explicitAlt;
+
+  const parts = [
+    item.title,
+    item.brand && !String(item.title || "").includes(item.brand) ? item.brand : null,
+    item.volume,
+  ].filter(Boolean);
+
+  return parts.length ? `Visuel produit ${parts.join(" - ")}` : "Visuel produit Sapos Parfums";
+}
+
+function buildBrandLogoAlt(item) {
+  const brand = String(item.brand || "").trim();
+  if (brand) return `Logo ${brand}`;
+  return "Logo marque";
+}
+
+function getProductHandle(item) {
+  const rawUrl = String(item.url || "").trim();
+  if (!rawUrl) return null;
+  try {
+    const url = new URL(rawUrl, window.location.origin);
+    const match = url.pathname.match(/^\/products\/([^/]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function applyAvailabilityToItem(item, snapshot) {
+  if (!snapshot || typeof snapshot.available !== "boolean") return false;
+
+  const nextStatusKey = snapshot.available ? "available" : "out";
+  const nextStatusLabel = snapshot.available ? "Disponible" : "Rupture";
+  const nextQuantity = snapshot.available ? Math.max(Number(item.quantity) || 1, 1) : 0;
+
+  let changed = false;
+  if ((item.statusKey || "available") !== nextStatusKey) {
+    item.statusKey = nextStatusKey;
+    changed = true;
+  }
+  if ((item.statusLabel || "Disponible") !== nextStatusLabel) {
+    item.statusLabel = nextStatusLabel;
+    changed = true;
+  }
+  if ((item.quantity ?? null) !== nextQuantity) {
+    item.quantity = nextQuantity;
+    changed = true;
+  }
+  return changed;
+}
+
+function queueAvailabilityRender() {
+  if (availabilityRenderQueued) return;
+  availabilityRenderQueued = true;
+  window.requestAnimationFrame(() => {
+    availabilityRenderQueued = false;
+    state.items = state.items.filter(isVisibleCatalogItem);
+    availableStatusLabels = getAvailableStatusLabels();
+    render();
+  });
+}
+
+async function fetchAvailabilityBatch(handles) {
+  if (!handles.length) return [];
+  const params = new URLSearchParams();
+  params.set("handles", handles.join(","));
+  const response = await fetch(`/api/availability?${params.toString()}`, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Availability refresh failed: ${response.status}`);
+  }
+  const payload = await response.json();
+  return Array.isArray(payload.items) ? payload.items : [];
+}
+
+async function refreshAvailabilityForItems(items) {
+  const handles = [...new Set(items.map((item) => getProductHandle(item)).filter(Boolean))];
+  const now = Date.now();
+  const handlesToFetch = handles.filter((handle) => {
+    if (availabilityInFlight.has(handle)) return false;
+    const cached = availabilityCache.get(handle);
+    return !cached || now - cached.checkedAt > AVAILABILITY_REFRESH_TTL_MS;
+  });
+
+  if (!handlesToFetch.length) return;
+  handlesToFetch.forEach((handle) => availabilityInFlight.add(handle));
+
+  try {
+    for (let index = 0; index < handlesToFetch.length; index += AVAILABILITY_BATCH_SIZE) {
+      const batch = handlesToFetch.slice(index, index + AVAILABILITY_BATCH_SIZE);
+      let snapshots = [];
+      try {
+        snapshots = await fetchAvailabilityBatch(batch);
+      } catch (error) {
+        console.warn("Impossible de rafraîchir la disponibilité Shopify.", error);
+      }
+
+      const checkedAt = Date.now();
+      const snapshotMap = new Map(
+        snapshots
+          .filter((entry) => entry && entry.handle)
+          .map((entry) => [entry.handle, { ...entry, checkedAt }])
+      );
+
+      batch.forEach((handle) => {
+        const snapshot = snapshotMap.get(handle);
+        if (snapshot) {
+          availabilityCache.set(handle, snapshot);
+        }
+      });
+    }
+  } finally {
+    handlesToFetch.forEach((handle) => availabilityInFlight.delete(handle));
+  }
+
+  let changed = false;
+  state.items.forEach((item) => {
+    const handle = getProductHandle(item);
+    if (!handle) return;
+    changed = applyAvailabilityToItem(item, availabilityCache.get(handle)) || changed;
+  });
+
+  if (changed) {
+    queueAvailabilityRender();
+  }
+}
+
 function hasRichNote(item) {
   return Boolean((item.noteHtml || "").trim() || (item.note || "").trim());
 }
@@ -215,9 +359,44 @@ function htmlToStructuredLines(html) {
     .filter(Boolean);
 }
 
+function extractInlineNoteSection(line) {
+  const compact = String(line || "").replace(/\s+/g, " ").trim();
+  if (!compact) return null;
+
+  const specs = [
+    { label: "Notes de tête", regex: /^notes?\s+de\s+t[êe]te\s*:?\s*(.+)$/i },
+    { label: "Notes de cœur", regex: /^notes?\s+de\s+c[œoe]ur\s*:?\s*(.+)$/i },
+    { label: "Notes de fond", regex: /^notes?\s+de\s+fond\s*:?\s*(.+)$/i },
+    { label: "Notes principales", regex: /^notes?\s+principales?\s*:\s*(.+)$/i },
+    { label: "Notes de tête", regex: /^t[êe]te\s*:?\s*(.+)$/i },
+    { label: "Notes de cœur", regex: /^c[œoe]ur\s*:?\s*(.+)$/i },
+    { label: "Notes de fond", regex: /^fond\s*:?\s*(.+)$/i },
+    { label: "Notes principales", regex: /^notes?\s*:\s*(.+)$/i },
+  ];
+
+  for (const { label, regex } of specs) {
+    const match = compact.match(regex);
+    if (!match) continue;
+    return {
+      label,
+      value: cleanupNoteValue(match[1] || ""),
+    };
+  }
+
+  return null;
+}
+
 function formatNotesParagraphs(sections) {
+  const seen = new Set();
+
   return sections
-    .filter((section) => section?.value)
+    .filter((section) => {
+      if (!section?.value) return false;
+      const key = `${String(section.label || "").toLowerCase()}::${String(section.value || "").toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .map(
       (section) =>
         `<p><strong>${escapeHtml(section.label)} :</strong> ${escapeHtml(section.value)}</p>`
@@ -239,7 +418,7 @@ function isNoteBoundaryLine(text) {
   const compact = String(text || "").replace(/\s+/g, " ").trim();
   if (!compact) return false;
   if (
-    /^(pour quelle occasion|tenue et sillage|pourquoi choisir|extrait de parfum|disponible en flacon|livraison offerte|commandez)/i.test(
+    /^(pour quelle occasion|tenue et sillage|pourquoi choisir|extrait de parfum|disponible en flacon|livraison offerte|commandez|le format testeur|cette présentation testeur|présenté ici|format\s*:)/i.test(
       compact
     )
   ) {
@@ -280,6 +459,7 @@ function detectNoteHeading(text) {
   if (/^notes?\s+de\s+coeur$/.test(normalized)) return "Notes de cœur";
   if (/^notes?\s+de\s+fond$/.test(normalized)) return "Notes de fond";
   if (/^notes?\s+principales$/.test(normalized)) return "Notes principales";
+  if (/^notes?\s+olfactives$/.test(normalized)) return "Notes olfactives";
   return null;
 }
 
@@ -289,6 +469,12 @@ function extractStructuredNotesFromLines(lines) {
   const sections = [];
 
   for (let index = 0; index < lines.length; index += 1) {
+    const inlineSection = extractInlineNoteSection(lines[index]);
+    if (inlineSection?.value) {
+      sections.push(inlineSection);
+      continue;
+    }
+
     const headingLabel = detectNoteHeading(lines[index]);
     if (!headingLabel) continue;
 
@@ -303,7 +489,8 @@ function extractStructuredNotesFromLines(lines) {
     }
 
     if (values.length) {
-      const value = cleanupNoteValue(values.join(" "));
+      const joiner = headingLabel === "Notes olfactives" ? ", " : " ";
+      const value = cleanupNoteValue(values.join(joiner));
       if (!value) continue;
       sections.push({
         label: headingLabel,
@@ -327,6 +514,12 @@ function extractStructuredNotesFromDom(doc) {
 
   for (let index = 0; index < children.length; index += 1) {
     const child = children[index];
+    const inlineSection = extractInlineNoteSection(child.textContent);
+    if (inlineSection?.value) {
+      sections.push(inlineSection);
+      continue;
+    }
+
     const headingLabel = detectNoteHeading(child.textContent);
     if (!headingLabel) continue;
 
@@ -341,7 +534,8 @@ function extractStructuredNotesFromDom(doc) {
     }
 
     if (values.length) {
-      const value = cleanupNoteValue(values.join(" "));
+      const joiner = headingLabel === "Notes olfactives" ? ", " : " ";
+      const value = cleanupNoteValue(values.join(joiner));
       if (!value) continue;
       sections.push({
         label: headingLabel,
@@ -377,6 +571,26 @@ function extractStructuredNotesFromText(text) {
       regex:
         /NOTES?\s+DE\s+FOND\s*:?\s*(.+?)(?=\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
     },
+    {
+      label: "Notes de tête",
+      regex:
+        /(?:^|\s)T[ÊE]TE\s*:\s*(.+?)(?=\s+(?:C[ŒOE]UR|FOND)\s*:|\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+    {
+      label: "Notes de cœur",
+      regex:
+        /(?:^|\s)C[ŒOE]UR\s*:\s*(.+?)(?=\s+FOND\s*:|\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+    {
+      label: "Notes de fond",
+      regex:
+        /(?:^|\s)FOND\s*:\s*(.+?)(?=\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
+    {
+      label: "Notes principales",
+      regex:
+        /(?:^|\s)NOTES?\s*:\s*(.+?)(?=\s+POURQUOI|\s+POUR\s+QUELLE|\s+TENUE|\s+EXTRAIT\s+DE\s+PARFUM|$)/i,
+    },
   ];
 
   const sections = specs
@@ -396,6 +610,50 @@ function extractStructuredNotesFromText(text) {
   return "";
 }
 
+function extractNarrativeOlfactoryNotes(text) {
+  const compact = String(text || "").replace(/\s+/g, " ").trim();
+  if (!compact) return [];
+
+  const patterns = [
+    /([A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+(?:,\s*[A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+){1,}(?:\s+et\s+[A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+)?)\s+(?:composent|compose|forment|forme|réunissent|réunit|prolongent|prolonge|signent|signe)\b/gi,
+    /([A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+(?:,\s*[A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+){1,}(?:\s+et\s+[A-ZÀ-ÖØ-öø-ÿa-z0-9'’ -]+)?)\s+(?:au\s+c[œoe]ur|en\s+fond|dans\s+le\s+fond|en\s+ouverture)\b/gi,
+  ];
+
+  const values = [];
+  for (const pattern of patterns) {
+    const matches = compact.matchAll(pattern);
+    for (const match of matches) {
+      const candidate = cleanupInlineNoteValue(match[1] || "")
+        .replace(/\set\s/gi, ", ")
+        .replace(/\s*;\s*/g, ", ")
+        .trim()
+        .replace(/[.:,;]+$/, "");
+      if (!candidate) continue;
+      candidate
+        .split(/\s*,\s*/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .forEach((part) => values.push(part));
+    }
+  }
+
+  const uniqueValues = [];
+  for (const value of values) {
+    const normalizedValue = value
+      .replace(/^(?:une?|des?|le|la|les|du|de la|de l'|d['’]|son|sa|ses|cette|ce)\s+/i, "")
+      .trim();
+    if (normalizedValue.length < 3) continue;
+    if (/\b(?:parfum|fragrance|composition|sillage|tenue|occasion|saison|livraison|testeur|conditionnement|version|quotidien)\b/i.test(normalizedValue)) {
+      continue;
+    }
+    if (!uniqueValues.some((existing) => existing.toLowerCase() === normalizedValue.toLowerCase())) {
+      uniqueValues.push(normalizedValue);
+    }
+  }
+
+  return uniqueValues.slice(0, 12);
+}
+
 function extractInlinePrimaryNotes(text) {
   const compact = String(text || "").replace(/\s+/g, " ").trim();
   if (!compact) return [];
@@ -404,7 +662,6 @@ function extractInlinePrimaryNotes(text) {
     /\bassocie\s+([^.]*)/i,
     /\brepose sur\s+([^.]*)/i,
     /\bs['’]ouvre sur\s+([^.]*)/i,
-    /\bautour de\s+([^.]*)/i,
   ];
 
   for (const pattern of patterns) {
@@ -428,7 +685,27 @@ function extractInlinePrimaryNotes(text) {
   return [];
 }
 
+function normalizeNativePreviewHtml(html) {
+  const compact = String(html || "").trim();
+  if (!compact || !compact.includes("|")) return compact;
+
+  const doc = new DOMParser().parseFromString(compact, "text/html");
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    node.nodeValue = node.nodeValue.replace(/\s*\|\s*/g, ", ");
+  }
+
+  return doc.body.innerHTML.trim();
+}
+
 function extractNativeNotesHtml(item) {
+  const nativePreviewHtml = (item.notePreviewHtml || "").trim();
+  if (nativePreviewHtml) {
+    return normalizeNativePreviewHtml(nativePreviewHtml);
+  }
+
   const html = (item.noteHtml || "").trim();
   if (html) {
     const structuredFromLines = extractStructuredNotesFromLines(htmlToStructuredLines(html));
@@ -442,7 +719,7 @@ function extractNativeNotesHtml(item) {
       return structuredFromDom;
     }
 
-    const htmlText = stripHtmlToText(html);
+    const htmlText = htmlToStructuredLines(html).join(" ");
     const structuredFromHtmlText = extractStructuredNotesFromText(htmlText);
     if (structuredFromHtmlText) {
       return structuredFromHtmlText;
@@ -452,7 +729,7 @@ function extractNativeNotesHtml(item) {
 
     for (const heading of headings) {
       const headingText = heading.textContent.trim();
-      if (!/^(pyramide olfactive|notes principales)$/i.test(headingText)) continue;
+      if (!/^(pyramide olfactive|notes principales|notes olfactives)$/i.test(headingText)) continue;
 
       const chunks = [];
       let cursor = heading.parentElement === doc.body ? heading.nextElementSibling : heading.nextElementSibling;
@@ -474,6 +751,25 @@ function extractNativeNotesHtml(item) {
         cursor = cursor.nextElementSibling;
       }
       if (chunks.length) return chunks.join("");
+    }
+
+    const olfactiveListHeading = headings.find((heading) =>
+      /^notes olfactives$/i.test(heading.textContent.trim())
+    );
+    if (olfactiveListHeading) {
+      let cursor = olfactiveListHeading.nextElementSibling;
+      while (cursor) {
+        if (/^H[1-4]$/i.test(cursor.tagName)) break;
+        if (cursor.matches("ul, ol")) {
+          const values = Array.from(cursor.querySelectorAll("li"))
+            .map((node) => node.textContent.replace(/\s+/g, " ").trim())
+            .filter(Boolean);
+          if (values.length) {
+            return `<p><strong>Notes principales :</strong> ${escapeHtml(values.join(", "))}</p>`;
+          }
+        }
+        cursor = cursor.nextElementSibling;
+      }
     }
 
     const listItems = Array.from(doc.querySelectorAll("li")).filter((node) =>
@@ -526,6 +822,11 @@ function extractNativeNotesHtml(item) {
     return `<p><strong>Notes principales :</strong> ${escapeHtml(inlineNotes.join(", "))}</p>`;
   }
 
+  const narrativeNotes = extractNarrativeOlfactoryNotes(text);
+  if (narrativeNotes.length) {
+    return `<p><strong>Notes principales :</strong> ${escapeHtml(narrativeNotes.join(", "))}</p>`;
+  }
+
   return "";
 }
 
@@ -567,7 +868,7 @@ async function loadCatalogItems() {
     throw new Error(`Catalogue HTTP ${response.status}`);
   }
   const items = await response.json();
-  return items;
+  return Array.isArray(items) ? items.filter(isVisibleCatalogItem) : [];
 }
 
 function bindUi() {
@@ -647,7 +948,11 @@ function bindUi() {
   });
 
   els.familySearch?.addEventListener("input", (event) => {
-    filterChipsInContainer(els.filters.family, event.target.value.trim().toLowerCase());
+    const query = event.target.value.trim().toLowerCase();
+    if (!familyExpanded) {
+      renderFamilyFilterOptions(Boolean(query));
+    }
+    filterChipsInContainer(els.filters.family, query);
   });
 
   els.brandMoreBtn?.addEventListener("click", () => {
@@ -692,12 +997,17 @@ function bindUi() {
     applyQuickAvailable(event.target.checked);
   });
 
-  els.viewCardsBtn?.addEventListener("click", () => setView("cards"));
+  els.viewGridBtn?.addEventListener("click", () => setView("grid"));
+  els.viewDetailedBtn?.addEventListener("click", () => setView("detailed"));
   els.viewTextBtn?.addEventListener("click", () => setView("text"));
 
-  els.loadMoreBtn?.addEventListener("click", () => {
-    state.visibleCount += PAGE_SIZE;
-    render();
+  els.paginationPrev?.addEventListener("click", () => {
+    if (state.currentPage > 1) goToPage(state.currentPage - 1);
+  });
+
+  els.paginationNext?.addEventListener("click", () => {
+    const totalPages = Math.max(1, Math.ceil(sortItems(filterItems()).length / PAGE_SIZE));
+    if (state.currentPage < totalPages) goToPage(state.currentPage + 1);
   });
 
   bindFabScrollBehavior();
@@ -713,9 +1023,11 @@ function applyQuickAvailable(checked) {
 }
 
 function setView(mode) {
-  currentView = mode === "text" ? "text" : "cards";
+  currentView = ["grid", "detailed", "text"].includes(mode) ? mode : "grid";
   els.list.classList.toggle("is-text", currentView === "text");
-  els.viewCardsBtn?.classList.toggle("is-active", currentView === "cards");
+  els.list.classList.toggle("is-grid", currentView === "grid");
+  els.viewGridBtn?.classList.toggle("is-active", currentView === "grid");
+  els.viewDetailedBtn?.classList.toggle("is-active", currentView === "detailed");
   els.viewTextBtn?.classList.toggle("is-active", currentView === "text");
   try {
     localStorage.setItem("sapos-catalog-view", currentView);
@@ -791,6 +1103,12 @@ function handleNavAction(action) {
     case "unisex":
       applyCategoryFilter({ gender: "Mixte" });
       break;
+    case "mainstream":
+     applyCategoryFilter({ segment: "Mainstream" });
+     break;
+    case "niche":
+     applyCategoryFilter({ segment: "Niche" });
+     break;
     case "contact":
       closeAllDrawers();
       window.open("https://saposparfums.fr/pages/contact", "_blank", "noopener");
@@ -800,7 +1118,7 @@ function handleNavAction(action) {
   }
 }
 
-function applyCategoryFilter({ gender, bestSeller } = {}) {
+function applyCategoryFilter({ gender, bestSeller, segment } = {}) {
   state.filters.brand.clear();
   state.filters.family.clear();
   state.filters.query = "";
@@ -808,6 +1126,10 @@ function applyCategoryFilter({ gender, bestSeller } = {}) {
   state.filters.gender.clear();
   if (gender) {
     state.filters.gender.add(gender);
+  }
+  state.filters.segment.clear();
+  if (segment) {
+   state.filters.segment.add(segment);
   }
   state.filters.bestSeller = Boolean(bestSeller);
   syncFilterInputs("brand");
@@ -834,7 +1156,7 @@ function filterChipsInContainer(container, query) {
   });
 }
 
-const FAMILY_PREVIEW_COUNT = 8;
+const FAMILY_PREVIEW_COUNT = 0;
 let familyExpanded = false;
 
 function renderFilterOptions() {
@@ -851,16 +1173,17 @@ function renderGenderFilterOptions() {
   });
 }
 
-function renderFamilyFilterOptions() {
+function renderFamilyFilterOptions(forceShowAll) {
   const counts = summarizeCounts(state.items, (item) => item.families || []);
   els.filters.family.innerHTML = "";
-  const visible = familyExpanded ? counts : counts.slice(0, FAMILY_PREVIEW_COUNT);
+  const showAll = familyExpanded || forceShowAll;
+  const visible = showAll ? counts : counts.slice(0, FAMILY_PREVIEW_COUNT);
   visible.forEach(({ value, count }) => {
     els.filters.family.appendChild(createFilterChip("family", value, count));
   });
   if (els.familyMoreBtn) {
     const hasMore = counts.length > FAMILY_PREVIEW_COUNT;
-    els.familyMoreBtn.classList.toggle("hidden", !hasMore);
+    els.familyMoreBtn.classList.toggle("hidden", !hasMore || Boolean(forceShowAll));
     els.familyMoreBtn.textContent = familyExpanded
       ? "Voir moins de familles"
       : `+ voir toutes les familles (${counts.length})`;
@@ -871,16 +1194,19 @@ function renderBrandFilterOptions() {
   const brands = uniqueValues("brand");
   const houseBrands = brands.filter((brand) => isHouseBrand(brand));
   const partnerBrands = brands.filter((brand) => !isHouseBrand(brand));
-  const previewPartners = partnerBrands.slice(0, PARTNER_PREVIEW_COUNT);
+  const previewPartners = FEATURED_PARTNER_BRANDS.filter((brand) => partnerBrands.includes(brand));
   const hasMore = partnerBrands.length > previewPartners.length;
 
   els.filters.brand.innerHTML = "";
 
   if (houseBrands.length) {
     els.filters.brand.appendChild(createGroupLabel("Nos marques"));
+    const houseWrap = document.createElement("div");
+    houseWrap.className = "filter-list filter-list-plain";
     houseBrands.forEach((brand) => {
-      els.filters.brand.appendChild(createFilterChip("brand", brand));
+      houseWrap.appendChild(createFilterChip("brand", brand));
     });
+    els.filters.brand.appendChild(houseWrap);
   }
 
   if (previewPartners.length) {
@@ -960,12 +1286,15 @@ function getFilterSignature() {
 function render() {
   const signature = getFilterSignature();
   if (signature !== lastFilterSignature) {
-    state.visibleCount = PAGE_SIZE;
+    state.currentPage = 1;
     lastFilterSignature = signature;
   }
 
   const results = sortItems(filterItems());
-  const visibleResults = results.slice(0, state.visibleCount);
+  const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+  if (state.currentPage > totalPages) state.currentPage = totalPages;
+  const startIndex = (state.currentPage - 1) * PAGE_SIZE;
+  const visibleResults = results.slice(startIndex, startIndex + PAGE_SIZE);
 
   renderOverview(results);
   renderRows(visibleResults);
@@ -973,11 +1302,12 @@ function render() {
   renderFamilyShortcuts();
   updateFiltersFabCount();
   syncQuickAvailableToggle();
-  updateLoadMoreButton(results.length);
+  updatePaginationBar(results.length);
   updateResultsCount(results.length);
 
   els.title.textContent = `${results.length} reference${results.length > 1 ? "s" : ""}`;
   els.empty.classList.toggle("hidden", results.length !== 0);
+  refreshAvailabilityForItems(visibleResults);
 }
 
 function updateResultsCount(totalFiltered) {
@@ -992,19 +1322,55 @@ function updateResultsCount(totalFiltered) {
   } sur ${totalCatalog} au catalogue`;
 }
 
-function updateLoadMoreButton(totalFiltered) {
-  if (!els.loadMoreBar || !els.loadMoreBtn) return;
-  const remaining = totalFiltered - state.visibleCount;
-  if (remaining > 0) {
-    const shown = Math.min(state.visibleCount, totalFiltered);
-    if (els.loadMoreCount) {
-      els.loadMoreCount.textContent = `${shown} sur ${totalFiltered} références affichées`;
-    }
-    els.loadMoreBtn.textContent = `Afficher ${Math.min(remaining, PAGE_SIZE)} de plus`;
-    els.loadMoreBar.classList.add("is-visible");
-  } else {
-    els.loadMoreBar.classList.remove("is-visible");
+function updatePaginationBar(totalFiltered) {
+  if (!els.paginationBar) return;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+  els.paginationBar.classList.toggle("is-visible", totalPages > 1);
+  if (totalPages <= 1) return;
+
+  const current = state.currentPage;
+  if (els.paginationNumbers) {
+    els.paginationNumbers.innerHTML = "";
+    buildPaginationSequence(current, totalPages).forEach((entry) => {
+      if (entry === "…") {
+        const span = document.createElement("span");
+        span.className = "pagination-ellipsis";
+        span.textContent = "…";
+        els.paginationNumbers.appendChild(span);
+        return;
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "pagination-number";
+      button.textContent = String(entry);
+      button.classList.toggle("is-active", entry === current);
+      button.addEventListener("click", () => goToPage(entry));
+      els.paginationNumbers.appendChild(button);
+    });
   }
+
+  if (els.paginationPrev) els.paginationPrev.disabled = current <= 1;
+  if (els.paginationNext) els.paginationNext.disabled = current >= totalPages;
+}
+
+function buildPaginationSequence(current, total) {
+  const delta = 1;
+  const range = [];
+  for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i += 1) {
+    range.push(i);
+  }
+  const sequence = [1];
+  if (range.length && range[0] > 2) sequence.push("…");
+  sequence.push(...range);
+  if (range.length && range[range.length - 1] < total - 1) sequence.push("…");
+  if (total > 1) sequence.push(total);
+  return sequence;
+}
+
+function goToPage(page) {
+  state.currentPage = page;
+  render();
+  document.querySelector(".catalog-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function syncQuickAvailableToggle() {
@@ -1086,7 +1452,7 @@ function renderRows(results) {
     });
     if (item.image) {
       image.src = item.image;
-      image.alt = item.imageAlt || item.title;
+      image.alt = buildProductImageAlt(item);
       image.classList.remove("hidden");
       logo.classList.add("hidden");
       monogram.classList.add("hidden");
@@ -1097,7 +1463,7 @@ function renderRows(results) {
       image.classList.add("hidden");
       if (brandLogo) {
         logo.src = brandLogo;
-        logo.alt = item.brand || item.title;
+        logo.alt = buildBrandLogoAlt(item);
         logo.classList.remove("hidden");
         monogram.classList.add("hidden");
       } else {
@@ -1121,11 +1487,17 @@ function renderRows(results) {
       meta.appendChild(badge);
     });
 
-    noteWrap.classList.remove("hidden");
-    noteDetail.innerHTML = getCardNoteHtml(item);
+    noteWrap.classList.toggle("hidden", !hasRichNote(item));
+    noteDetail.innerHTML = "";
+    noteDetail.classList.add("hidden");
+    noteDetail.dataset.loaded = "false";
     noteToggle.addEventListener("click", (event) => {
       event.stopPropagation();
       const expanded = noteToggle.getAttribute("aria-expanded") === "true";
+      if (!expanded && noteDetail.dataset.loaded !== "true") {
+        noteDetail.innerHTML = getCardNoteHtml(item);
+        noteDetail.dataset.loaded = "true";
+      }
       noteToggle.setAttribute("aria-expanded", expanded ? "false" : "true");
       noteToggle.querySelector("span").textContent = expanded ? "Voir les notes" : "Masquer les notes";
       noteDetail.classList.toggle("hidden", expanded);
@@ -1142,6 +1514,7 @@ function renderActiveFilters() {
     ...[...state.filters.brand].map((value) => ["brand", value]),
     ...[...state.filters.family].map((value) => ["family", value]),
     ...[...state.filters.gender].map((value) => ["gender", value]),
+    ...[...state.filters.segment].map((value) => ["segment", value]),
     ...[...state.filters.status].map((value) => ["status", value]),
   ];
 
@@ -1190,7 +1563,7 @@ function openDialog(item) {
 
   if (item.image) {
     els.dialogImage.src = item.image;
-    els.dialogImage.alt = item.imageAlt || item.title;
+    els.dialogImage.alt = buildProductImageAlt(item);
     els.dialogImage.classList.remove("hidden");
     els.dialogLogo.classList.add("hidden");
     els.dialogMonogram.classList.add("hidden");
@@ -1201,7 +1574,7 @@ function openDialog(item) {
     els.dialogImage.classList.add("hidden");
     if (brandLogo) {
       els.dialogLogo.src = brandLogo;
-      els.dialogLogo.alt = item.brand || item.title;
+      els.dialogLogo.alt = buildBrandLogoAlt(item);
       els.dialogLogo.classList.remove("hidden");
       els.dialogMonogram.classList.add("hidden");
     } else {
@@ -1222,7 +1595,7 @@ function openDialog(item) {
   );
 
   els.dialogLink.href = shopUrl;
-  els.dialogLink.textContent = "Commander sur la boutique";
+  els.dialogLink.textContent = "Voir la fiche produit";
   els.dialogLink.classList.toggle("hidden", !item.url);
 
   if (els.dialogCartLink) {
@@ -1250,6 +1623,30 @@ function openDialog(item) {
   els.dialog.showModal();
   const dialogCard = els.dialog.querySelector(".dialog-card");
   if (dialogCard) dialogCard.scrollTop = 0;
+}
+
+function getItemGenders(item) {
+  const raw = item.gender;
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  if (typeof raw === "string" && raw.includes(",")) {
+    return raw.split(",").map((value) => value.trim()).filter(Boolean);
+  }
+  return raw ? [raw] : [];
+}
+
+function matchesGenderFilter(item) {
+  if (!state.filters.gender.size) return true;
+  const itemGenders = getItemGenders(item);
+  return [...state.filters.gender].some((selected) => {
+    if (itemGenders.includes(selected)) return true;
+    if (
+      (selected === "Femme" || selected === "Homme") &&
+      itemGenders.some((value) => value === "Unisexe" || value === "Mixte")
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 function filterItems() {
@@ -1289,8 +1686,12 @@ function filterItems() {
       return false;
     }
 
-    if (state.filters.gender.size && !state.filters.gender.has(item.gender)) {
+    if (!matchesGenderFilter(item)) {
       return false;
+    }
+
+    if (state.filters.segment.size && !state.filters.segment.has(item.segment)) {
+     return false;
     }
 
     if (state.filters.status.size && !state.filters.status.has(item.statusLabel)) {
@@ -1380,7 +1781,7 @@ function syncFilterInputs(key) {
 function resetAllFilters() {
   state.filters.query = "";
   els.search.value = "";
-  ["brand", "family", "gender", "status"].forEach((key) => {
+  ["brand", "family", "gender", "status", "segment"].forEach((key) => {
     state.filters[key].clear();
     syncFilterInputs(key);
   });
@@ -1430,7 +1831,7 @@ function navigateToView(view) {
 function getOverviewConfig(results) {
   if (state.view === "families") {
     return {
-      label: "Familles",
+      label: "Familles olfactives",
       title: "Toutes les familles olfactives",
       text: "Choisissez une famille pour revenir sur une selection deja filtree.",
       items: summarizeCounts(results, (item) => item.families || []).map(({ value, count }) => ({

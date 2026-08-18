@@ -535,8 +535,7 @@ select {
 }
 
 .catalog-list.is-text .product-visual,
-.catalog-list.is-text .product-badges,
-.catalog-list.is-text .product-note-wrap {
+.catalog-list.is-text .product-badges {
   display: none;
 }
 
